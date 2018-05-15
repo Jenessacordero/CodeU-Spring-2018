@@ -64,6 +64,30 @@
         This page should also be used to describe the features and improvements
         you've added.
       </p>
+
+      <h1>About the Developers</h1>
+
+      <div>
+      <strong><u>Vibha Agarwal</strong></u>
+      <p>I'm a sophomore at MIT. My hobbies include reading, dancing,
+      fire-spinning, traveling/adventuring, going on long car rides with friends,
+      working on projects, cooking/eating, and sleeping.</p>
+      </div>
+
+      <div>
+      <strong><u>Jenessa Cordero</strong></u>
+      <p>I am from Seattle, Washington. I am currently studying data science
+      and cognitive science at Berkeley.</p>
+      </div>
+
+      <div>
+      <strong><u>Christopher Avalos</strong></u>
+      <p>I'm a sophomore at Brown University and I plan on studying Computer
+      Science and East Asian Studies (with a focus on Japanese). Some of my
+      hobbies include reading, playing the piano, video games, and
+      listening to music.</p>
+      </div>
+
     </div>
   </div>
 </body>
