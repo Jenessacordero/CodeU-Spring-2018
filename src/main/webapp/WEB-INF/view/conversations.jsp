@@ -15,6 +15,7 @@
 --%>
 <%@ page import="java.util.List" %>
 <%@ page import="codeu.model.data.Conversation" %>
+<%@ page import="codeu.model.data.User" %>
 
 <!DOCTYPE html>
 <html>
@@ -33,6 +34,7 @@
       <a href="/login">Login</a>
     <% } %>
     <a href="/about.jsp">About</a>
+    <a href="/profile.jsp">Profile</a>
   </nav>
 
   <div id="container">
