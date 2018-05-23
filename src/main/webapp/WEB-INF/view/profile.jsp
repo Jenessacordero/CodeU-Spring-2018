@@ -21,7 +21,6 @@
   <title>CodeU Chat App</title>
   <link rel="stylesheet" href="/css/main.css">
 </head>
-
 <body>
 
   <nav>
@@ -53,4 +52,5 @@
      </div>
   
  </body>
+
 </html>

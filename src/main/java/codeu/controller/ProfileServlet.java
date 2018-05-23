@@ -68,8 +68,7 @@ public class ProfileServlet extends HttpServlet {
 	  }
 	  
 	  /**
-	   * This function fires when a user navigates to the profile page. It gets the username of the current user
-	   *  and forwards to profile.jsp for rendering the list.
+	   * This function fires when a user navigates to the profile page.
 	   */
 	  @Override
 	  public void doGet(HttpServletRequest request, HttpServletResponse response)
