@@ -48,8 +48,8 @@ public class AdminPageServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
-      PrintWriter out = response.getWriter();
-      out.println("<h1>This is the admin page! Only the administrators of this site can see this :)</h1>");
+      request.getRequestDispatcher("/WEB-INF/view/adminpage.jsp").forward(request, response);
+
     }
 
 }

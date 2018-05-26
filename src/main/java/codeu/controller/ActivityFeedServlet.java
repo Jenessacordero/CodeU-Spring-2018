@@ -48,8 +48,8 @@ public class ActivityFeedServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
-      PrintWriter out = response.getWriter();
-      out.println("<h1>This is the activity feed page!</h1>");
+      request.getRequestDispatcher("/WEB-INF/view/activityfeed.jsp").forward(request, response);
+
     }
 
 }

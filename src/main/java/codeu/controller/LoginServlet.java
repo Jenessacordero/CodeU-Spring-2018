@@ -84,9 +84,11 @@ public class LoginServlet extends HttpServlet {
     }
     request.getSession().setAttribute("user", username);
 
-    if (request.getSession().getAttribute("user") == "jenessacordero") {
+    if (username.equals("jenessacordero")) {
       response.sendRedirect("/adminpage");
     }
-    response.sendRedirect("/conversations");
+    else {
+      response.sendRedirect("/conversations");
+    }
   }
 }
