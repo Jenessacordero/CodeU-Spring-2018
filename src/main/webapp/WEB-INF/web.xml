@@ -84,4 +84,14 @@
     <url-pattern>/activityfeed</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>AdminPageServlet</servlet-name>
+    <servlet-class>codeu.controller.AdminPageServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>AdminPageServlet</servlet-name>
+    <url-pattern>/adminpage</url-pattern>
+  </servlet-mapping>
+
 </web-app>

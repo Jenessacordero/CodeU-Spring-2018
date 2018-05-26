@@ -45,6 +45,9 @@
 
     <% if(request.getSession().getAttribute("user") != null){ %>
       <a href = "/activityfeed">View all activity feed here<a>
+        <% if(request.getSession().getAttribute("user") != "jenessacordero") {%>
+            <a href = "/adminpage"> View admin page here<a>
+        <% } %>
       <h1>New Conversation</h1>
       <form action="/conversations" method="POST">
           <div class="form-group">
