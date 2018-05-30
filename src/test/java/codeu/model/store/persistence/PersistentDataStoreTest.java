@@ -3,6 +3,7 @@ package codeu.model.store.persistence;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
+import codeu.model.data.AboutMe;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import java.time.Instant;
@@ -145,5 +146,43 @@ public class PersistentDataStoreTest {
     Assert.assertEquals(authorTwo, resultMessageTwo.getAuthorId());
     Assert.assertEquals(contentTwo, resultMessageTwo.getContent());
     Assert.assertEquals(creationTwo, resultMessageTwo.getCreationTime());
+  }
+  
+  @Test
+  public void testSaveAndLoadAboutMes() throws PersistentDataStoreException {
+    UUID idOne = UUID.fromString("10000000-2222-3333-4444-555555555555");
+    UUID ownerOne = UUID.fromString("10000002-2222-3333-4444-555555555555");
+    String contentOne = "test content one";
+    Instant creationOne = Instant.ofEpochMilli(1000);
+    AboutMe inputAboutMeOne =
+        new AboutMe(idOne, ownerOne, contentOne, creationOne);
+
+    UUID idTwo = UUID.fromString("10000003-2222-3333-4444-555555555555");
+    UUID ownerTwo = UUID.fromString("10000005-2222-3333-4444-555555555555");
+    String contentTwo = "test content two";
+    Instant creationTwo = Instant.ofEpochMilli(2000);
+    AboutMe inputAboutMeTwo =
+        new AboutMe(idTwo, ownerTwo, contentTwo, creationTwo);
+
+    // save
+    persistentDataStore.writeThrough(inputAboutMeOne);
+    persistentDataStore.writeThrough(inputAboutMeTwo);
+
+    // load
+    List<AboutMe> resultAboutMes = persistentDataStore.loadAboutMes();
+    System.out.println(resultAboutMes.size());
+
+    // confirm that what we saved matches what we loaded
+    AboutMe resultAboutMeOne = resultAboutMes.get(0);
+    Assert.assertEquals(idOne, resultAboutMeOne.getId());
+    Assert.assertEquals(ownerOne, resultAboutMeOne.getOwner());
+    Assert.assertEquals(contentOne, resultAboutMeOne.getContent());
+    Assert.assertEquals(creationOne, resultAboutMeOne.getCreationTime());
+
+    AboutMe resultAboutMeTwo = resultAboutMes.get(1);
+    Assert.assertEquals(idTwo, resultAboutMeTwo.getId());
+    Assert.assertEquals(ownerTwo, resultAboutMeTwo.getOwner());
+    Assert.assertEquals(contentTwo, resultAboutMeTwo.getContent());
+    Assert.assertEquals(creationTwo, resultAboutMeTwo.getCreationTime());
   }
 }
