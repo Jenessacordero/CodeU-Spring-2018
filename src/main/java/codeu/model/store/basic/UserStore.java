@@ -56,7 +56,7 @@ public class UserStore {
   private PersistentStorageAgent persistentStorageAgent;
 
   /** The in-memory list of Users. */
-  private List<User> users;
+  private static List<User> users;
 
   /** This class is a singleton, so its constructor is private. Call getInstance() instead. */
   private UserStore(PersistentStorageAgent persistentStorageAgent) {
@@ -79,6 +79,10 @@ public class UserStore {
     return null;
   }
 
+
+  public static List<User> returnAllUsers() {
+    return users;
+  }
   /**
    * Access the User object with the given UUID.
    *
@@ -117,6 +121,35 @@ public class UserStore {
       }
     }
     return false;
+  }
+
+  public static User wordiestUser() {
+    User wordiest = null;
+    int maxWords = -1;
+    for (User user : users) {
+      if (user.getnumWords() > maxWords) {
+        wordiest = user;
+        maxWords = user.getnumWords();
+      }
+    }
+    return wordiest;
+  }
+
+  public static User mostActive() {
+    User mostActive = null;
+    int maxMessages = -1;
+    for (User user : users) {
+      if (user.getNumPersonalMessages() > maxMessages) {
+        mostActive = user;
+        maxMessages = user.getNumPersonalMessages();
+      }
+    }
+    return mostActive;
+  }
+
+
+  public static User getNewestUser() {
+    return users.get(users.size() - 1);
   }
 
   /**

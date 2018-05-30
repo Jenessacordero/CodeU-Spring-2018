@@ -23,6 +23,8 @@ public class User {
   private final String name;
   private final String passwordHash;
   private final Instant creation;
+  private int personalMessages;
+  private int numWords;
 
   /**
    * Constructs a new User.
@@ -37,6 +39,8 @@ public class User {
     this.name = name;
     this.passwordHash = passwordHash;
     this.creation = creation;
+    this.personalMessages = 0;
+    this.numWords = 0;
   }
 
   /** Returns the ID of this User. */
@@ -58,4 +62,16 @@ public class User {
   public Instant getCreationTime() {
     return creation;
   }
+
+  /** Returns the number of messages the user has sent */
+  public int getNumPersonalMessages() { return personalMessages; }
+
+  /** Returns the sum of all lengths of messages sent by this user */
+  public int getnumWords() { return numWords; }
+
+  /** Modifies the users message count if they send another message */
+  public void changeNumPersonalMessageCount() { this.personalMessages += 1; }
+
+  /** Modifies the users word count if they send another message */
+  public void changeNumWords(String message) { this.numWords += (message.length()); }
 }

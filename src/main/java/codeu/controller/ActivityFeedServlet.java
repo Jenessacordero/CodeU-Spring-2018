@@ -5,6 +5,7 @@ package codeu.controller;
 import java.io.PrintWriter;
 import codeu.model.data.Conversation;
 import codeu.model.data.User;
+import codeu.model.data.UserAction;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class ActivityFeedServlet extends HttpServlet {
   private UserStore userStore;
 
   private ConversationStore conversationStore;
+
 
   @Override
   public void init() throws ServletException {
@@ -48,6 +50,9 @@ public class ActivityFeedServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
+      UserAction dummy = new UserAction(Instant.now(), 'u', "dummy");
+      List<UserAction> allActions = dummy.returnActions();
+      request.setAttribute("actions", allActions);
       request.getRequestDispatcher("/WEB-INF/view/activityfeed.jsp").forward(request, response);
 
     }
