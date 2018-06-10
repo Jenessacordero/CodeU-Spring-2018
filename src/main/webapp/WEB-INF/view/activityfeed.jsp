@@ -25,7 +25,14 @@
     <% if(request.getAttribute("error") != null){ %>
         <h2 style="color:red"><%= request.getAttribute("error") %></h2>
     <% } %>
+    <h1>Activity</h1>
+    <p>Here's everything that's happened on the site so far!</p>
     <hr/>
+
+    <% // List<UserAction> actions = (List<UserAction>) request.getAttribute("actions");%>
+
+    <%
+    %>
   </div>
 </body>
 </html>
