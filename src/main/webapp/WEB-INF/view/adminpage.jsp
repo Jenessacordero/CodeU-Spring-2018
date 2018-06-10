@@ -15,6 +15,9 @@
       <a href="/login">Login</a>
     <% } %>
     <a href="/about.jsp">About</a>
+    <% if(request.getSession().getAttribute("user") != null){ %>
+      <a href="/user/<%=request.getSession().getAttribute("user") %>">Profile Page</a>
+  <% } %>
     <% if(request.getSession().getAttribute("user") == ("jenessacordero")) {%>
     <a href="/adminpage.jsp">Admin</a>
     <% } %>

@@ -17,9 +17,12 @@ package codeu.controller;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
+import codeu.model.data.AboutMe;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.persistence.PersistentDataStoreException;
+import codeu.model.store.basic.AboutMeStore;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
@@ -40,6 +43,12 @@ public class ProfileServlet extends HttpServlet {
 	/** Store class that gives access to Conversations. */
 	private ConversationStore conversationStore;
 	
+	/** Store class that gives access to Messages. */
+	private MessageStore messageStore;
+	
+	/** Store class that gives access to AboutMes. */
+	private AboutMeStore aboutMeStore;
+	
 	/**
 	 * Set up state for handling conversation-related requests. This method is only called when
 	 * running in a server, not when running in a test.
@@ -49,6 +58,8 @@ public class ProfileServlet extends HttpServlet {
 		 super.init();
 		 setUserStore(UserStore.getInstance());
 		 setConversationStore(ConversationStore.getInstance());
+		 setMessageStore(MessageStore.getInstance());
+		 setAboutMeStore(AboutMeStore.getInstance());
 	  }
 
 	  /**
@@ -68,12 +79,79 @@ public class ProfileServlet extends HttpServlet {
 	  }
 	  
 	  /**
+	   * Sets the MessageStore used by this servlet. This function provides a common setup method for use
+	   * by the test framework or the servlet's init() function.
+	   */
+	  void setMessageStore(MessageStore messageStore) {
+	    this.messageStore = messageStore;
+	  }
+	  
+	  /**
+	   * Sets the AboutMeStore used by this servlet. This function provides a common setup method for use
+	   * by the test framework or the servlet's init() function.
+	   */
+	  void setAboutMeStore(AboutMeStore aboutMeStore) {
+	    this.aboutMeStore = aboutMeStore;
+	  }
+
+	  
+	  /**
 	   * This function fires when a user navigates to the profile page.
 	   */
 	  @Override
 	  public void doGet(HttpServletRequest request, HttpServletResponse response)
 	      throws IOException, ServletException {
+		  String requestUrl = request.getRequestURI();
+		  String username = requestUrl.substring("/user/".length());
+		  
+		  User user = userStore.getUser(username);
+		  UUID userID = user.getId();
+		  
+		  List<Message> messages = messageStore.getMessagesByUser(userID);
+		  AboutMe aboutMe = aboutMeStore.getAboutMeByUser(userID);
+		  
+		  request.setAttribute("messages", messages);
+		  request.setAttribute("user", user);
+		  request.setAttribute("username", username);
+		  request.setAttribute("aboutMe", aboutMe);
+		  
 		  request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
+	  }
+	  
+	  /**
+	   * This function fires when a user submits a form on the page.
+	   */
+	  @Override
+	  public void doPost(HttpServletRequest request, HttpServletResponse response)
+	      throws IOException, ServletException {
+		  
+		  // Here I get information about the user.
+		  String username = (String) request.getSession().getAttribute("user");
+		  User user = userStore.getUser(username);
+		  
+		  String aboutMeContent = request.getParameter("aboutme");
+
+		  // this removes any HTML from the message content
+		  String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());
+		  
+		  // Create a new AboutMe object and add it to the store.
+		  AboutMe aboutMe =
+			        new AboutMe(
+			            UUID.randomUUID(),
+			            user.getId(),
+			            cleanedAboutMeContent,
+			            Instant.now());
+		  
+		  try {
+			aboutMeStore.addAboutMe(aboutMe);
+		} catch (PersistentDataStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		  
+		  // redirect to a GET request
+		  response.sendRedirect("/user/" + username);
+		  
 	  }
 
 }

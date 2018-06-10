@@ -16,8 +16,13 @@ package codeu.controller;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.User;
+import codeu.model.data.Message;
+import codeu.model.data.AboutMe;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.persistence.PersistentDataStoreException;
+import codeu.model.store.basic.MessageStore;
+import codeu.model.store.basic.AboutMeStore;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -41,8 +46,9 @@ public class ProfileServletTest {
   private HttpSession mockSession;
   private HttpServletResponse mockResponse;
   private RequestDispatcher mockRequestDispatcher;
-  private ConversationStore mockConversationStore;
+  private MessageStore mockMessageStore;
   private UserStore mockUserStore;
+  private AboutMeStore mockAboutMeStore;
 
   @Before
   public void setup() {
@@ -57,11 +63,14 @@ public class ProfileServletTest {
     Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/profile.jsp"))
         .thenReturn(mockRequestDispatcher);
 
-    mockConversationStore = Mockito.mock(ConversationStore.class);
-    profileServlet.setConversationStore(mockConversationStore);
+    mockMessageStore = Mockito.mock(MessageStore.class);
+    profileServlet.setMessageStore(mockMessageStore);
 
     mockUserStore = Mockito.mock(UserStore.class);
     profileServlet.setUserStore(mockUserStore);
+    
+    mockAboutMeStore = Mockito.mock(AboutMeStore.class);
+    profileServlet.setAboutMeStore(mockAboutMeStore);
   	}
   
   /**
@@ -71,8 +80,109 @@ public class ProfileServletTest {
    */
   @Test
   public void testDoGet() throws IOException, ServletException {
-    profileServlet.doGet(mockRequest, mockResponse);
+	  UUID userId;
+	User user =
+		        new User(
+		            userId = UUID.randomUUID(),
+		            "test username",
+		            "$2a$10$.e.4EEfngEXmxAO085XnYOmDntkqod0C384jOR9oagwxMnPNHaGLa",
+		            Instant.now());
+	
+	 List<Message> fakeMessageList = new ArrayList<>();
+	 
+	 fakeMessageList.add(
+		        new Message(
+		            UUID.randomUUID(),
+		            UUID.randomUUID(),
+		            userId,
+		            "test content",
+		            Instant.now()));
+	 	 
+
+	 AboutMe fakeAboutMe = new AboutMe(
+		            UUID.randomUUID(),
+		            userId,
+		            "test content",
+		            Instant.now());
+	
+
+	 Mockito.when(mockRequest.getRequestURI()).thenReturn("/user/test username");
+	 Mockito.when(mockUserStore.getUser("test username")).thenReturn(user);
+	 Mockito.when(mockMessageStore.getMessagesByUser(userId))
+	 .thenReturn(fakeMessageList);
+	 Mockito.when(mockAboutMeStore.getAboutMeByUser(userId))
+	 .thenReturn(fakeAboutMe);
+
+	 HttpSession mockSession = Mockito.mock(HttpSession.class);
+	 Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
+		    
+	 profileServlet.doGet(mockRequest, mockResponse);
+    
+    Mockito.verify(mockRequest).setAttribute("user", user);
+    Mockito.verify(mockRequest).setAttribute("messages", fakeMessageList);
+    Mockito.verify(mockRequest).setAttribute("aboutMe", fakeAboutMe);
+
+
 
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
+  }
+  
+  /**
+   * Simple test to see if doPost stores the AboutMe.
+   * @throws IOException
+   * @throws ServletException
+   * @throws PersistentDataStoreException
+   */
+  @Test
+  public void testDoPost_StoresAboutMe() throws IOException, ServletException, PersistentDataStoreException {
+    Mockito.when(mockRequest.getRequestURI()).thenReturn("/user/test_username");
+    Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
+
+	User fakeUser =
+        new User(
+            UUID.randomUUID(),
+            "test_username",
+            "$2a$10$bBiLUAVmUFK6Iwg5rmpBUOIBW6rIMhU1eKfi3KR60V9UXaYTwPfHy",
+            Instant.now());
+    Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
+
+
+    Mockito.when(mockRequest.getParameter("aboutme")).thenReturn("Test bio.");
+
+    profileServlet.doPost(mockRequest, mockResponse);
+
+    ArgumentCaptor<AboutMe> aboutMeArgumentCaptor = ArgumentCaptor.forClass(AboutMe.class);
+    Mockito.verify(mockAboutMeStore).addAboutMe(aboutMeArgumentCaptor.capture());
+    Assert.assertEquals("Test bio.", aboutMeArgumentCaptor.getValue().getContent());
+
+    Mockito.verify(mockResponse).sendRedirect("/user/test_username");
+  }
+
+  /**
+   * Simple test to see if doPost cleans up html content.
+   * @throws IOException
+   * @throws ServletException
+   * @throws PersistentDataStoreException
+   */
+  @Test
+  public void testDoPost_CleansHtmlContent() throws IOException, ServletException, PersistentDataStoreException {
+    Mockito.when(mockRequest.getRequestURI()).thenReturn("/user/test_username");
+    Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
+
+    User fakeUser = new User(UUID.randomUUID(), "test_username", "test_username", Instant.now());
+    Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
+
+
+    Mockito.when(mockRequest.getParameter("aboutme"))
+        .thenReturn("Contains <b>html</b> and <script>JavaScript</script> content.");
+
+    profileServlet.doPost(mockRequest, mockResponse);
+
+    ArgumentCaptor<AboutMe> aboutMeArgumentCaptor = ArgumentCaptor.forClass(AboutMe.class);
+    Mockito.verify(mockAboutMeStore).addAboutMe(aboutMeArgumentCaptor.capture());
+    Assert.assertEquals(
+        "Contains html and  content.", aboutMeArgumentCaptor.getValue().getContent());
+
+    Mockito.verify(mockResponse).sendRedirect("/user/test_username");
   }
   }

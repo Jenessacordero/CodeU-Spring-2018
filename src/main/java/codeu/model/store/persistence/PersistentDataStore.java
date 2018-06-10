@@ -17,10 +17,12 @@ package codeu.model.store.persistence;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
+import codeu.model.data.AboutMe;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
@@ -149,9 +151,43 @@ public class PersistentDataStore {
 
     return messages;
   }
+  
+  /**
+   * Loads all AboutMe objects from the Datastore service and returns them in a List.
+   *
+   * @throws PersistentDataStoreException if an error was detected during the load from the
+   *     Datastore service
+   */
+  public List<AboutMe> loadAboutMes() throws PersistentDataStoreException {
+
+    List<AboutMe> aboutMes = new ArrayList<>();
+
+    // Retrieve all aboutmes from the datastore.
+    Query query = new Query("chat-aboutmes");
+    PreparedQuery results = datastore.prepare(query);
+
+    for (Entity entity : results.asIterable()) {
+      try {
+        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+        UUID owner = UUID.fromString((String) entity.getProperty("owner"));
+        String content = (String) entity.getProperty("content");
+        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+        AboutMe aboutMe = new AboutMe(uuid, owner, content, creationTime);
+        aboutMes.add(aboutMe);
+      } catch (Exception e) {
+        // In a production environment, errors should be very rare. Errors which may
+        // occur include network errors, Datastore service errors, authorization errors,
+        // database entity definition mismatches, or service mismatches.
+        throw new PersistentDataStoreException(e);
+      }
+    }
+
+    return aboutMes;
+  }
 
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
+	  
     Entity userEntity = new Entity("chat-users", user.getId().toString());
     userEntity.setProperty("uuid", user.getId().toString());
     userEntity.setProperty("username", user.getName());
@@ -179,6 +215,36 @@ public class PersistentDataStore {
     conversationEntity.setProperty("title", conversation.getTitle());
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
     datastore.put(conversationEntity);
+  }
+  
+  /** Write an AboutMe object to the Datastore service. 
+   * @throws PersistentDataStoreException */
+  public void writeThrough(AboutMe aboutMe) throws PersistentDataStoreException {
+	// Retrieve all aboutmes from the datastore.
+	  Query query = new Query("chat-aboutmes");
+	  PreparedQuery results = datastore.prepare(query);
+
+	    for (Entity entity : results.asIterable()) {
+	      try {
+	    	if(entity.getProperty("owner").equals(aboutMe.getOwner().toString())) {
+	    		entity.setProperty("content", aboutMe.getContent());
+	    		datastore.put(entity);
+	    		return;
+	    	}
+	      } catch (Exception e) {
+	        // In a production environment, errors should be very rare. Errors which may
+	        // occur include network errors, Datastore service errors, authorization errors,
+	        // database entity definition mismatches, or service mismatches.
+	        throw new PersistentDataStoreException(e);
+	      }
+	    }
+	    
+	    Entity aboutMeEntity = new Entity("chat-aboutmes", aboutMe.getId().toString());
+	    aboutMeEntity.setProperty("uuid", aboutMe.getId().toString());
+	    aboutMeEntity.setProperty("owner", aboutMe.getOwner().toString());
+	    aboutMeEntity.setProperty("content", aboutMe.getContent());
+	    aboutMeEntity.setProperty("creation_time", aboutMe.getCreationTime().toString());
+	    datastore.put(aboutMeEntity);
   }
 }
 

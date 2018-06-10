@@ -16,6 +16,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.data.Message" %>
+<%@ page import="codeu.model.data.User" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
 <%
 Conversation conversation = (Conversation) request.getAttribute("conversation");
@@ -55,6 +56,9 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
       <a href="/login">Login</a>
     <% } %>
     <a href="/about.jsp">About</a>
+    <% if(request.getSession().getAttribute("user") != null){ %>
+      <a href="/user/<%=request.getSession().getAttribute("user") %>">Profile Page</a>
+    <% }  %>
   </nav>
 
   <div id="container">
@@ -70,8 +74,10 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
       for (Message message : messages) {
         String author = UserStore.getInstance()
           .getUser(message.getAuthorId()).getName();
+         User user = UserStore.getInstance()
+                .getUser(message.getAuthorId());
     %>
-      <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
+      <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <%= message.getContent() %></li>
     <%
       }
     %>
