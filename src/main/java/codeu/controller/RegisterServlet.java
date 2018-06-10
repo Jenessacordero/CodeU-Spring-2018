@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import codeu.model.data.UserAction;
 import org.mindrot.jbcrypt.BCrypt;
 
 import codeu.model.data.User;
@@ -66,7 +67,8 @@ public class RegisterServlet extends HttpServlet {
 
     User user = new User(UUID.randomUUID(), username, hashed, Instant.now());
     userStore.addUser(user);
-
+    UserAction newUser = new UserAction(Instant.now(), 'u', user.getName());
+    newUser.addAction(newUser);
     response.sendRedirect("/login");
   }
 }

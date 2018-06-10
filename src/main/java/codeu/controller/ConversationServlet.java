@@ -16,6 +16,7 @@ package codeu.controller;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.User;
+import codeu.model.data.UserAction;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
@@ -35,6 +36,8 @@ public class ConversationServlet extends HttpServlet {
 
   /** Store class that gives access to Conversations. */
   private ConversationStore conversationStore;
+
+  private boolean initialized = false;
 
   /**
    * Set up state for handling conversation-related requests. This method is only called when
@@ -118,6 +121,8 @@ public class ConversationServlet extends HttpServlet {
         new Conversation(UUID.randomUUID(), user.getId(), conversationTitle, Instant.now());
 
     conversationStore.addConversation(conversation);
+    UserAction newConversation = new UserAction(Instant.now(), user.getName(), 'c', conversationTitle);
+    newConversation.addAction(newConversation);
     response.sendRedirect("/chat/" + conversationTitle);
   }
 }

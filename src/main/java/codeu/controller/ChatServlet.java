@@ -17,6 +17,7 @@ package codeu.controller;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
+import codeu.model.data.UserAction;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
@@ -42,6 +43,8 @@ public class ChatServlet extends HttpServlet {
 
   /** Store class that gives access to Users. */
   private UserStore userStore;
+
+  private boolean initialized = false;
 
   /** Set up state for handling chat requests. */
   @Override
@@ -152,6 +155,10 @@ public class ChatServlet extends HttpServlet {
             Instant.now());
 
     messageStore.addMessage(message);
+    user.changeNumPersonalMessageCount();
+    user.changeNumWords(message.getContent());
+    UserAction newMessage = new UserAction(Instant.now(), user.getName(), 'm', conversationTitle, cleanedMessageContent);
+    newMessage.addAction(newMessage);
 
     // redirect to a GET request
     response.sendRedirect("/chat/" + conversationTitle);
