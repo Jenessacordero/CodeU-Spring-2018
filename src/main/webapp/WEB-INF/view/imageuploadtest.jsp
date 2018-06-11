@@ -12,15 +12,14 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
+  -- currently outputs a blank webpage for testing purposes
 --%>
-<%@ page import="java.util.List" %>
-<%@ page import="codeu.model.data.Conversation" %>
-<%@ page import="codeu.model.data.User" %>
+
 
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Conversations</title>
+  <title>Image Upload (Test)</title>
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
@@ -46,50 +45,11 @@
     <% } %>
 
     <% if(request.getSession().getAttribute("user") != null){ %>
-      <a href = "/activityfeed">View all activity feed here<a>
-      <h1>New Conversation</h1>
-      <form action="/conversations" method="POST">
-          <div class="form-group">
-            <label class="form-control-label">Title:</label>
-          <input type="text" name="conversationTitle">
-        </div>
-
-        <button type="submit">Create</button>
-      </form>
-
+      <h1>Image Upload Test</h1>
       <hr/>
     <% } %>
 
-
-
-    <h1>Conversations</h1>
-    <% if(request.getSession().getAttribute("user") == null){ %>
-      <p>Login to start a conversation!</p>
-    <% } %>
-
-    <%
-    List<Conversation> conversations =
-      (List<Conversation>) request.getAttribute("conversations");
-    if(conversations == null || conversations.isEmpty()){
-    %>
-      <p>Create a conversation to get started.</p>
-    <%
-    }
-    else{
-    %>
-      <ul class="mdl-list">
-    <%
-      for(Conversation conversation : conversations){
-    %>
-      <li><a href="/chat/<%= conversation.getTitle() %>">
-        <%= conversation.getTitle() %></a></li>
-    <%
-      }
-    %>
-      </ul>
-    <%
-    }
-    %>
+    <h1>Test</h1>
     <hr/>
   </div>
 </body>
