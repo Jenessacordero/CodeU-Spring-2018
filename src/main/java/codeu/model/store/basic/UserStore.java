@@ -147,7 +147,6 @@ public class UserStore {
     return mostActive;
   }
 
-
   public static User getNewestUser() {
     return users.get(users.size() - 1);
   }

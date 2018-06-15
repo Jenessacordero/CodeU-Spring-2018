@@ -23,18 +23,23 @@
 
   <nav>
     <a id="navTitle" href="/">CodeU Chat App</a>
-    <a href="/conversations">Conversations</a>
+    <a href="/about.jsp">About</a>
+    <a href="/activityfeed">Activity Feed</a>
     <% if(request.getSession().getAttribute("user") != null){ %>
       <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
     <% } else{ %>
       <a href="/login">Login</a>
     <% } %>
-    <a href="/about.jsp">About</a>
     <% if(request.getSession().getAttribute("user") != null){ %>
       <a href="/user/<%=request.getSession().getAttribute("user") %>">Profile Page</a>
     <% } %>
+    <a href="/conversations">Conversations</a>
+    <% if(request.getSession().getAttribute("user") != null && (request.getSession().getAttribute("user").equals("cavalos99") || 
+    		request.getSession().getAttribute("user").equals("jenessacordero") || request.getSession().getAttribute("user").equals("agarwalv"))) {%>
+    <a href="/adminpage">Admin</a>
+    <% } %>
   </nav>
-
+  
   <div id="container">
     <div
       style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">

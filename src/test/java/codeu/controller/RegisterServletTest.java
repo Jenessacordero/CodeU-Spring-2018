@@ -15,6 +15,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import codeu.model.data.User;
+import codeu.model.data.UserAction;
+import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
 
 public class RegisterServletTest {
@@ -23,6 +25,7 @@ public class RegisterServletTest {
   private HttpServletRequest mockRequest;
   private HttpServletResponse mockResponse;
   private RequestDispatcher mockRequestDispatcher;
+  private UserActionStore mockUserActionStore;
 
   @Before
   public void setup() throws IOException {
@@ -32,6 +35,9 @@ public class RegisterServletTest {
     mockRequestDispatcher = Mockito.mock(RequestDispatcher.class);
     Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/register.jsp"))
         .thenReturn(mockRequestDispatcher);
+    
+    mockUserActionStore = Mockito.mock(UserActionStore.class);
+    registerServlet.setUserActionStore(mockUserActionStore);
   }
 
   @Test
@@ -70,6 +76,9 @@ public class RegisterServletTest {
     Assert.assertThat(
         userArgumentCaptor.getValue().getPasswordHash(), CoreMatchers.containsString("$2a$10$"));
     Assert.assertEquals(60, userArgumentCaptor.getValue().getPasswordHash().length());
+    
+    ArgumentCaptor<UserAction> userActionArgumentCaptor = ArgumentCaptor.forClass(UserAction.class);
+    Mockito.verify(mockUserActionStore).addUserAction(userActionArgumentCaptor.capture());
 
     Mockito.verify(mockResponse).sendRedirect("/login");
   }

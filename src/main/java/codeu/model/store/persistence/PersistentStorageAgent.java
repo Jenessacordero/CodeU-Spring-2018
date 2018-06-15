@@ -16,7 +16,9 @@ package codeu.model.store.persistence;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
+import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
+import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
 import codeu.model.store.persistence.PersistentDataStore;
 import java.util.List;
@@ -99,6 +101,26 @@ public class PersistentStorageAgent {
   public List<AboutMe> loadAboutMes() throws PersistentDataStoreException {
     return persistentDataStore.loadAboutMes();
   }
+  
+  /**
+   * Retrieve all StatusUpdate objects from the Datastore service. The returned list may be empty.
+   *
+   * @throws PersistentDataStoreException if an error was detected during the load from the
+   *     Datastore service
+   */
+  public List<StatusUpdate> loadStatusUpdates() throws PersistentDataStoreException {
+    return persistentDataStore.loadStatusUpdates();
+  }
+  
+  /**
+   * Retrieve all UserAction objects from the Datastore service. The returned list may be empty.
+   *
+   * @throws PersistentDataStoreException if an error was detected during the load from the
+   *     Datastore service
+   */
+  public List<UserAction> loadUserActions() throws PersistentDataStoreException {
+    return persistentDataStore.loadUserActions();
+  }
 
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
@@ -119,6 +141,16 @@ public class PersistentStorageAgent {
  * @throws PersistentDataStoreException */
   public void writeThrough(AboutMe aboutMe) throws PersistentDataStoreException {
     persistentDataStore.writeThrough(aboutMe);
+  }
+  
+  /** Write a StatusUpdate object to the Datastore service. */
+  public void writeThrough(StatusUpdate statusUpdate) {
+    persistentDataStore.writeThrough(statusUpdate);
+  }
+  
+  /** Write a UserAction object to the Datastore service. */
+  public void writeThrough(UserAction userAction) {
+    persistentDataStore.writeThrough(userAction);
   }
 
 }
