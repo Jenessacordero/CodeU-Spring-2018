@@ -16,7 +16,9 @@ package codeu.model.store.persistence;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
+import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
+import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -184,6 +186,60 @@ public class PersistentDataStore {
 
     return aboutMes;
   }
+  
+  public List<StatusUpdate> loadStatusUpdates() throws PersistentDataStoreException {
+
+	    List<StatusUpdate> statusUpdates = new ArrayList<>();
+
+	    // Retrieve all messages from the datastore.
+	    Query query = new Query("status-updates").addSort("creation_time", SortDirection.ASCENDING);
+	    PreparedQuery results = datastore.prepare(query);
+
+	    for (Entity entity : results.asIterable()) {
+	      try {
+	        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+	        UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
+	        String content = (String) entity.getProperty("content");
+	        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+	        StatusUpdate statusUpdate = new StatusUpdate(uuid, authorUuid, content, creationTime);
+	        statusUpdates.add(statusUpdate);
+	      } catch (Exception e) {
+	        // In a production environment, errors should be very rare. Errors which may
+	        // occur include network errors, Datastore service errors, authorization errors,
+	        // database entity definition mismatches, or service mismatches.
+	        throw new PersistentDataStoreException(e);
+	      }
+	    }
+
+	    return statusUpdates;
+	  }
+  
+  public List<UserAction> loadUserActions() throws PersistentDataStoreException {
+
+	    List<UserAction> userActions = new ArrayList<>();
+
+	    // Retrieve all messages from the datastore.
+	    Query query = new Query("user-actions").addSort("creation_time", SortDirection.DESCENDING);
+	    PreparedQuery results = datastore.prepare(query);
+
+	    for (Entity entity : results.asIterable()) {
+	      try {
+	        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+	        UUID userUuid = UUID.fromString((String) entity.getProperty("user_uuid"));
+	        String message = (String) entity.getProperty("message");
+	        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+	        UserAction userAction = new UserAction(uuid, userUuid, message, creationTime);
+	        userActions.add(userAction);
+	      } catch (Exception e) {
+	        // In a production environment, errors should be very rare. Errors which may
+	        // occur include network errors, Datastore service errors, authorization errors,
+	        // database entity definition mismatches, or service mismatches.
+	        throw new PersistentDataStoreException(e);
+	      }
+	    }
+
+	    return userActions;
+	  }
 
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
@@ -245,6 +301,26 @@ public class PersistentDataStore {
 	    aboutMeEntity.setProperty("content", aboutMe.getContent());
 	    aboutMeEntity.setProperty("creation_time", aboutMe.getCreationTime().toString());
 	    datastore.put(aboutMeEntity);
+  }
+  
+  /** Write a StatusUpdate object to the Datastore service. */
+  public void writeThrough(StatusUpdate statusUpdate) {
+    Entity statusUpdateEntity = new Entity("status-updates", statusUpdate.getId().toString());
+    statusUpdateEntity.setProperty("uuid", statusUpdate.getId().toString());
+    statusUpdateEntity.setProperty("author_uuid", statusUpdate.getAuthorId().toString());
+    statusUpdateEntity.setProperty("content", statusUpdate.getContent());
+    statusUpdateEntity.setProperty("creation_time", statusUpdate.getCreationTime().toString());
+    datastore.put(statusUpdateEntity);
+  }
+  
+  /** Write a UserAction object to the Datastore service. */
+  public void writeThrough(UserAction userAction) {
+    Entity userActionEntity = new Entity("user-actions", userAction.getId().toString());
+    userActionEntity.setProperty("uuid", userAction.getId().toString());
+    userActionEntity.setProperty("user_uuid", userAction.getUserId().toString());
+    userActionEntity.setProperty("message", userAction.getMessage());
+    userActionEntity.setProperty("creation_time", userAction.getCreationTime().toString());
+    datastore.put(userActionEntity);
   }
 }
 

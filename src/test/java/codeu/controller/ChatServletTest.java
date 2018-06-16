@@ -17,8 +17,10 @@ package codeu.controller;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
+import codeu.model.data.UserAction;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
+import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import java.time.Instant;
@@ -46,6 +48,7 @@ public class ChatServletTest {
   private ConversationStore mockConversationStore;
   private MessageStore mockMessageStore;
   private UserStore mockUserStore;
+  private UserActionStore mockUserActionStore;
 
   @Before
   public void setup() {
@@ -68,6 +71,9 @@ public class ChatServletTest {
 
     mockUserStore = Mockito.mock(UserStore.class);
     chatServlet.setUserStore(mockUserStore);
+    
+    mockUserActionStore = Mockito.mock(UserActionStore.class);
+    chatServlet.setUserActionStore(mockUserActionStore);
   }
 
   @Test
@@ -177,6 +183,9 @@ public class ChatServletTest {
     ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
     Mockito.verify(mockMessageStore).addMessage(messageArgumentCaptor.capture());
     Assert.assertEquals("Test message.", messageArgumentCaptor.getValue().getContent());
+    
+    ArgumentCaptor<UserAction> userActionArgumentCaptor = ArgumentCaptor.forClass(UserAction.class);
+    Mockito.verify(mockUserActionStore).addUserAction(userActionArgumentCaptor.capture());
 
     Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
   }

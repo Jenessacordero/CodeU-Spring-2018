@@ -2,7 +2,9 @@ package codeu.model.store.persistence;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
+import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
+import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -170,7 +172,6 @@ public class PersistentDataStoreTest {
 
     // load
     List<AboutMe> resultAboutMes = persistentDataStore.loadAboutMes();
-    System.out.println(resultAboutMes.size());
 
     // confirm that what we saved matches what we loaded
     AboutMe resultAboutMeOne = resultAboutMes.get(0);
@@ -184,5 +185,79 @@ public class PersistentDataStoreTest {
     Assert.assertEquals(ownerTwo, resultAboutMeTwo.getOwner());
     Assert.assertEquals(contentTwo, resultAboutMeTwo.getContent());
     Assert.assertEquals(creationTwo, resultAboutMeTwo.getCreationTime());
+  }
+  
+  @Test
+  public void testSaveAndLoadStatusUpdates() throws PersistentDataStoreException {
+    UUID idOne = UUID.fromString("10000000-2222-3333-4444-555555555555");
+    UUID authorOne = UUID.fromString("10000002-2222-3333-4444-555555555555");
+    String contentOne = "test content one";
+    Instant creationOne = Instant.ofEpochMilli(1000);
+    StatusUpdate inputStatusUpdateOne =
+        new StatusUpdate(idOne, authorOne, contentOne, creationOne);
+
+    UUID idTwo = UUID.fromString("10000003-2222-3333-4444-555555555555");
+    UUID authorTwo = UUID.fromString("10000005-2222-3333-4444-555555555555");
+    String contentTwo = "test content two";
+    Instant creationTwo = Instant.ofEpochMilli(2000);
+    StatusUpdate inputStatusUpdateTwo =
+        new StatusUpdate(idTwo, authorTwo, contentTwo, creationTwo);
+
+    // save
+    persistentDataStore.writeThrough(inputStatusUpdateOne);
+    persistentDataStore.writeThrough(inputStatusUpdateTwo);
+
+    // load
+    List<StatusUpdate> resultStatusUpdates = persistentDataStore.loadStatusUpdates();
+
+    // confirm that what we saved matches what we loaded
+    StatusUpdate resultStatusUpdateOne = resultStatusUpdates.get(0);
+    Assert.assertEquals(idOne, resultStatusUpdateOne.getId());
+    Assert.assertEquals(authorOne, resultStatusUpdateOne.getAuthorId());
+    Assert.assertEquals(contentOne, resultStatusUpdateOne.getContent());
+    Assert.assertEquals(creationOne, resultStatusUpdateOne.getCreationTime());
+
+    StatusUpdate resultStatusUpdateTwo = resultStatusUpdates.get(1);
+    Assert.assertEquals(idTwo, resultStatusUpdateTwo.getId());
+    Assert.assertEquals(authorTwo, resultStatusUpdateTwo.getAuthorId());
+    Assert.assertEquals(contentTwo, resultStatusUpdateTwo.getContent());
+    Assert.assertEquals(creationTwo, resultStatusUpdateTwo.getCreationTime());
+  }
+  
+  @Test
+  public void testSaveAndLoadUserActions() throws PersistentDataStoreException {
+    UUID idOne = UUID.fromString("10000000-2222-3333-4444-555555555555");
+    UUID userOne = UUID.fromString("10000002-2222-3333-4444-555555555555");
+    String messageOne = "test content one";
+    Instant creationOne = Instant.ofEpochMilli(1000);
+    UserAction inputUserActionOne =
+        new UserAction(idOne, userOne, messageOne, creationOne);
+
+    UUID idTwo = UUID.fromString("10000003-2222-3333-4444-555555555555");
+    UUID userTwo = UUID.fromString("10000005-2222-3333-4444-555555555555");
+    String messageTwo = "test content two";
+    Instant creationTwo = Instant.ofEpochMilli(2000);
+    UserAction inputUserActionTwo =
+        new UserAction(idTwo, userTwo, messageTwo, creationTwo);
+
+    // save
+    persistentDataStore.writeThrough(inputUserActionOne);
+    persistentDataStore.writeThrough(inputUserActionTwo);
+
+    // load
+    List<UserAction> resultUserActions = persistentDataStore.loadUserActions();
+
+    // confirm that what we saved matches what we loaded
+    UserAction resultUserActionOne = resultUserActions.get(1);
+    Assert.assertEquals(idOne, resultUserActionOne.getId());
+    Assert.assertEquals(userOne, resultUserActionOne.getUserId());
+    Assert.assertEquals(messageOne, resultUserActionOne.getMessage());
+    Assert.assertEquals(creationOne, resultUserActionOne.getCreationTime());
+
+    UserAction resultUserActionTwo = resultUserActions.get(0);
+    Assert.assertEquals(idTwo, resultUserActionTwo.getId());
+    Assert.assertEquals(userTwo, resultUserActionTwo.getUserId());
+    Assert.assertEquals(messageTwo, resultUserActionTwo.getMessage());
+    Assert.assertEquals(creationTwo, resultUserActionTwo.getCreationTime());
   }
 }

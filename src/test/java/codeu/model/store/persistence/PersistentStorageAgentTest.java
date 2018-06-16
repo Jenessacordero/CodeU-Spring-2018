@@ -2,7 +2,9 @@ package codeu.model.store.persistence;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
+import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
+import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
 import java.time.Instant;
 import java.util.UUID;
@@ -50,7 +52,19 @@ public class PersistentStorageAgentTest {
     persistentStorageAgent.loadAboutMes();
     Mockito.verify(mockPersistentDataStore).loadAboutMes();
   }
-
+  
+  @Test
+  public void testLoadStatusUpdates() throws PersistentDataStoreException {
+    persistentStorageAgent.loadStatusUpdates();
+    Mockito.verify(mockPersistentDataStore).loadStatusUpdates();
+  }
+  
+  @Test
+  public void testLoadUserActions() throws PersistentDataStoreException {
+    persistentStorageAgent.loadUserActions();
+    Mockito.verify(mockPersistentDataStore).loadUserActions();
+  }
+  
   @Test
   public void testWriteThroughUser() {
     User user =
@@ -87,5 +101,23 @@ public class PersistentStorageAgentTest {
             UUID.randomUUID(), UUID.randomUUID(), "test bio", Instant.now());
     persistentStorageAgent.writeThrough(aboutMe);
     Mockito.verify(mockPersistentDataStore).writeThrough(aboutMe);
+  }
+  
+  @Test
+  public void testWriteThroughStatusUpdate() throws PersistentDataStoreException {
+    StatusUpdate statusUpdate =
+        new StatusUpdate(
+            UUID.randomUUID(), UUID.randomUUID(), "test update", Instant.now());
+    persistentStorageAgent.writeThrough(statusUpdate);
+    Mockito.verify(mockPersistentDataStore).writeThrough(statusUpdate);
+  }
+  
+  @Test
+  public void testWriteThroughUserAction() throws PersistentDataStoreException {
+    UserAction userAction =
+        new UserAction(
+            UUID.randomUUID(), UUID.randomUUID(), "test action", Instant.now());
+    persistentStorageAgent.writeThrough(userAction);
+    Mockito.verify(mockPersistentDataStore).writeThrough(userAction);
   }
 }
