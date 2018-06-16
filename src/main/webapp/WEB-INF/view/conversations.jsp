@@ -63,7 +63,12 @@
 
       <hr/>
 
+
+
     <h1>Conversations</h1>
+    <% if(request.getSession().getAttribute("user") == null){ %>
+      <p>Login to start a conversation!</p>
+    <% } %>
 
     <%
     List<Conversation> conversations =

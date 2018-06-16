@@ -94,4 +94,14 @@
     <url-pattern>/adminpage</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>ImageUploadTestServlet</servlet-name>
+    <servlet-class>codeu.controller.ImageUploadTestServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ImageUploadTestServlet</servlet-name>
+    <url-pattern>/imageuploadtest</url-pattern>
+  </servlet-mapping>
+
 </web-app>
