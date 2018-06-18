@@ -14,6 +14,8 @@
   limitations under the License.
   -- currently outputs a blank webpage for testing purposes
 --%>
+<%@ page import="java.util.List" %>
+<%@ page import="codeu.model.data.Images" %>
 
 
 <!DOCTYPE html>
@@ -50,7 +52,22 @@
     <% } %>
 
     <h1>Test</h1>
+    <form action="/imageuploadtest" method="POST">
+              <div class="form-group">
+                <label class="form-control-label">Filename:</label>
+              <input type="text" name="filename">
+            </div>
+
+            <button type="submit">Submit</button>
+          </form>
     <hr/>
+
+    <%
+        List<Images> uploadedImages = (List<Images>) request.getAttribute("images");
+        for(Images images : uploadedImages) { %>
+            <img src = "<%= images.returnFileName() %> height ="50" width ="50">
+        <% }
+    %>
   </div>
 </body>
 </html>

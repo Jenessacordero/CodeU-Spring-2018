@@ -20,6 +20,7 @@ import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
+import codeu.model.data.Images;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -29,6 +30,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.SortDirection;
+
+import java.awt.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -322,5 +325,13 @@ public class PersistentDataStore {
     userActionEntity.setProperty("creation_time", userAction.getCreationTime().toString());
     datastore.put(userActionEntity);
   }
+
+    /** Write an Image object to the Datastore service. */
+    public void writeThrough(Images image) {
+        Entity UploadedImageEntity = new Entity("uploaded-images", image.getID().toString());
+        UploadedImageEntity.setProperty("uuid", image.getID().toString());
+        UploadedImageEntity.setProperty("filename", image.returnFileName().toString());
+        datastore.put(UploadedImageEntity);
+    }
 }
 

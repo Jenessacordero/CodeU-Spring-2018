@@ -20,6 +20,7 @@ import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
+import codeu.model.data.Images;
 import codeu.model.store.persistence.PersistentDataStore;
 import java.util.List;
 
@@ -151,6 +152,10 @@ public class PersistentStorageAgent {
   /** Write a UserAction object to the Datastore service. */
   public void writeThrough(UserAction userAction) {
     persistentDataStore.writeThrough(userAction);
+  }
+
+  /** Write a Image Object to the DataStore service. */
+  public void writeThrough(Images uploadedImage) { persistentDataStore.writeThrough(uploadedImage);
   }
 
 }

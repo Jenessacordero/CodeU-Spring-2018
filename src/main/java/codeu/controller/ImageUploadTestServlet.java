@@ -14,7 +14,12 @@
 
 package codeu.controller;
 
+import codeu.model.store.basic.UploadedImagesStore;
+import codeu.model.data.Images;
+import java.util.List;
+
 import java.io.IOException;
+import java.util.UUID;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet class responsible for the test image uploading page. */
 public class ImageUploadTestServlet extends HttpServlet {
 
+    /** Store class that gives access to Images */
+    private UploadedImagesStore imageStore;
+
+
   /**
    * Set up state for handling conversation-related requests. This method is only called when
    * running in a server, not when running in a test.
@@ -30,7 +39,16 @@ public class ImageUploadTestServlet extends HttpServlet {
   @Override
   public void init() throws ServletException {
     super.init();
+    setImageStore(UploadedImagesStore.getInstance());
   }
+
+
+  /**
+   * Sets the ImageStore used by this servlet. This function provides a common setup method for use by the test
+   * framework or the servlet's init function.
+   */
+  void setImageStore(UploadedImagesStore imageStore) { this.imageStore = imageStore; }
+
 
   /**
    * This function fires when a user navigates to the conversations page. It gets all of the
@@ -39,18 +57,24 @@ public class ImageUploadTestServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
+
+    List<Images> images = imageStore.returnAllImages();
+    request.setAttribute("images", images);
     request.getRequestDispatcher("/WEB-INF/view/imageuploadtest.jsp").forward(request, response);
   }
 
   /**
-   * This function fires when a user submits the form on the conversations page. It gets the
-   * logged-in username from the session and the new conversation title from the submitted form
-   * data. It uses this to create a new Conversation object that it adds to the model.
-   */
+   * This function fires when a user submits the form on the image test page page.
+   * retrieves filename from the given form then creates a new Image Object that is stored in the
+   * Image data store */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     // for test purposes, only redirects to page
+
+      String filename = request.getParameter("filename");
+      Images uploadImage = new Images(filename, UUID.randomUUID());
+      imageStore.addImage(uploadImage);
     response.sendRedirect("/imageuploadtest");
   }
 }
