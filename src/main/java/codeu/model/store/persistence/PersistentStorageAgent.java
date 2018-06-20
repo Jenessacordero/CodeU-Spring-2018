@@ -22,6 +22,8 @@ import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
 import codeu.model.data.Images;
 import codeu.model.store.persistence.PersistentDataStore;
+
+import java.awt.*;
 import java.util.List;
 
 /**
@@ -111,6 +113,10 @@ public class PersistentStorageAgent {
    */
   public List<StatusUpdate> loadStatusUpdates() throws PersistentDataStoreException {
     return persistentDataStore.loadStatusUpdates();
+  }
+
+  public List<Images> loadImages() throws PersistentDataStoreException {
+    return persistentDataStore.loadImages();
   }
   
   /**

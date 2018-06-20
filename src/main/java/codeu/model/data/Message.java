@@ -25,6 +25,7 @@ public class Message {
   private final UUID author;
   private final String content;
   private final Instant creation;
+  private String messageType;
 
   /**
    * Constructs a new Message.
@@ -35,12 +36,13 @@ public class Message {
    * @param content the text content of this Message
    * @param creation the creation time of this Message
    */
-  public Message(UUID id, UUID conversation, UUID author, String content, Instant creation) {
+  public Message(UUID id, UUID conversation, UUID author, String content, Instant creation, String type) {
     this.id = id;
     this.conversation = conversation;
     this.author = author;
     this.content = content;
     this.creation = creation;
+    this.messageType = type;
   }
 
   /** Returns the ID of this Message. */
@@ -67,4 +69,6 @@ public class Message {
   public Instant getCreationTime() {
     return creation;
   }
+
+  public String getType() { return messageType; }
 }

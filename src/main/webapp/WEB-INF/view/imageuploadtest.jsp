@@ -27,18 +27,24 @@
 <body>
 
   <nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
-    <a href="/conversations">Conversations</a>
-    <% if(request.getSession().getAttribute("user") != null){ %>
-      <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
-    <% } else{ %>
-      <a href="/login">Login</a>
-    <% } %>
-    <a href="/about.jsp">About</a>
-    <% if(request.getSession().getAttribute("user") != null){ %>
-      <a href="/user/<%=request.getSession().getAttribute("user") %>">Profile Page</a>
-    <% } %>
-  </nav>
+      <a id="navTitle" href="/">CodeU Chat App</a>
+      <% if(request.getSession().getAttribute("user") != null && (request.getSession().getAttribute("user").equals("cavalos99") ||
+          		request.getSession().getAttribute("user").equals("jenessacordero") || request.getSession().getAttribute("user").equals("agarwalv"))) {%>
+          <a href="/adminpage">Admin</a>
+      <% } %>
+      <a href="/about.jsp">About</a>
+      <a href="/activityfeed">Activity Feed</a>
+      <a href="/conversations">Conversations</a>
+      <% if(request.getSession().getAttribute("user") != null){ %>
+        <a href="/user/<%=request.getSession().getAttribute("user") %>">Profile Page</a>
+      <% } %>
+      <% if(request.getSession().getAttribute("user") != null){ %>
+            <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
+          <% } else{ %>
+            <a href="/login">Login</a>
+      <% } %>
+
+    </nav>
 
   <div id="container">
 
@@ -52,14 +58,18 @@
     <% } %>
 
     <h1>Test</h1>
-    <form action="/imageuploadtest" method="POST">
-              <div class="form-group">
-                <label class="form-control-label">Filename:</label>
-              <input type="text" name="filename">
-            </div>
-
-            <button type="submit">Submit</button>
-          </form>
+    <form method="post" enctype="multipart/form-data">
+      <div>
+        <label for="image">Choose file to upload</label>
+        <p></p>
+        <input type="file" id="image" name="image"
+              accept=".jpg, .jpeg, .png">
+      </div>
+      <div>
+        <p></p>
+        <button>Submit</button>
+      </div>
+    </form>
     <hr/>
 
     <%

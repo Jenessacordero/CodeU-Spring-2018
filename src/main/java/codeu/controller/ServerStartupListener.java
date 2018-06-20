@@ -6,12 +6,8 @@ import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
-import codeu.model.store.basic.ConversationStore;
-import codeu.model.store.basic.MessageStore;
-import codeu.model.store.basic.StatusUpdateStore;
-import codeu.model.store.basic.UserActionStore;
-import codeu.model.store.basic.UserStore;
-import codeu.model.store.basic.AboutMeStore;
+import codeu.model.data.Images;
+import codeu.model.store.basic.*;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.List;
@@ -45,6 +41,9 @@ public class ServerStartupListener implements ServletContextListener {
       
       List<UserAction> userActions = PersistentStorageAgent.getInstance().loadUserActions();
       UserActionStore.getInstance().setUserActions(userActions);
+
+      List<Images> uploadedImages = PersistentStorageAgent.getInstance().loadImages();
+      UploadedImagesStore.getInstance().setImageStore(uploadedImages);
 
     } catch (PersistentDataStoreException e) {
       System.err.println("Server didn't start correctly. An error occurred during Datastore load!");

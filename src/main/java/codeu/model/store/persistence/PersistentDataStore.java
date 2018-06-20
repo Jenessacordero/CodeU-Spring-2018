@@ -144,7 +144,7 @@ public class PersistentDataStore {
         UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
         String content = (String) entity.getProperty("content");
-        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
+        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime, "m");
         messages.add(message);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -244,6 +244,31 @@ public class PersistentDataStore {
 	    return userActions;
 	  }
 
+    public List<Images> loadImages() throws PersistentDataStoreException {
+
+        List<Images> uploadedImages = new ArrayList<>();
+
+        // Retrieve all messages from the datastore.
+        Query query = new Query("images").addSort("creation_time", SortDirection.DESCENDING);
+        PreparedQuery results = datastore.prepare(query);
+
+        for (Entity entity : results.asIterable()) {
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                String filename = (String) entity.getProperty("filename");
+                Images uploadedImage = new Images(filename, uuid);
+                uploadedImages.add(uploadedImage);
+            } catch (Exception e) {
+                // In a production environment, errors should be very rare. Errors which may
+                // occur include network errors, Datastore service errors, authorization errors,
+                // database entity definition mismatches, or service mismatches.
+                throw new PersistentDataStoreException(e);
+            }
+        }
+
+        return uploadedImages;
+    }
+
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
 	  
@@ -263,6 +288,7 @@ public class PersistentDataStore {
     messageEntity.setProperty("author_uuid", message.getAuthorId().toString());
     messageEntity.setProperty("content", message.getContent());
     messageEntity.setProperty("creation_time", message.getCreationTime().toString());
+    messageEntity.setProperty("message_type", message.getType());
     datastore.put(messageEntity);
   }
 
@@ -330,7 +356,7 @@ public class PersistentDataStore {
     public void writeThrough(Images image) {
         Entity UploadedImageEntity = new Entity("uploaded-images", image.getID().toString());
         UploadedImageEntity.setProperty("uuid", image.getID().toString());
-        UploadedImageEntity.setProperty("filename", image.returnFileName().toString());
+        UploadedImageEntity.setProperty("filename", image.returnFileName());
         datastore.put(UploadedImageEntity);
     }
 }

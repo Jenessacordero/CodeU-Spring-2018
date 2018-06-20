@@ -72,7 +72,7 @@ public class ImageUploadTestServlet extends HttpServlet {
       throws IOException, ServletException {
     // for test purposes, only redirects to page
 
-      String filename = request.getParameter("filename");
+      String filename = request.getParameter("image");
       Images uploadImage = new Images(filename, UUID.randomUUID());
       imageStore.addImage(uploadImage);
     response.sendRedirect("/imageuploadtest");
