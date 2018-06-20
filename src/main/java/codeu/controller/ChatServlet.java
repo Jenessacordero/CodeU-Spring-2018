@@ -165,7 +165,7 @@ public class ChatServlet extends HttpServlet {
             conversation.getId(),
             user.getId(),
             cleanedMessageContent,
-            Instant.now(), "m");
+            Instant.now());
 
     messageStore.addMessage(message);
     user.changeNumPersonalMessageCount();

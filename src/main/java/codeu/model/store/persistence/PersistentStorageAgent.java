@@ -24,6 +24,7 @@ import codeu.model.data.Images;
 import codeu.model.store.persistence.PersistentDataStore;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -81,7 +82,7 @@ public class PersistentStorageAgent {
    * @throws PersistentDataStoreException if an error was detected during the load from the
    *     Datastore service
    */
-  public List<Conversation> loadConversations() throws PersistentDataStoreException {
+  public HashMap<String, Conversation> loadConversations() throws PersistentDataStoreException {
     return persistentDataStore.loadConversations();
   }
 

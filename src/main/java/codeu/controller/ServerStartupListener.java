@@ -10,6 +10,8 @@ import codeu.model.data.Images;
 import codeu.model.store.basic.*;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import codeu.model.store.persistence.PersistentStorageAgent;
+
+import java.util.HashMap;
 import java.util.List;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -27,7 +29,7 @@ public class ServerStartupListener implements ServletContextListener {
       List<User> users = PersistentStorageAgent.getInstance().loadUsers();
       UserStore.getInstance().setUsers(users);
 
-      List<Conversation> conversations = PersistentStorageAgent.getInstance().loadConversations();
+      HashMap<String, Conversation> conversations = PersistentStorageAgent.getInstance().loadConversations();
       ConversationStore.getInstance().setConversations(conversations);
 
       List<Message> messages = PersistentStorageAgent.getInstance().loadMessages();

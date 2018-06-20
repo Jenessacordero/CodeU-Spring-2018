@@ -9,6 +9,7 @@ import codeu.model.data.AboutMe;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import org.junit.After;
@@ -93,16 +94,16 @@ public class PersistentDataStoreTest {
     persistentDataStore.writeThrough(inputConversationTwo);
 
     // load
-    List<Conversation> resultConversations = persistentDataStore.loadConversations();
+    HashMap<String, Conversation> resultConversations = persistentDataStore.loadConversations();
 
     // confirm that what we saved matches what we loaded
-    Conversation resultConversationOne = resultConversations.get(0);
+    Conversation resultConversationOne = resultConversations.get("Test_Title");
     Assert.assertEquals(idOne, resultConversationOne.getId());
     Assert.assertEquals(ownerOne, resultConversationOne.getOwnerId());
     Assert.assertEquals(titleOne, resultConversationOne.getTitle());
     Assert.assertEquals(creationOne, resultConversationOne.getCreationTime());
 
-    Conversation resultConversationTwo = resultConversations.get(1);
+    Conversation resultConversationTwo = resultConversations.get("Test_Title_Two");
     Assert.assertEquals(idTwo, resultConversationTwo.getId());
     Assert.assertEquals(ownerTwo, resultConversationTwo.getOwnerId());
     Assert.assertEquals(titleTwo, resultConversationTwo.getTitle());
@@ -117,7 +118,7 @@ public class PersistentDataStoreTest {
     String contentOne = "test content one";
     Instant creationOne = Instant.ofEpochMilli(1000);
     Message inputMessageOne =
-        new Message(idOne, conversationOne, authorOne, contentOne, creationOne, "m");
+        new Message(idOne, conversationOne, authorOne, contentOne, creationOne);
 
     UUID idTwo = UUID.fromString("10000003-2222-3333-4444-555555555555");
     UUID conversationTwo = UUID.fromString("10000004-2222-3333-4444-555555555555");
@@ -125,7 +126,7 @@ public class PersistentDataStoreTest {
     String contentTwo = "test content one";
     Instant creationTwo = Instant.ofEpochMilli(2000);
     Message inputMessageTwo =
-        new Message(idTwo, conversationTwo, authorTwo, contentTwo, creationTwo, "m");
+        new Message(idTwo, conversationTwo, authorTwo, contentTwo, creationTwo);
 
     // save
     persistentDataStore.writeThrough(inputMessageOne);

@@ -17,6 +17,7 @@ package codeu.model.store.basic;
 import codeu.model.data.Conversation;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -56,48 +57,41 @@ public class ConversationStore {
   private PersistentStorageAgent persistentStorageAgent;
 
   /** The in-memory list of Conversations. */
-  private List<Conversation> conversations;
+  private HashMap<String, Conversation> conversations;
 
   /** This class is a singleton, so its constructor is private. Call getInstance() instead. */
   private ConversationStore(PersistentStorageAgent persistentStorageAgent) {
     this.persistentStorageAgent = persistentStorageAgent;
-    conversations = new ArrayList<>();
+    conversations = new HashMap();
   }
 
 /** Access the current set of conversations known to the application. */
-  public List<Conversation> getAllConversations() {
+  public HashMap<String, Conversation> getAllConversations() {
     return conversations;
   }
 
   /** Add a new conversation to the current set of conversations known to the application. */
   public void addConversation(Conversation conversation) {
-    conversations.add(conversation);
+    conversations.put(conversation.title, conversation);
     persistentStorageAgent.writeThrough(conversation);
   }
 
   /** Check whether a Conversation title is already known to the application. */
   public boolean isTitleTaken(String title) {
     // This approach will be pretty slow if we have many Conversations.
-    for (Conversation conversation : conversations) {
-      if (conversation.getTitle().equals(title)) {
-        return true;
-      }
+    if (conversations.containsKey(title)) {
+      return true;
     }
     return false;
   }
 
   /** Find and return the Conversation with the given title. */
   public Conversation getConversationWithTitle(String title) {
-    for (Conversation conversation : conversations) {
-      if (conversation.getTitle().equals(title)) {
-        return conversation;
-      }
-    }
-    return null;
+    return conversations.get(title);
   }
 
   /** Sets the List of Conversations stored by this ConversationStore. */
-  public void setConversations(List<Conversation> conversations) {
+  public void setConversations(HashMap<String, Conversation> conversations) {
     this.conversations = conversations;
   }
 }

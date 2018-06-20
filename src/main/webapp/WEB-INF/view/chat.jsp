@@ -83,9 +83,6 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
          User user = UserStore.getInstance()
                 .getUser(message.getAuthorId());
 
-      if (message.getType() == 'i') {
-        <img src=""
-      }
     %>
       <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <%= message.getContent() %></li>
     <%

@@ -4,6 +4,7 @@ import codeu.model.data.Conversation;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import org.junit.Assert;
@@ -25,8 +26,8 @@ public class ConversationStoreTest {
     mockPersistentStorageAgent = Mockito.mock(PersistentStorageAgent.class);
     conversationStore = ConversationStore.getTestInstance(mockPersistentStorageAgent);
 
-    final List<Conversation> conversationList = new ArrayList<>();
-    conversationList.add(CONVERSATION_ONE);
+    final HashMap<String, Conversation> conversationList = new HashMap<>();
+    conversationList.put("conversation_one", CONVERSATION_ONE);
     conversationStore.setConversations(conversationList);
   }
 

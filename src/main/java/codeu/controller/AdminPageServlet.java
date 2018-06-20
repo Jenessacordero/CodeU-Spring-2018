@@ -2,10 +2,12 @@
 // admin page message.
 package codeu.controller;
 
+import codeu.model.data.Conversation;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -56,7 +58,7 @@ public class AdminPageServlet extends HttpServlet {
       // Methods are written in respective classes that return the list of all
       // conversations, messages, and users
       // Lists are needed to retrieve the length
-      List allConversations = conversationStore.getAllConversations();
+      HashMap<String, Conversation> allConversations = conversationStore.getAllConversations();
       List allUsers = userStore.returnAllUsers();
       List allMessages = messageStore.returnAllMessages();
 

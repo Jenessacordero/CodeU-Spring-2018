@@ -14,6 +14,8 @@
   limitations under the License.
 --%>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Set" %>
 <%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.data.User" %>
 
@@ -72,8 +74,8 @@
     <% } %>
 
     <%
-    List<Conversation> conversations =
-      (List<Conversation>) request.getAttribute("conversations");
+    HashMap<String, Conversation> conversations =
+      (HashMap<String, Conversation>) request.getAttribute("conversations");
     if(conversations == null || conversations.isEmpty()){
     %>
       <p>Create a conversation to get started.</p>
@@ -83,10 +85,11 @@
     %>
       <ul class="mdl-list">
     <%
-      for(Conversation conversation : conversations){
+      Set<String> conversationTitles = conversations.keySet();
+      for(String title : conversationTitles){
     %>
-      <li><a href="/chat/<%= conversation.getTitle() %>">
-        <%= conversation.getTitle() %></a></li>
+      <li><a href="/chat/<%= title %>">
+        <%= title %></a></li>
     <%
       }
     %>
