@@ -18,6 +18,10 @@
 <%@ page import="codeu.model.data.Message" %>
 <%@ page import="codeu.model.data.User" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
+<%@ page import="org.kefirsf.bb.BBProcessorFactory" %>
+<%@ page import="org.kefirsf.bb.ConfigurationFactory" %>
+<%@ page import="org.kefirsf.bb.TextProcessor" %>
+
 <%
 Conversation conversation = (Conversation) request.getAttribute("conversation");
 List<Message> messages = (List<Message>) request.getAttribute("messages");
@@ -75,6 +79,13 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 
     <div id="chat">
       <ul>
+    <%-- the processor stuff below is for styled text --%>
+    <%
+        TextProcessor processor = BBProcessorFactory.getInstance()
+            .createFromResource(ConfigurationFactory.MARKDOWN_CONFIGURATION_FILE);
+        assert "<strong>text</strong>".equals(processor.process("**text**"));
+    %>
+
     <%
       for (Message message : messages) {
         String author = UserStore.getInstance()
@@ -82,7 +93,7 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
          User user = UserStore.getInstance()
                 .getUser(message.getAuthorId());
     %>
-      <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <%= message.getContent() %></li>
+      <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <%= processor.process(message.getContent()) %></li>
     <%
       }
     %>
