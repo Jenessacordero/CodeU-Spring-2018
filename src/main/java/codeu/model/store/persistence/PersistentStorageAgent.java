@@ -25,7 +25,10 @@ import codeu.model.store.persistence.PersistentDataStore;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
+
 
 /**
  * This class is the interface between the application and PersistentDataStore, which handles
@@ -92,9 +95,19 @@ public class PersistentStorageAgent {
    * @throws PersistentDataStoreException if an error was detected during the load from the
    *     Datastore service
    */
-  public List<Message> loadMessages() throws PersistentDataStoreException {
-    return persistentDataStore.loadMessages();
+  public HashMap<UUID, LinkedList<Message>> loadMessagesByUser() throws PersistentDataStoreException {
+    return persistentDataStore.loadMessagesByUser();
   }
+
+    /**
+     * Retrieve all Message objects from the Datastore service. The returned list may be empty.
+     *
+     * @throws PersistentDataStoreException if an error was detected during the load from the
+     *     Datastore service
+     */
+    public HashMap<UUID, LinkedList<Message>> loadMessagesByConversation() throws PersistentDataStoreException {
+        return persistentDataStore.loadMessagesByConversation();
+    }
   
   /**
    * Retrieve all AboutMe objects from the Datastore service. The returned list may be empty.

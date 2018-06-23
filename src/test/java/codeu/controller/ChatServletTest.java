@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.UUID;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -86,7 +87,7 @@ public class ChatServletTest {
     Mockito.when(mockConversationStore.getConversationWithTitle("test_conversation"))
         .thenReturn(fakeConversation);
 
-    List<Message> fakeMessageList = new ArrayList<>();
+    LinkedList<Message> fakeMessageList = new LinkedList<>();
     fakeMessageList.add(
         new Message(
             UUID.randomUUID(),

@@ -43,8 +43,10 @@ public class PersistentStorageAgentTest {
 
   @Test
   public void testLoadMessages() throws PersistentDataStoreException {
-    persistentStorageAgent.loadMessages();
-    Mockito.verify(mockPersistentDataStore).loadMessages();
+    persistentStorageAgent.loadMessagesByConversation();
+    Mockito.verify(mockPersistentDataStore).loadMessagesByConversation();
+    persistentStorageAgent.loadMessagesByUser();
+    Mockito.verify(mockPersistentDataStore).loadMessagesByUser();
   }
   
   @Test

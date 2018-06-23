@@ -57,19 +57,15 @@
       <hr/>
     <% } %>
 
-    <h1>Test</h1>
-    <form method="post" enctype="multipart/form-data">
-      <div>
-        <label for="image">Choose file to upload</label>
-        <p></p>
-        <input type="file" id="image" name="image"
-              accept=".jpg, .jpeg, .png">
-      </div>
-      <div>
-        <p></p>
-        <button>Submit</button>
-      </div>
-    </form>
+    <h3>File Upload:</h3>
+          Select a file to upload: <br />
+          <form action = "UploadServlet" method = "post"
+             enctype = "multipart/form-data">
+             <input type = "file" name = "file" size = "50" />
+             <br />
+             <input type = "submit" value = "Upload File" />
+          </form>
+
     <hr/>
 
     <%

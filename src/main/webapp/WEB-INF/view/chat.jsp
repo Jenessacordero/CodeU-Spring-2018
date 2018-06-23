@@ -13,14 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
-<%@ page import="java.util.List" %>
+<%@ page import="java.util.LinkedList" %>
 <%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.data.Message" %>
 <%@ page import="codeu.model.data.User" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
 <%
 Conversation conversation = (Conversation) request.getAttribute("conversation");
-List<Message> messages = (List<Message>) request.getAttribute("messages");
+LinkedList<Message> messages = (LinkedList<Message>) request.getAttribute("messages");
 %>
 
 <!DOCTYPE html>
@@ -77,15 +77,19 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
     <div id="chat">
       <ul>
     <%
-      for (Message message : messages) {
-        String author = UserStore.getInstance()
-          .getUser(message.getAuthorId()).getName();
-         User user = UserStore.getInstance()
-                .getUser(message.getAuthorId());
+      if (messages != null) {
+          for (int i = 0; i < messages.size(); i++) {
+            Message message = messages.get(i);
+            String author = UserStore.getInstance()
+              .getUser(message.getAuthorId()).getName();
+             User user = UserStore.getInstance()
+                    .getUser(message.getAuthorId());
+
 
     %>
       <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <%= message.getContent() %></li>
     <%
+           }
       }
     %>
       </ul>

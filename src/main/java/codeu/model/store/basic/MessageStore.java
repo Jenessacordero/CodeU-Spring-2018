@@ -16,9 +16,8 @@ package codeu.model.store.basic;
 
 import codeu.model.data.Message;
 import codeu.model.store.persistence.PersistentStorageAgent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+
+import java.util.*;
 
 /**
  * Store class that uses in-memory data structures to hold values and automatically loads from and
@@ -56,55 +55,65 @@ public class MessageStore {
    */
   private PersistentStorageAgent persistentStorageAgent;
 
-  /** The in-memory list of Messages. */
-  private List<Message> messages;
+  /** The in-memory list of Messages stored by conversation ID */
+  private HashMap<UUID, LinkedList<Message>> messages;
+
+    /** The in-memory list of Messages stored by User ID */
+    private HashMap<UUID, LinkedList<Message>> UserMessages;
 
   public List<Message> returnAllMessages() {
-    return messages;
+    List<Message> totalMessages = new ArrayList<>();
+    Set<UUID> conversationIDs = messages.keySet();
+    for (UUID ids : conversationIDs) {
+        LinkedList<Message> conversationMessages = messages.get(ids);
+        for (Message messages : conversationMessages) {
+            totalMessages.add(messages);
+        }
+    }
+    return totalMessages;
   }
 
   /** This class is a singleton, so its constructor is private. Call getInstance() instead. */
   private MessageStore(PersistentStorageAgent persistentStorageAgent) {
     this.persistentStorageAgent = persistentStorageAgent;
-    messages = new ArrayList<>();
+    messages = new LinkedHashMap<>();
   }
 
   /** Add a new message to the current set of messages known to the application. */
   public void addMessage(Message message) {
-    messages.add(message);
+    // adds messages sorted by conversationID
+      LinkedList<Message> messagesInConversation = new LinkedList<>();
+      if (messages.containsKey(message.getConversationId())) {
+          messagesInConversation = messages.get(message.getConversationId());
+      }
+    messagesInConversation.add(message);
+    messages.put(message.getConversationId(), messagesInConversation);
+
+    // adds messages stored by UserID
+      LinkedList<Message> messagesByUser = new LinkedList<>();
+      if (UserMessages.containsKey(message.getAuthorId())) {
+          messagesByUser = UserMessages.get(message.getAuthorId());
+      }
+      messagesByUser.add(message);
+      UserMessages.put(message.getAuthorId(), messagesByUser);
     persistentStorageAgent.writeThrough(message);
   }
 
   /** Access the current set of Messages within the given Conversation. */
-  public List<Message> getMessagesInConversation(UUID conversationId) {
-
-    List<Message> messagesInConversation = new ArrayList<>();
-
-    for (Message message : messages) {
-      if (message.getConversationId().equals(conversationId)) {
-        messagesInConversation.add(message);
-      }
-    }
-
-    return messagesInConversation;
+  public LinkedList<Message> getMessagesInConversation(UUID conversationId) {
+    return messages.get(conversationId);
   }
   
   /** Access the current set of Messages by the current user. */
-  public List<Message> getMessagesByUser(UUID user) {
-
-    List<Message> messagesInConversation = new ArrayList<>();
-
-    for (Message message : messages) {
-      if (message.getAuthorId().equals(user)) {
-        messagesInConversation.add(message);
-      }
-    }
-
-    return messagesInConversation;
+  public LinkedList<Message> getMessagesByUser(UUID user) {
+    return UserMessages.get(user);
   }
 
+
   /** Sets the List of Messages stored by this MessageStore. */
-  public void setMessages(List<Message> messages) {
-    this.messages = messages;
+  public void setMessages(HashMap<UUID, LinkedList<Message>> messagesByConversation,
+                          HashMap<UUID, LinkedList<Message>> messagesByUser) {
+    this.messages = messagesByConversation;
+    this.UserMessages = messagesByUser;
   }
 }

@@ -11,6 +11,7 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.UUID;
 import org.junit.After;
 import org.junit.Assert;
@@ -133,17 +134,19 @@ public class PersistentDataStoreTest {
     persistentDataStore.writeThrough(inputMessageTwo);
 
     // load
-    List<Message> resultMessages = persistentDataStore.loadMessages();
+    HashMap<UUID, LinkedList<Message>> resultMessagesConvo = persistentDataStore.loadMessagesByConversation();
+    HashMap<UUID, LinkedList<Message>> resultMessagesUser = persistentDataStore.loadMessagesByUser();
+
 
     // confirm that what we saved matches what we loaded
-    Message resultMessageOne = resultMessages.get(0);
+    Message resultMessageOne = resultMessagesConvo.get(conversationOne).getLast();
     Assert.assertEquals(idOne, resultMessageOne.getId());
     Assert.assertEquals(conversationOne, resultMessageOne.getConversationId());
     Assert.assertEquals(authorOne, resultMessageOne.getAuthorId());
     Assert.assertEquals(contentOne, resultMessageOne.getContent());
     Assert.assertEquals(creationOne, resultMessageOne.getCreationTime());
 
-    Message resultMessageTwo = resultMessages.get(1);
+    Message resultMessageTwo = resultMessagesConvo.get(conversationTwo).getLast();
     Assert.assertEquals(idTwo, resultMessageTwo.getId());
     Assert.assertEquals(conversationTwo, resultMessageTwo.getConversationId());
     Assert.assertEquals(authorTwo, resultMessageTwo.getAuthorId());

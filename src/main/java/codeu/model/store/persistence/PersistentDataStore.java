@@ -21,6 +21,7 @@ import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
 import codeu.model.data.Images;
+import codeu.model.data.Message;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -36,6 +37,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.UUID;
 
 /**
@@ -124,15 +126,13 @@ public class PersistentDataStore {
   }
 
   /**
-   * Loads all Message objects from the Datastore service and returns them in a List, sorted in
-   * ascending order by creation time.
-   *
+   * Loads all Message objects from the Datastore service and returns them in a HashMap by ConversationID
    * @throws PersistentDataStoreException if an error was detected during the load from the
    *     Datastore service
    */
-  public List<Message> loadMessages() throws PersistentDataStoreException {
+  public HashMap<UUID, LinkedList<Message>> loadMessagesByConversation() throws PersistentDataStoreException {
 
-    List<Message> messages = new ArrayList<>();
+    HashMap<UUID, LinkedList<Message>> messagesByConversation = new HashMap<>();
 
     // Retrieve all messages from the datastore.
     Query query = new Query("chat-messages").addSort("creation_time", SortDirection.ASCENDING);
@@ -146,7 +146,12 @@ public class PersistentDataStore {
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
         String content = (String) entity.getProperty("content");
         Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
-        messages.add(message);
+        LinkedList<Message> tempMessages = new LinkedList<>();
+        if (messagesByConversation.containsKey(conversationUuid)) {
+            tempMessages = messagesByConversation.get(conversationUuid);
+        }
+        tempMessages.add(message);
+;       messagesByConversation.put(conversationUuid, tempMessages);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
         // occur include network errors, Datastore service errors, authorization errors,
@@ -154,9 +159,47 @@ public class PersistentDataStore {
         throw new PersistentDataStoreException(e);
       }
     }
-
-    return messages;
+    return messagesByConversation;
   }
+
+    /**
+     * Loads all Message objects from the Datastore service and returns them in a HashMap by UserID
+     *
+     * @throws PersistentDataStoreException if an error was detected during the load from the
+     *     Datastore service
+     */
+    public HashMap<UUID, LinkedList<Message>> loadMessagesByUser() throws PersistentDataStoreException {
+
+        HashMap<UUID, LinkedList<Message>> messagesByUser = new HashMap<>();
+
+        // Retrieve all messages from the datastore.
+        Query query = new Query("chat-messages").addSort("creation_time", SortDirection.ASCENDING);
+        PreparedQuery results = datastore.prepare(query);
+
+        for (Entity entity : results.asIterable()) {
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                UUID conversationUuid = UUID.fromString((String) entity.getProperty("conv_uuid"));
+                UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
+                Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+                String content = (String) entity.getProperty("content");
+                Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
+                LinkedList<Message> tempList = new LinkedList<>();
+                if (messagesByUser.containsKey(authorUuid)) {
+                    tempList = messagesByUser.get(authorUuid);
+                }
+                tempList.add(message);
+                messagesByUser.put(authorUuid, tempList);
+
+            } catch (Exception e) {
+                // In a production environment, errors should be very rare. Errors which may
+                // occur include network errors, Datastore service errors, authorization errors,
+                // database entity definition mismatches, or service mismatches.
+                throw new PersistentDataStoreException(e);
+            }
+        }
+        return messagesByUser;
+    }
   
   /**
    * Loads all AboutMe objects from the Datastore service and returns them in a List.
