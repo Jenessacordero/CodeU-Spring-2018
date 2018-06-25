@@ -15,9 +15,12 @@
 package codeu.controller;
 
 import codeu.model.data.Conversation;
+import codeu.model.data.Destination;
+import codeu.model.data.Message;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.store.basic.ConversationStore;
+import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
@@ -30,13 +33,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet class responsible for the conversations page. */
-public class ConversationServlet extends HttpServlet {
+public class DestinationPageServlet extends HttpServlet {
 
   /** Store class that gives access to Users. */
   private UserStore userStore;
 
   /** Store class that gives access to Conversations. */
   private ConversationStore conversationStore;
+  
+  /** Store class that gives access to Destinations. */
+  private DestinationStore destinationStore;
   
   /** Store class that gives access to UserActions. */
   private UserActionStore userActionStore;
@@ -50,6 +56,7 @@ public class ConversationServlet extends HttpServlet {
     super.init();
     setUserStore(UserStore.getInstance());
     setConversationStore(ConversationStore.getInstance());
+    setDestinationStore(DestinationStore.getInstance());
     setUserActionStore(UserActionStore.getInstance());
   }
 
@@ -70,6 +77,14 @@ public class ConversationServlet extends HttpServlet {
   }
   
   /**
+   * Sets the DestinationStore used by this servlet. This function provides a common setup method
+   * for use by the test framework or the servlet's init() function.
+   */
+  void setDestinationStore(DestinationStore destinationStore) {
+    this.destinationStore = destinationStore;
+  }
+  
+  /**
    * Sets the UserActionStore used by this servlet. This function provides a common setup method
    * for use by the test framework or the servlet's init() function.
    */
@@ -84,9 +99,14 @@ public class ConversationServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-    List<Conversation> conversations = conversationStore.getAllConversations();
+	  String requestUrl = request.getRequestURI();
+	  String destinationTitle = requestUrl.substring("/destination/".length());
+	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
+
+    List<Conversation> conversations = conversationStore.getConvosInDestination(destination.getId());
     request.setAttribute("conversations", conversations);
-    request.getRequestDispatcher("/WEB-INF/view/conversations.jsp").forward(request, response);
+    request.setAttribute("destinationTitle", destinationTitle);
+    request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
   }
 
   /**
@@ -97,11 +117,15 @@ public class ConversationServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-
+	  
+	  String requestUrl = request.getRequestURI();
+	  String destinationTitle = requestUrl.substring("/destination/".length());
+	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
+	  
     String username = (String) request.getSession().getAttribute("user");
     if (username == null) {
       // user is not logged in, don't let them create a conversation
-      response.sendRedirect("/conversations");
+      response.sendRedirect("/login");
       return;
     }
 
@@ -109,7 +133,7 @@ public class ConversationServlet extends HttpServlet {
     if (user == null) {
       // user was not found, don't let them create a conversation
       System.out.println("User not found: " + username);
-      response.sendRedirect("/conversations");
+      response.sendRedirect("/login");
       return;
     }
   
@@ -117,7 +141,7 @@ public class ConversationServlet extends HttpServlet {
     String conversationTitle = request.getParameter("conversationTitle");
     if (!conversationTitle.matches("[\\w*]*")) {
       request.setAttribute("error", "Please enter only letters and numbers.");
-      request.getRequestDispatcher("/WEB-INF/view/conversations.jsp").forward(request, response);
+      request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
       return;
     }
 
@@ -129,7 +153,7 @@ public class ConversationServlet extends HttpServlet {
     }
 
     Conversation conversation =
-        new Conversation(UUID.randomUUID(), user.getId(), conversationTitle, Instant.now());
+        new Conversation(UUID.randomUUID(), user.getId(), destination.getId(), conversationTitle, Instant.now());
 
     conversationStore.addConversation(conversation);
     
