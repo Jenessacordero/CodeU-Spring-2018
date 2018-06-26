@@ -84,11 +84,17 @@ LinkedList<Message> messages = (LinkedList<Message>) request.getAttribute("messa
               .getUser(message.getAuthorId()).getName();
              User user = UserStore.getInstance()
                     .getUser(message.getAuthorId());
+            Character type = message.getType();
+            if (type == 'm') {
+                %>
+                      <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <%= message.getContent() %></li>
+                    <%
 
-
-    %>
-      <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <%= message.getContent() %></li>
-    <%
+            } else {
+                %>
+                      <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <a href = "<%= message.getContent() %>"> <img src="<%= message.getContent() %>" height = "100" width = "100"></a></li>
+                    <%
+                 }
            }
       }
     %>
@@ -100,9 +106,15 @@ LinkedList<Message> messages = (LinkedList<Message>) request.getAttribute("messa
     <% if (request.getSession().getAttribute("user") != null) { %>
     <form action="/chat/<%= conversation.getTitle() %>" method="POST">
         <input type="text" name="message">
-        <br/>
+
         <button type="submit">Send</button>
     </form>
+    <form action="/chat/<%= conversation.getTitle() %>" method="POST">
+            <input type="text" name="filename">
+
+            <button type="submit">Send Image</button>
+        </form>
+
     <% } else { %>
       <p><a href="/login">Login</a> to send a message.</p>
     <% } %>

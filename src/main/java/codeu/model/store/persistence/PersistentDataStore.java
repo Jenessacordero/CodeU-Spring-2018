@@ -145,7 +145,7 @@ public class PersistentDataStore {
         UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
         String content = (String) entity.getProperty("content");
-        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
+        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime, 'm');
         LinkedList<Message> tempMessages = new LinkedList<>();
         if (messagesByConversation.containsKey(conversationUuid)) {
             tempMessages = messagesByConversation.get(conversationUuid);
@@ -183,7 +183,7 @@ public class PersistentDataStore {
                 UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
                 Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
                 String content = (String) entity.getProperty("content");
-                Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
+                Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime, 'm');
                 LinkedList<Message> tempList = new LinkedList<>();
                 if (messagesByUser.containsKey(authorUuid)) {
                     tempList = messagesByUser.get(authorUuid);
@@ -300,7 +300,7 @@ public class PersistentDataStore {
             try {
                 UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
                 String filename = (String) entity.getProperty("filename");
-                Images uploadedImage = new Images(filename, uuid);
+                Images uploadedImage = new Images(filename, "random", uuid);
                 uploadedImages.add(uploadedImage);
             } catch (Exception e) {
                 // In a production environment, errors should be very rare. Errors which may

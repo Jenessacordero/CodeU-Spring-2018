@@ -154,19 +154,35 @@ public class ChatServlet extends HttpServlet {
       return;
     }
 
-    String messageContent = request.getParameter("message");
+    Message message;
+    String cleanedMessageContent;
 
-    // this removes any HTML from the message content
-    String cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
+    if (request.getParameter("message") != null) {
+      String messageContent = request.getParameter("message");
 
-    // Creates a message.
-    Message message =
-        new Message(
-            UUID.randomUUID(),
-            conversation.getId(),
-            user.getId(),
-            cleanedMessageContent,
-            Instant.now());
+      // this removes any HTML from the message content
+      cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
+
+      // Creates a message.
+      message = new Message(UUID.randomUUID(),
+              conversation.getId(),
+              user.getId(),
+              cleanedMessageContent,
+              Instant.now(), 'm');
+
+    } else {
+
+      String messageContent = request.getParameter("filename");
+      cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
+
+      // Creates a message.
+      message = new Message(
+                      UUID.randomUUID(),
+                      conversation.getId(),
+                      user.getId(),
+                      cleanedMessageContent,
+                      Instant.now(), 'i');
+    }
 
     messageStore.addMessage(message);
     user.changeNumPersonalMessageCount();

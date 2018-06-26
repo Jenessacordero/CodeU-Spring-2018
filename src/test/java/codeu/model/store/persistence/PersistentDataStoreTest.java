@@ -119,7 +119,7 @@ public class PersistentDataStoreTest {
     String contentOne = "test content one";
     Instant creationOne = Instant.ofEpochMilli(1000);
     Message inputMessageOne =
-        new Message(idOne, conversationOne, authorOne, contentOne, creationOne);
+        new Message(idOne, conversationOne, authorOne, contentOne, creationOne, 'm');
 
     UUID idTwo = UUID.fromString("10000003-2222-3333-4444-555555555555");
     UUID conversationTwo = UUID.fromString("10000004-2222-3333-4444-555555555555");
@@ -127,7 +127,7 @@ public class PersistentDataStoreTest {
     String contentTwo = "test content one";
     Instant creationTwo = Instant.ofEpochMilli(2000);
     Message inputMessageTwo =
-        new Message(idTwo, conversationTwo, authorTwo, contentTwo, creationTwo);
+        new Message(idTwo, conversationTwo, authorTwo, contentTwo, creationTwo, 'm');
 
     // save
     persistentDataStore.writeThrough(inputMessageOne);

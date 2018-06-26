@@ -6,7 +6,8 @@ import java.util.UUID;
 
 public class Images {
     private String filename;
-    private final UUID id;
+    private String destination;
+    private UUID id;
 
 
     /**
@@ -14,18 +15,20 @@ public class Images {
      *
      *
      * @param filename delegated filename with extension (.jpg, .png)
-     * @param id random generated ID
+     * @param destination
      */
-    public Images(String filename, UUID id) {
+    public Images(String filename, String destination, UUID id) {
         this.filename = filename;
+        this.destination = destination;
         this.id = id;
+
     }
 
     public String returnFileName() {
         return this.filename;
     }
 
-    public UUID getID() {
-        return this.id;
-    }
+    public String returnDestination() { return this.destination; }
+
+    public UUID getID() { return this.id; }
 }
