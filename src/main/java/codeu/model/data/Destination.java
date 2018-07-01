@@ -18,53 +18,46 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
- * Class representing a conversation, which can be thought of as a chat room. Conversations are
- * created by a User and contain Messages.
+ * Class representing a destination. Destinations are
+ * created by a User and contain Conversations.
  */
-public class Conversation {
+public class Destination {
   public final UUID id;
   public final UUID owner;
-  public final UUID destination;
-  public final Instant creation;
   public final String title;
+  public final Instant creation;
 
   /**
    * Constructs a new Conversation.
    *
-   * @param id the ID of this Conversation
-   * @param owner the ID of the User who created this Conversation
-   * @param title the title of this Conversation
-   * @param creation the creation time of this Conversation
+   * @param id the ID of this Destination
+   * @param owner the ID of the User who created this Destination
+   * @param title the title of this Destination
+   * @param creation the creation time of this Destination
    */
-  public Conversation(UUID id, UUID owner, UUID destination, String title, Instant creation) {
+  public Destination(UUID id, UUID owner, String title, Instant creation) {
     this.id = id;
     this.owner = owner;
-    this.destination = destination;
     this.creation = creation;
     this.title = title;
   }
 
-  /** Returns the ID of this Conversation. */
+  /** Returns the ID of this Destination. */
   public UUID getId() {
     return id;
   }
 
-  /** Returns the ID of the User who created this Conversation. */
+  /** Returns the ID of the User who created this Destination. */
   public UUID getOwnerId() {
     return owner;
   }
-  
-  /** Returns the ID of the Destination where this Conversation is. */
-  public UUID getDestinationId() {
-    return destination;
-  }
 
-  /** Returns the title of this Conversation. */
+  /** Returns the title of this Destination. */
   public String getTitle() {
     return title;
   }
 
-  /** Returns the creation time of this Conversation. */
+  /** Returns the creation time of this Destination. */
   public Instant getCreationTime() {
     return creation;
   }

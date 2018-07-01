@@ -15,6 +15,7 @@
 package codeu.model.store.persistence;
 
 import codeu.model.data.Conversation;
+import codeu.model.data.Destination;
 import codeu.model.data.Message;
 import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
@@ -105,8 +106,9 @@ public class PersistentDataStore {
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         UUID ownerUuid = UUID.fromString((String) entity.getProperty("owner_uuid"));
         String title = (String) entity.getProperty("title");
+        UUID destinationUuid = UUID.fromString((String) entity.getProperty("destination_uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        Conversation conversation = new Conversation(uuid, ownerUuid, title, creationTime);
+        Conversation conversation = new Conversation(uuid, ownerUuid, destinationUuid, title, creationTime);
         conversations.add(conversation);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -230,6 +232,7 @@ public class PersistentDataStore {
 	        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
 	        UserAction userAction = new UserAction(uuid, userUuid, message, creationTime);
 	        userActions.add(userAction);
+	    	  
 	      } catch (Exception e) {
 	        // In a production environment, errors should be very rare. Errors which may
 	        // occur include network errors, Datastore service errors, authorization errors,
@@ -239,6 +242,33 @@ public class PersistentDataStore {
 	    }
 
 	    return userActions;
+	  }
+  
+  public List<Destination> loadDestinations() throws PersistentDataStoreException {
+
+	    List<Destination> destinations = new ArrayList<>();
+
+	    // Retrieve all messages from the datastore.
+	    Query query = new Query("destinations").addSort("creation_time", SortDirection.ASCENDING);
+	    PreparedQuery results = datastore.prepare(query);
+
+	    for (Entity entity : results.asIterable()) {
+	      try {
+	        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+	        UUID owner = UUID.fromString((String) entity.getProperty("owner"));
+	        String title = (String) entity.getProperty("title");
+	        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+	        Destination destination = new Destination(uuid, owner, title, creationTime);
+	        destinations.add(destination);
+	      } catch (Exception e) {
+	        // In a production environment, errors should be very rare. Errors which may
+	        // occur include network errors, Datastore service errors, authorization errors,
+	        // database entity definition mismatches, or service mismatches.
+	        throw new PersistentDataStoreException(e);
+	      }
+	    }
+
+	    return destinations;
 	  }
 
   /** Write a User object to the Datastore service. */
@@ -269,6 +299,7 @@ public class PersistentDataStore {
     conversationEntity.setProperty("uuid", conversation.getId().toString());
     conversationEntity.setProperty("owner_uuid", conversation.getOwnerId().toString());
     conversationEntity.setProperty("title", conversation.getTitle());
+    conversationEntity.setProperty("destination_uuid", conversation.getDestinationId().toString());
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
     datastore.put(conversationEntity);
   }
@@ -321,6 +352,16 @@ public class PersistentDataStore {
     userActionEntity.setProperty("message", userAction.getMessage());
     userActionEntity.setProperty("creation_time", userAction.getCreationTime().toString());
     datastore.put(userActionEntity);
+  }
+  
+  /** Write a Destination object to the Datastore service. */
+  public void writeThrough(Destination destination) {
+    Entity destinationEntity = new Entity("destinations", destination.getId().toString());
+    destinationEntity.setProperty("uuid", destination.getId().toString());
+    destinationEntity.setProperty("owner", destination.getOwnerId().toString());
+    destinationEntity.setProperty("title", destination.getTitle());
+    destinationEntity.setProperty("creation_time", destination.getCreationTime().toString());
+    datastore.put(destinationEntity);
   }
 }
 

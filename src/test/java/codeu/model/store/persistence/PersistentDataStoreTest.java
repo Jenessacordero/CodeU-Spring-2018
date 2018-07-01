@@ -1,6 +1,7 @@
 package codeu.model.store.persistence;
 
 import codeu.model.data.Conversation;
+import codeu.model.data.Destination;
 import codeu.model.data.Message;
 import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
@@ -78,15 +79,17 @@ public class PersistentDataStoreTest {
   public void testSaveAndLoadConversations() throws PersistentDataStoreException {
     UUID idOne = UUID.fromString("10000000-2222-3333-4444-555555555555");
     UUID ownerOne = UUID.fromString("10000001-2222-3333-4444-555555555555");
+    UUID destinationOne = UUID.fromString("10000002-2222-3333-4444-555555555555");
     String titleOne = "Test_Title";
     Instant creationOne = Instant.ofEpochMilli(1000);
-    Conversation inputConversationOne = new Conversation(idOne, ownerOne, titleOne, creationOne);
+    Conversation inputConversationOne = new Conversation(idOne, ownerOne, destinationOne, titleOne, creationOne);
 
-    UUID idTwo = UUID.fromString("10000002-2222-3333-4444-555555555555");
-    UUID ownerTwo = UUID.fromString("10000003-2222-3333-4444-555555555555");
+    UUID idTwo = UUID.fromString("10000003-2222-3333-4444-555555555555");
+    UUID ownerTwo = UUID.fromString("10000004-2222-3333-4444-555555555555");
+    UUID destinationTwo = UUID.fromString("10000005-2222-3333-4444-555555555555");
     String titleTwo = "Test_Title_Two";
     Instant creationTwo = Instant.ofEpochMilli(2000);
-    Conversation inputConversationTwo = new Conversation(idTwo, ownerTwo, titleTwo, creationTwo);
+    Conversation inputConversationTwo = new Conversation(idTwo, ownerTwo, destinationTwo, titleTwo, creationTwo);
 
     // save
     persistentDataStore.writeThrough(inputConversationOne);
@@ -99,12 +102,14 @@ public class PersistentDataStoreTest {
     Conversation resultConversationOne = resultConversations.get(0);
     Assert.assertEquals(idOne, resultConversationOne.getId());
     Assert.assertEquals(ownerOne, resultConversationOne.getOwnerId());
+    Assert.assertEquals(destinationOne, resultConversationOne.getDestinationId());
     Assert.assertEquals(titleOne, resultConversationOne.getTitle());
     Assert.assertEquals(creationOne, resultConversationOne.getCreationTime());
 
     Conversation resultConversationTwo = resultConversations.get(1);
     Assert.assertEquals(idTwo, resultConversationTwo.getId());
     Assert.assertEquals(ownerTwo, resultConversationTwo.getOwnerId());
+    Assert.assertEquals(destinationTwo, resultConversationTwo.getDestinationId());
     Assert.assertEquals(titleTwo, resultConversationTwo.getTitle());
     Assert.assertEquals(creationTwo, resultConversationTwo.getCreationTime());
   }
@@ -259,5 +264,43 @@ public class PersistentDataStoreTest {
     Assert.assertEquals(userTwo, resultUserActionTwo.getUserId());
     Assert.assertEquals(messageTwo, resultUserActionTwo.getMessage());
     Assert.assertEquals(creationTwo, resultUserActionTwo.getCreationTime());
+  }
+  
+  @Test
+  public void testSaveAndLoadDestinations() throws PersistentDataStoreException {
+    UUID idOne = UUID.fromString("10000000-2222-3333-4444-555555555555");
+    UUID userOne = UUID.fromString("10000002-2222-3333-4444-555555555555");
+    String titleOne = "test title one";
+    Instant creationOne = Instant.ofEpochMilli(1000);
+    Destination inputDestinationOne =
+        new Destination(idOne, userOne, titleOne, creationOne);
+
+    UUID idTwo = UUID.fromString("10000003-2222-3333-4444-555555555555");
+    UUID userTwo = UUID.fromString("10000005-2222-3333-4444-555555555555");
+    String titleTwo = "test title two";
+    Instant creationTwo = Instant.ofEpochMilli(2000);
+    Destination inputDestinationTwo =
+        new Destination(idTwo, userTwo, titleTwo, creationTwo);
+
+    // save
+    persistentDataStore.writeThrough(inputDestinationOne);
+    persistentDataStore.writeThrough(inputDestinationTwo);
+
+    // load
+    List<Destination> resultDestinations = persistentDataStore.loadDestinations();
+
+    // confirm that what we saved matches what we loaded
+    Destination resultDestinationOne = resultDestinations.get(0);
+    Assert.assertEquals(idOne, resultDestinationOne.getId());
+    Assert.assertEquals(userOne, resultDestinationOne.getOwnerId());
+    Assert.assertEquals(titleOne, resultDestinationOne.getTitle());
+    Assert.assertEquals(creationOne, resultDestinationOne.getCreationTime());
+
+    Destination resultDestinationTwo = resultDestinations.get(1);
+    Assert.assertEquals(idTwo, resultDestinationTwo.getId());
+    Assert.assertEquals(userTwo, resultDestinationTwo.getOwnerId());
+    Assert.assertEquals(titleTwo, resultDestinationTwo.getTitle());
+    Assert.assertEquals(creationTwo, resultDestinationTwo.getCreationTime());
+
   }
 }

@@ -13,10 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
+<%@ page import="java.util.List" %>
+<%@ page import="codeu.model.data.Destination" %>
+<%@ page import="codeu.model.data.User" %>
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login</title>
+  <title>Destinations</title>
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
@@ -33,33 +37,63 @@
     <% if(request.getSession().getAttribute("user") != null){ %>
       <a href="/user/<%=request.getSession().getAttribute("user") %>">Profile Page</a>
     <% } %>
-    <a href="/destinations">Destinations</a>
+    <a href="destinations">Destinations</a>
     <% if(request.getSession().getAttribute("user") != null && (request.getSession().getAttribute("user").equals("cavalos99") || 
     		request.getSession().getAttribute("user").equals("jenessacordero") || request.getSession().getAttribute("user").equals("agarwalv"))) {%>
     <a href="/adminpage">Admin</a>
     <% } %>
   </nav>
-
+  
   <div id="container">
-    <h1>Login</h1>
 
     <% if(request.getAttribute("error") != null){ %>
         <h2 style="color:red"><%= request.getAttribute("error") %></h2>
     <% } %>
 
-    <form action="/login" method="POST">
-      <label for="username">Username: </label>
-      <br/>
-      <input type="text" name="username" id="username">
-      <br/>
-      <label for="password">Password: </label>
-      <br/>
-      <input type="password" name="password" id="password">
-      <br/><br/>
-      <button type="submit">Login</button>
-    </form>
 
-    <p>New users can register <a href="/register">here</a>.</p>
+      <h1>New Destination</h1>
+      <form action="/destinations" method="POST">
+          <div class="form-group">
+            <label class="form-control-label">Title:</label>
+          <input type="text" name="destinationTitle">
+        </div>
+
+        <button type="submit">Create</button>
+      </form>
+
+      <hr/>
+
+
+
+    <h1>Destinations</h1>
+    <% if(request.getSession().getAttribute("user") == null){ %>
+      <p>Login to create a destination!</p>
+    <% } %>
+
+    <%
+    List<Destination> destinations =
+      (List<Destination>) request.getAttribute("destinations");
+    if(destinations == null || destinations.isEmpty()){
+    %>
+      <p>Create a destination to get started.</p>
+    <%
+    }
+    else{
+    %>
+      <ul class="mdl-list">
+    <%
+      for(Destination destination : destinations){
+    %>
+      <li><a href="/destination/<%= destination.getTitle() %>">
+        <%= destination.getTitle() %></a></li>
+    <%
+      }
+    %>
+      </ul>
+    <%
+    }
+    %>
+    <hr/>
   </div>
 </body>
 </html>

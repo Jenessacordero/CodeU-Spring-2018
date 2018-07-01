@@ -82,7 +82,7 @@ public class ChatServletTest {
 
     UUID fakeConversationId = UUID.randomUUID();
     Conversation fakeConversation =
-        new Conversation(fakeConversationId, UUID.randomUUID(), "test_conversation", Instant.now());
+        new Conversation(fakeConversationId, UUID.randomUUID(), UUID.randomUUID(), "test_conversation", Instant.now());
     Mockito.when(mockConversationStore.getConversationWithTitle("test_conversation"))
         .thenReturn(fakeConversation);
 
@@ -172,7 +172,7 @@ public class ChatServletTest {
     Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
 
     Conversation fakeConversation =
-        new Conversation(UUID.randomUUID(), UUID.randomUUID(), "test_conversation", Instant.now());
+        new Conversation(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "test_conversation", Instant.now());
     Mockito.when(mockConversationStore.getConversationWithTitle("test_conversation"))
         .thenReturn(fakeConversation);
 
@@ -199,7 +199,7 @@ public class ChatServletTest {
     Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
 
     Conversation fakeConversation =
-        new Conversation(UUID.randomUUID(), UUID.randomUUID(), "test_conversation", Instant.now());
+        new Conversation(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "test_conversation", Instant.now());
     Mockito.when(mockConversationStore.getConversationWithTitle("test_conversation"))
         .thenReturn(fakeConversation);
 

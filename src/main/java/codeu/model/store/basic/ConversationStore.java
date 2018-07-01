@@ -15,9 +15,11 @@
 package codeu.model.store.basic;
 
 import codeu.model.data.Conversation;
+import codeu.model.data.Message;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Store class that uses in-memory data structures to hold values and automatically loads from and
@@ -94,6 +96,20 @@ public class ConversationStore {
       }
     }
     return null;
+  }
+  
+  /** Access the current set of Conversations within the given Destination. */
+  public List<Conversation> getConvosInDestination(UUID destinationId) {
+
+    List<Conversation> convosInDestination = new ArrayList<>();
+
+    for (Conversation conversation : conversations) {
+      if (conversation.getDestinationId().equals(destinationId)) {
+    	  convosInDestination.add(conversation);
+      }
+    }
+
+    return convosInDestination;
   }
 
   /** Sets the List of Conversations stored by this ConversationStore. */

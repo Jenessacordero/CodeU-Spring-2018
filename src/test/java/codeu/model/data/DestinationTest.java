@@ -19,22 +19,20 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ConversationTest {
+public class DestinationTest {
 
   @Test
   public void testCreate() {
     UUID id = UUID.randomUUID();
     UUID owner = UUID.randomUUID();
-    UUID destination = UUID.randomUUID();
     String title = "Test_Title";
     Instant creation = Instant.now();
 
-    Conversation conversation = new Conversation(id, owner, destination, title, creation);
+    Destination destination = new Destination(id, owner, title, creation);
 
-    Assert.assertEquals(id, conversation.getId());
-    Assert.assertEquals(owner, conversation.getOwnerId());
-    Assert.assertEquals(destination, conversation.getDestinationId());
-    Assert.assertEquals(title, conversation.getTitle());
-    Assert.assertEquals(creation, conversation.getCreationTime());
+    Assert.assertEquals(id, destination.getId());
+    Assert.assertEquals(owner, destination.getOwnerId());
+    Assert.assertEquals(title, destination.getTitle());
+    Assert.assertEquals(creation, destination.getCreationTime());
   }
 }
