@@ -8,6 +8,14 @@ import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
 import codeu.model.data.Images;
 import codeu.model.store.basic.*;
+import codeu.model.data.Destination;
+import codeu.model.store.basic.ConversationStore;
+import codeu.model.store.basic.DestinationStore;
+import codeu.model.store.basic.MessageStore;
+import codeu.model.store.basic.StatusUpdateStore;
+import codeu.model.store.basic.UserActionStore;
+import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.AboutMeStore;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import codeu.model.store.persistence.PersistentStorageAgent;
 
@@ -47,6 +55,9 @@ public class ServerStartupListener implements ServletContextListener {
       
       List<UserAction> userActions = PersistentStorageAgent.getInstance().loadUserActions();
       UserActionStore.getInstance().setUserActions(userActions);
+      
+      List<Destination> destinations = PersistentStorageAgent.getInstance().loadDestinations();
+      DestinationStore.getInstance().setDestinations(destinations);
 
       List<Images> uploadedImages = PersistentStorageAgent.getInstance().loadImages();
       UploadedImagesStore.getInstance().setImageStore(uploadedImages);

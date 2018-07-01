@@ -18,6 +18,10 @@
 <%@ page import="codeu.model.data.Message" %>
 <%@ page import="codeu.model.data.User" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
+<%@ page import="org.kefirsf.bb.BBProcessorFactory" %>
+<%@ page import="org.kefirsf.bb.ConfigurationFactory" %>
+<%@ page import="org.kefirsf.bb.TextProcessor" %>
+
 <%
 Conversation conversation = (Conversation) request.getAttribute("conversation");
 LinkedList<Message> messages = (LinkedList<Message>) request.getAttribute("messages");
@@ -76,7 +80,15 @@ LinkedList<Message> messages = (LinkedList<Message>) request.getAttribute("messa
 
     <div id="chat">
       <ul>
+    <%-- the processor stuff below is for styled text --%>
     <%
+        TextProcessor processor = BBProcessorFactory.getInstance()
+            .createFromResource(ConfigurationFactory.MARKDOWN_CONFIGURATION_FILE);
+        assert "<strong>text</strong>".equals(processor.process("**text**"));
+    %>
+
+    <%
+<<<<<<< HEAD
       if (messages != null) {
           for (int i = 0; i < messages.size(); i++) {
             Message message = messages.get(i);

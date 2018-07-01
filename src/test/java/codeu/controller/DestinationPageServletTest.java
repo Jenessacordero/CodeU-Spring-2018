@@ -15,9 +15,11 @@
 package codeu.controller;
 
 import codeu.model.data.Conversation;
+import codeu.model.data.Destination;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.store.basic.ConversationStore;
+import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
@@ -37,20 +39,21 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-public class ConversationServletTest {
+public class DestinationPageServletTest {
 
-  private ConversationServlet conversationServlet;
+  private DestinationPageServlet destinationPageServlet;
   private HttpServletRequest mockRequest;
   private HttpSession mockSession;
   private HttpServletResponse mockResponse;
   private RequestDispatcher mockRequestDispatcher;
   private ConversationStore mockConversationStore;
+  private DestinationStore mockDestinationStore;
   private UserStore mockUserStore;
   private UserActionStore mockUserActionStore;
 
   @Before
   public void setup() {
-    conversationServlet = new ConversationServlet();
+	  destinationPageServlet = new DestinationPageServlet();
 
     mockRequest = Mockito.mock(HttpServletRequest.class);
     mockSession = Mockito.mock(HttpSession.class);
@@ -58,64 +61,101 @@ public class ConversationServletTest {
 
     mockResponse = Mockito.mock(HttpServletResponse.class);
     mockRequestDispatcher = Mockito.mock(RequestDispatcher.class);
-    Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/conversations.jsp"))
+    Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp"))
         .thenReturn(mockRequestDispatcher);
 
     mockConversationStore = Mockito.mock(ConversationStore.class);
-    conversationServlet.setConversationStore(mockConversationStore);
+    destinationPageServlet.setConversationStore(mockConversationStore);
+    
+    mockDestinationStore = Mockito.mock(DestinationStore.class);
+    destinationPageServlet.setDestinationStore(mockDestinationStore);
 
     mockUserStore = Mockito.mock(UserStore.class);
-    conversationServlet.setUserStore(mockUserStore);
+    destinationPageServlet.setUserStore(mockUserStore);
     
     mockUserActionStore = Mockito.mock(UserActionStore.class);
-    conversationServlet.setUserActionStore(mockUserActionStore);
+    destinationPageServlet.setUserActionStore(mockUserActionStore);
   }
 
   @Test
   public void testDoGet() throws IOException, ServletException {
-    HashMap<String, Conversation> fakeConversationList = new HashMap<>();
-    fakeConversationList.put("test_conversation",
-        new Conversation(UUID.randomUUID(), UUID.randomUUID(), "test_conversation", Instant.now()));
-    Mockito.when(mockConversationStore.getAllConversations()).thenReturn(fakeConversationList);
+	UUID fakeDestinationId = UUID.randomUUID();
+	Mockito.when(mockRequest.getRequestURI()).thenReturn("/destination/test_destination");
+    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
+    
+    Destination fakeDestination =
+            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now());
+        Mockito.when(mockDestinationStore.getDestinationWithTitle("test_destination"))
+            .thenReturn(fakeDestination);
+        
+    List<Conversation> fakeConversationList = new ArrayList<>();
+    fakeConversationList.add(
+        new Conversation(UUID.randomUUID(), UUID.randomUUID(), fakeDestinationId, "test_conversation", Instant.now()));
+    Mockito.when(mockConversationStore.getConvosInDestination(fakeDestinationId)).thenReturn(fakeConversationList);
 
-    conversationServlet.doGet(mockRequest, mockResponse);
+    destinationPageServlet.doGet(mockRequest, mockResponse);
 
     Mockito.verify(mockRequest).setAttribute("conversations", fakeConversationList);
+    Mockito.verify(mockRequest).setAttribute("destinationTitle", "test_destination");
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
 
   @Test
   public void testDoPost_UserNotLoggedIn() throws IOException, ServletException {
+	  UUID fakeDestinationId = UUID.randomUUID();
+		Mockito.when(mockRequest.getRequestURI()).thenReturn("/destination/test_destination");
+	    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
+	    
+	    Destination fakeDestination =
+	            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now());
+	        Mockito.when(mockDestinationStore.getDestinationWithTitle("test_destination"))
+	            .thenReturn(fakeDestination);
     Mockito.when(mockSession.getAttribute("user")).thenReturn(null);
 
-    conversationServlet.doPost(mockRequest, mockResponse);
+    destinationPageServlet.doPost(mockRequest, mockResponse);
 
     Mockito.verify(mockConversationStore, Mockito.never())
         .addConversation(Mockito.any(Conversation.class));
-    Mockito.verify(mockResponse).sendRedirect("/conversations");
+    Mockito.verify(mockResponse).sendRedirect("/login");
   }
 
   @Test
   public void testDoPost_InvalidUser() throws IOException, ServletException {
+	  UUID fakeDestinationId = UUID.randomUUID();
+		Mockito.when(mockRequest.getRequestURI()).thenReturn("/destination/test_destination");
+	    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
+	    
+	    Destination fakeDestination =
+	            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now());
+	        Mockito.when(mockDestinationStore.getDestinationWithTitle("test_destination"))
+	            .thenReturn(fakeDestination);
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
     Mockito.when(mockUserStore.getUser("test_username")).thenReturn(null);
 
-    conversationServlet.doPost(mockRequest, mockResponse);
+    destinationPageServlet.doPost(mockRequest, mockResponse);
 
     Mockito.verify(mockConversationStore, Mockito.never())
         .addConversation(Mockito.any(Conversation.class));
-    Mockito.verify(mockResponse).sendRedirect("/conversations");
+    Mockito.verify(mockResponse).sendRedirect("/login");
   }
 
   @Test
   public void testDoPost_BadConversationName() throws IOException, ServletException {
+	  UUID fakeDestinationId = UUID.randomUUID();
+		Mockito.when(mockRequest.getRequestURI()).thenReturn("/destination/test_destination");
+	    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
+	    
+	    Destination fakeDestination =
+	            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now());
+	        Mockito.when(mockDestinationStore.getDestinationWithTitle("test_destination"))
+	            .thenReturn(fakeDestination);
     Mockito.when(mockRequest.getParameter("conversationTitle")).thenReturn("bad !@#$% name");
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
 
     User fakeUser = new User(UUID.randomUUID(), "test_username", "test_username", Instant.now());
     Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
 
-    conversationServlet.doPost(mockRequest, mockResponse);
+    destinationPageServlet.doPost(mockRequest, mockResponse);
 
     Mockito.verify(mockConversationStore, Mockito.never())
         .addConversation(Mockito.any(Conversation.class));
@@ -125,6 +165,14 @@ public class ConversationServletTest {
 
   @Test
   public void testDoPost_ConversationNameTaken() throws IOException, ServletException {
+	  UUID fakeDestinationId = UUID.randomUUID();
+		Mockito.when(mockRequest.getRequestURI()).thenReturn("/destination/test_destination");
+	    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
+	    
+	    Destination fakeDestination =
+	            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now());
+	        Mockito.when(mockDestinationStore.getDestinationWithTitle("test_destination"))
+	            .thenReturn(fakeDestination);
     Mockito.when(mockRequest.getParameter("conversationTitle")).thenReturn("test_conversation");
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
 
@@ -133,7 +181,7 @@ public class ConversationServletTest {
 
     Mockito.when(mockConversationStore.isTitleTaken("test_conversation")).thenReturn(true);
 
-    conversationServlet.doPost(mockRequest, mockResponse);
+    destinationPageServlet.doPost(mockRequest, mockResponse);
 
     Mockito.verify(mockConversationStore, Mockito.never())
         .addConversation(Mockito.any(Conversation.class));
@@ -142,15 +190,22 @@ public class ConversationServletTest {
 
   @Test
   public void testDoPost_NewConversation() throws IOException, ServletException {
-    Mockito.when(mockRequest.getParameter("conversationTitle")).thenReturn("test_conversation");
+	  Mockito.when(mockRequest.getRequestURI()).thenReturn("/destination/test_destination");
+    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
+    
+    Destination fakeDestination =
+            new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now());
+        Mockito.when(mockDestinationStore.getDestinationWithTitle("test_destination"))
+            .thenReturn(fakeDestination);
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
+    Mockito.when(mockRequest.getParameter("conversationTitle")).thenReturn("test_conversation");
 
     User fakeUser = new User(UUID.randomUUID(), "test_username", "test_username", Instant.now());
     Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
 
     Mockito.when(mockConversationStore.isTitleTaken("test_conversation")).thenReturn(false);
 
-    conversationServlet.doPost(mockRequest, mockResponse);
+    destinationPageServlet.doPost(mockRequest, mockResponse);
 
     ArgumentCaptor<Conversation> conversationArgumentCaptor =
         ArgumentCaptor.forClass(Conversation.class);

@@ -1,6 +1,7 @@
 package codeu.model.store.persistence;
 
 import codeu.model.data.Conversation;
+import codeu.model.data.Destination;
 import codeu.model.data.Message;
 import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
@@ -75,6 +76,12 @@ public class PersistentStorageAgentTest {
   }
   
   @Test
+  public void testLoadDestinations() throws PersistentDataStoreException {
+    persistentStorageAgent.loadDestinations();
+    Mockito.verify(mockPersistentDataStore).loadDestinations();
+  }
+  
+  @Test
   public void testWriteThroughUser() {
     User user =
         new User(
@@ -89,7 +96,7 @@ public class PersistentStorageAgentTest {
   @Test
   public void testWriteThroughConversation() {
     Conversation conversation =
-        new Conversation(UUID.randomUUID(), UUID.randomUUID(), "test_conversation", Instant.now());
+        new Conversation(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "test_conversation", Instant.now());
     persistentStorageAgent.writeThrough(conversation);
     Mockito.verify(mockPersistentDataStore).writeThrough(conversation);
   }
@@ -137,5 +144,14 @@ public class PersistentStorageAgentTest {
                     "filename", "destination", UUID.randomUUID());
     persistentStorageAgent.writeThrough(Image);
     Mockito.verify(mockPersistentDataStore).writeThrough(Image);
+  }
+  
+  @Test
+  public void testWriteThroughDestination() throws PersistentDataStoreException {
+    Destination destination =
+        new Destination(
+            UUID.randomUUID(), UUID.randomUUID(), "test title", Instant.now());
+    persistentStorageAgent.writeThrough(destination);
+    Mockito.verify(mockPersistentDataStore).writeThrough(destination);
   }
 }

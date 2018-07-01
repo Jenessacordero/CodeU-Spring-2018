@@ -7,6 +7,7 @@
 <body>
 
   <nav>
+<<<<<<< HEAD
       <a id="navTitle" href="/">CodeU Chat App</a>
       <% if(request.getSession().getAttribute("user") != null && (request.getSession().getAttribute("user").equals("cavalos99") ||
           		request.getSession().getAttribute("user").equals("jenessacordero") || request.getSession().getAttribute("user").equals("agarwalv"))) {%>

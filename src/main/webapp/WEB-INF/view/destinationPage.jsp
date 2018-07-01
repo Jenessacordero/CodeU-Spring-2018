@@ -28,6 +28,7 @@
 <body>
 
   <nav>
+<<<<<<< HEAD:src/main/webapp/WEB-INF/view/conversations.jsp
       <a id="navTitle" href="/">CodeU Chat App</a>
       <% if(request.getSession().getAttribute("user") != null && (request.getSession().getAttribute("user").equals("cavalos99") ||
           		request.getSession().getAttribute("user").equals("jenessacordero") || request.getSession().getAttribute("user").equals("agarwalv"))) {%>
@@ -54,8 +55,8 @@
     <% } %>
 
 
-      <h1>New Conversation</h1>
-      <form action="/conversations" method="POST">
+      <h1><%= request.getAttribute("destinationTitle") %></h1>
+      <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
           <div class="form-group">
             <label class="form-control-label">Title:</label>
           <input type="text" name="conversationTitle">
