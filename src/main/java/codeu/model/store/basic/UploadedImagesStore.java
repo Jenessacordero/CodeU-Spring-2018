@@ -50,12 +50,12 @@ public class UploadedImagesStore {
     }
 
     /**
-     * The PersistentStorageAgent responsible for loading UserActions from and saving UserActions to
+     * The PersistentStorageAgent responsible for loading Images from and saving UserActions to
      * Datastore.
      */
     private PersistentStorageAgent persistentStorageAgent;
 
-    /** The in-memory list of UserActions. */
+    /** The in-memory list of Images. */
     private List<Images> UploadedImages;
 
     public List<Images> returnAllImages() {
@@ -69,13 +69,13 @@ public class UploadedImagesStore {
         UploadedImages = new ArrayList<>();
     }
 
-    /** Add a new userAction to the current set of UserActions known to the application. */
+    /** Add a new userAction to the current set of Images known to the application. */
     public void addImage(Images image) {
-        UploadedImages.add(0, image);
+        UploadedImages.add(image);
         persistentStorageAgent.writeThrough(image);
     }
 
-    /** Sets the List of UserActions stored by this UserActionStore. */
+    /** Sets the List of UserActions stored by this ImageStore. */
     public void setImageStore(List<Images> images) {
         this.UploadedImages = images;
     }

@@ -1,11 +1,6 @@
 package codeu.model.store.persistence;
 
-import codeu.model.data.Conversation;
-import codeu.model.data.Message;
-import codeu.model.data.StatusUpdate;
-import codeu.model.data.User;
-import codeu.model.data.UserAction;
-import codeu.model.data.AboutMe;
+import codeu.model.data.*;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import java.time.Instant;
@@ -263,5 +258,26 @@ public class PersistentDataStoreTest {
     Assert.assertEquals(userTwo, resultUserActionTwo.getUserId());
     Assert.assertEquals(messageTwo, resultUserActionTwo.getMessage());
     Assert.assertEquals(creationTwo, resultUserActionTwo.getCreationTime());
+  }
+
+  @Test
+  public void testSaveAndLoadImages() throws PersistentDataStoreException {
+    String filename = "file1";
+    String destination = "random1";
+    UUID id = UUID.randomUUID();
+    Images newImage = new Images(filename, destination, id);
+
+
+    // save
+    persistentDataStore.writeThrough(newImage);
+
+    // load
+    List<Images> resultImages = persistentDataStore.loadImages();
+
+    // confirm that what we saved matches what we loaded
+    Images resultImage1 = resultImages.get(0);
+    Assert.assertEquals(filename, resultImage1.returnFileName());
+    Assert.assertEquals(destination, resultImage1.returnDestination());
+    Assert.assertEquals(id, resultImage1.getID());
   }
 }

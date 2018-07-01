@@ -293,14 +293,15 @@ public class PersistentDataStore {
         List<Images> uploadedImages = new ArrayList<>();
 
         // Retrieve all messages from the datastore.
-        Query query = new Query("images").addSort("creation_time", SortDirection.DESCENDING);
+        Query query = new Query("images").addSort("uuid", SortDirection.DESCENDING);
         PreparedQuery results = datastore.prepare(query);
 
         for (Entity entity : results.asIterable()) {
             try {
                 UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
                 String filename = (String) entity.getProperty("filename");
-                Images uploadedImage = new Images(filename, "random", uuid);
+                String destination = (String) entity.getProperty("destination");
+                Images uploadedImage = new Images(filename, destination, uuid);
                 uploadedImages.add(uploadedImage);
             } catch (Exception e) {
                 // In a production environment, errors should be very rare. Errors which may
@@ -397,9 +398,10 @@ public class PersistentDataStore {
 
     /** Write an Image object to the Datastore service. */
     public void writeThrough(Images image) {
-        Entity UploadedImageEntity = new Entity("uploaded-images", image.getID().toString());
+        Entity UploadedImageEntity = new Entity("images", image.getID().toString());
         UploadedImageEntity.setProperty("uuid", image.getID().toString());
         UploadedImageEntity.setProperty("filename", image.returnFileName());
+        UploadedImageEntity.setProperty("destination", image.returnDestination());
         datastore.put(UploadedImageEntity);
     }
 }
