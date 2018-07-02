@@ -33,14 +33,9 @@ public class ConversationStoreTest {
     mockPersistentStorageAgent = Mockito.mock(PersistentStorageAgent.class);
     conversationStore = ConversationStore.getTestInstance(mockPersistentStorageAgent);
 
-<<<<<<< HEAD
-    final HashMap<String, Conversation> conversationList = new HashMap<>();
-    conversationList.put("conversation_one", CONVERSATION_ONE);
-=======
     final List<Conversation> conversationList = new ArrayList<>();
     conversationList.add(CONVERSATION_ONE);
     conversationList.add(CONVERSATION_TWO);
->>>>>>> 34383b2d52c3bafe3bc4726882a05c20f949613e
     conversationStore.setConversations(conversationList);
   }
 

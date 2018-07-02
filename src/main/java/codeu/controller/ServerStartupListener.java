@@ -39,7 +39,7 @@ public class ServerStartupListener implements ServletContextListener {
       List<User> users = PersistentStorageAgent.getInstance().loadUsers();
       UserStore.getInstance().setUsers(users);
 
-      HashMap<String, Conversation> conversations = PersistentStorageAgent.getInstance().loadConversations();
+      List<Conversation> conversations = PersistentStorageAgent.getInstance().loadConversations();
       ConversationStore.getInstance().setConversations(conversations);
 
       HashMap<UUID, LinkedList<Message>> messagesConversations = PersistentStorageAgent.getInstance().loadMessagesByConversation();

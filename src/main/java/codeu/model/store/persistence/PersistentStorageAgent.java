@@ -86,7 +86,7 @@ public class PersistentStorageAgent {
    * @throws PersistentDataStoreException if an error was detected during the load from the
    *     Datastore service
    */
-  public HashMap<String, Conversation> loadConversations() throws PersistentDataStoreException {
+  public List<Conversation> loadConversations() throws PersistentDataStoreException {
     return persistentDataStore.loadConversations();
   }
 

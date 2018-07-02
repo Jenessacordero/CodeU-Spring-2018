@@ -58,7 +58,7 @@ public class AdminPageServlet extends HttpServlet {
       // Methods are written in respective classes that return the list of all
       // conversations, messages, and users
       // Lists are needed to retrieve the length
-      HashMap<String, Conversation> allConversations = conversationStore.getAllConversations();
+      List<Conversation> allConversations = conversationStore.getAllConversations();
       List allUsers = userStore.returnAllUsers();
       List allMessages = messageStore.returnAllMessages();
 
