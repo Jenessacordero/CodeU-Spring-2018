@@ -62,6 +62,16 @@ public class UploadedImagesStore {
         return UploadedImages;
     }
 
+    public List<Images> returnImagesInDestination(String destination) {
+        List<Images> destinationImages = new ArrayList<>();
+        for (Images image : UploadedImages) {
+            if (image.returnDestination() == destination) {
+                destinationImages.add(image);
+            }
+        }
+        return destinationImages;
+    }
+
 
     /** This class is a singleton, so its constructor is private. Call getInstance() instead. */
     private UploadedImagesStore(PersistentStorageAgent persistentStorageAgent) {

@@ -114,8 +114,9 @@ public class PersistentDataStore {
         String title = (String) entity.getProperty("title");
         UUID destinationUuid = UUID.fromString((String) entity.getProperty("destination_uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+        String url = (String) entity.getProperty("url");
 
-        Conversation conversation = new Conversation(uuid, ownerUuid, destinationUuid, title, creationTime);
+        Conversation conversation = new Conversation(uuid, ownerUuid, destinationUuid, title, creationTime, url);
         conversations.add(conversation);
 
       } catch (Exception e) {
@@ -376,6 +377,7 @@ public class PersistentDataStore {
     conversationEntity.setProperty("title", conversation.getTitle());
     conversationEntity.setProperty("destination_uuid", conversation.getDestinationId().toString());
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
+    conversationEntity.setProperty("url", conversation.getUrl());
     datastore.put(conversationEntity);
   }
   

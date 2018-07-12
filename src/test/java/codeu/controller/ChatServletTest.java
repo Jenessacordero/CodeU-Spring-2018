@@ -113,7 +113,7 @@ public class ChatServletTest {
 
     chatServlet.doGet(mockRequest, mockResponse);
 
-    Mockito.verify(mockResponse).sendRedirect("/conversations");
+    Mockito.verify(mockResponse).sendRedirect("/destinations");
   }
 
   @Test
