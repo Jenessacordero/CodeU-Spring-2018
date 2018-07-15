@@ -18,13 +18,16 @@ import codeu.model.data.Conversation;
 import codeu.model.data.Destination;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
+import codeu.model.data.Images;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.UploadedImagesStore;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import javax.servlet.RequestDispatcher;
@@ -49,10 +52,11 @@ public class DestinationPageServletTest {
   private DestinationStore mockDestinationStore;
   private UserStore mockUserStore;
   private UserActionStore mockUserActionStore;
+  private UploadedImagesStore mockImageStore;
 
   @Before
   public void setup() {
-	  destinationPageServlet = new DestinationPageServlet();
+      destinationPageServlet = new DestinationPageServlet();
 
     mockRequest = Mockito.mock(HttpServletRequest.class);
     mockSession = Mockito.mock(HttpSession.class);
@@ -74,6 +78,9 @@ public class DestinationPageServletTest {
     
     mockUserActionStore = Mockito.mock(UserActionStore.class);
     destinationPageServlet.setUserActionStore(mockUserActionStore);
+
+    mockImageStore = Mockito.mock(UploadedImagesStore.class);
+    destinationPageServlet.setImageStore(mockImageStore);
   }
 
   @Test
@@ -92,10 +99,16 @@ public class DestinationPageServletTest {
         new Conversation(UUID.randomUUID(), UUID.randomUUID(), fakeDestinationId, "test_conversation", Instant.now()));
     Mockito.when(mockConversationStore.getConvosInDestination(fakeDestinationId)).thenReturn(fakeConversationList);
 
+    List<Images> fakeImageList = new ArrayList<>();
+    fakeImageList.add(
+            new Images("random", "random_destination", UUID.randomUUID()));
+    Mockito.when(mockImageStore.returnAllImages()).thenReturn(fakeImageList);
+
     destinationPageServlet.doGet(mockRequest, mockResponse);
 
     Mockito.verify(mockRequest).setAttribute("conversations", fakeConversationList);
     Mockito.verify(mockRequest).setAttribute("destinationTitle", "test_destination");
+    Mockito.verify(mockRequest).setAttribute("images", fakeImageList);
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
 
@@ -184,7 +197,7 @@ public class DestinationPageServletTest {
 
     Mockito.verify(mockConversationStore, Mockito.never())
         .addConversation(Mockito.any(Conversation.class));
-    Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
+    Mockito.verify(mockResponse).sendRedirect("/chat/test_destination/test_conversation");
   }
 
   @Test
@@ -214,6 +227,6 @@ public class DestinationPageServletTest {
     ArgumentCaptor<UserAction> userActionArgumentCaptor = ArgumentCaptor.forClass(UserAction.class);
     Mockito.verify(mockUserActionStore).addUserAction(userActionArgumentCaptor.capture());
 
-    Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
+    Mockito.verify(mockResponse).sendRedirect("/chat/test_destination/test_conversation");
   }
 }

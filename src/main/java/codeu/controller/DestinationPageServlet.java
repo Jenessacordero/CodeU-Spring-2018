@@ -14,17 +14,15 @@
 
 package codeu.controller;
 
-import codeu.model.data.Conversation;
-import codeu.model.data.Destination;
-import codeu.model.data.Message;
-import codeu.model.data.User;
-import codeu.model.data.UserAction;
+import codeu.model.data.*;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.basic.UserActionStore;
+import codeu.model.store.basic.UploadedImagesStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import javax.servlet.ServletException;
@@ -47,6 +45,9 @@ public class DestinationPageServlet extends HttpServlet {
   /** Store class that gives access to UserActions. */
   private UserActionStore userActionStore;
 
+  /** Store class that gives access to Images. */
+  private UploadedImagesStore imageStore;
+
   /**
    * Set up state for handling conversation-related requests. This method is only called when
    * running in a server, not when running in a test.
@@ -58,6 +59,7 @@ public class DestinationPageServlet extends HttpServlet {
     setConversationStore(ConversationStore.getInstance());
     setDestinationStore(DestinationStore.getInstance());
     setUserActionStore(UserActionStore.getInstance());
+    setImageStore(UploadedImagesStore.getInstance());
   }
 
   /**
@@ -91,17 +93,28 @@ public class DestinationPageServlet extends HttpServlet {
   void setUserActionStore(UserActionStore UserActionStore) {
     this.userActionStore = UserActionStore;
   }
+  /**
+   * Sets the ImageStore used by this servlet. This function provides a common setup method for use
+   * by the test framework or the servlet's init() function.
+   */
+  void setImageStore(UploadedImagesStore imageStore) {
+    this.imageStore = imageStore;
+  }
 
   /**
    * This function fires when a user navigates to the conversations page. It gets all of the
    * conversations from the model and forwards to conversations.jsp for rendering the list.
    */
+
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 	  String requestUrl = request.getRequestURI();
 	  String destinationTitle = requestUrl.substring("/destination/".length());
 	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
+      List<Images> images = imageStore.returnAllImages();
+      request.setAttribute("images", images);
 
     List<Conversation> conversations = conversationStore.getConvosInDestination(destination.getId());
     request.setAttribute("conversations", conversations);
@@ -117,7 +130,8 @@ public class DestinationPageServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-	  
+
+
 	  String requestUrl = request.getRequestURI();
 	  String destinationTitle = requestUrl.substring("/destination/".length());
 	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
@@ -148,19 +162,26 @@ public class DestinationPageServlet extends HttpServlet {
     if (conversationStore.isTitleTaken(conversationTitle)) {
       // conversation title is already taken, just go into that conversation instead of creating a
       // new one
-      response.sendRedirect("/chat/" + conversationTitle);
+      response.sendRedirect("/chat/" + destinationTitle + "/" + conversationTitle);
       return;
     }
 
     Conversation conversation =
         new Conversation(UUID.randomUUID(), user.getId(), destination.getId(), conversationTitle, Instant.now());
-
     conversationStore.addConversation(conversation);
     
     // Creates a new user action.
     UserAction newConversation = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has created a new conversation: "
     		+ conversationTitle, Instant.now());
     userActionStore.addUserAction(newConversation);
-    response.sendRedirect("/chat/" + conversationTitle);
+
+    // creates a new image and saves to dataStore
+    String filename = request.getParameter("filename");
+    if (filename != null) {
+      Images uploadImage = new Images(filename, "random", UUID.randomUUID());
+      imageStore.addImage(uploadImage);
+    }
+
+    response.sendRedirect("/chat/" + destinationTitle + "/" + conversationTitle);
   }
 }

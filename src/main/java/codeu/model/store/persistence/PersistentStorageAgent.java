@@ -21,8 +21,15 @@ import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
+import codeu.model.data.Images;
 import codeu.model.store.persistence.PersistentDataStore;
+
+import java.awt.*;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
+
 
 /**
  * This class is the interface between the application and PersistentDataStore, which handles
@@ -89,9 +96,19 @@ public class PersistentStorageAgent {
    * @throws PersistentDataStoreException if an error was detected during the load from the
    *     Datastore service
    */
-  public List<Message> loadMessages() throws PersistentDataStoreException {
-    return persistentDataStore.loadMessages();
+  public HashMap<UUID, LinkedList<Message>> loadMessagesByUser() throws PersistentDataStoreException {
+    return persistentDataStore.loadMessagesByUser();
   }
+
+    /**
+     * Retrieve all Message objects from the Datastore service. The returned list may be empty.
+     *
+     * @throws PersistentDataStoreException if an error was detected during the load from the
+     *     Datastore service
+     */
+    public HashMap<UUID, LinkedList<Message>> loadMessagesByConversation() throws PersistentDataStoreException {
+        return persistentDataStore.loadMessagesByConversation();
+    }
   
   /**
    * Retrieve all AboutMe objects from the Datastore service. The returned list may be empty.
@@ -111,6 +128,10 @@ public class PersistentStorageAgent {
    */
   public List<StatusUpdate> loadStatusUpdates() throws PersistentDataStoreException {
     return persistentDataStore.loadStatusUpdates();
+  }
+
+  public List<Images> loadImages() throws PersistentDataStoreException {
+    return persistentDataStore.loadImages();
   }
   
   /**
@@ -167,6 +188,10 @@ public class PersistentStorageAgent {
   /** Write a Destination object to the Datastore service. */
   public void writeThrough(Destination destination) {
     persistentDataStore.writeThrough(destination);
+  }
+
+  /** Write a Image Object to the DataStore service. */
+  public void writeThrough(Images uploadedImage) { persistentDataStore.writeThrough(uploadedImage);
   }
 
 }

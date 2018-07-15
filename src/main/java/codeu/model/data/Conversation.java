@@ -68,4 +68,5 @@ public class Conversation {
   public Instant getCreationTime() {
     return creation;
   }
+
 }

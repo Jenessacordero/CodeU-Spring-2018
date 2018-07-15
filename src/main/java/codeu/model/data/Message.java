@@ -25,6 +25,7 @@ public class Message {
   private final UUID author;
   private final String content;
   private final Instant creation;
+  private final Character type;
 
   /**
    * Constructs a new Message.
@@ -34,13 +35,15 @@ public class Message {
    * @param author the ID of the User who sent this Message
    * @param content the text content of this Message
    * @param creation the creation time of this Message
+   * @param type determines whether the message contains an image or a string
    */
-  public Message(UUID id, UUID conversation, UUID author, String content, Instant creation) {
+  public Message(UUID id, UUID conversation, UUID author, String content, Instant creation, Character type) {
     this.id = id;
     this.conversation = conversation;
     this.author = author;
     this.content = content;
     this.creation = creation;
+    this.type = type;
   }
 
   /** Returns the ID of this Message. */
@@ -67,4 +70,6 @@ public class Message {
   public Instant getCreationTime() {
     return creation;
   }
+
+  public Character getType() { return type; }
 }

@@ -18,6 +18,7 @@ import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -81,7 +82,7 @@ public class ConversationStore {
   public boolean isTitleTaken(String title) {
     // This approach will be pretty slow if we have many Conversations.
     for (Conversation conversation : conversations) {
-      if (conversation.getTitle().equals(title)) {
+      if (conversation.title == title) {
         return true;
       }
     }
@@ -91,7 +92,7 @@ public class ConversationStore {
   /** Find and return the Conversation with the given title. */
   public Conversation getConversationWithTitle(String title) {
     for (Conversation conversation : conversations) {
-      if (conversation.getTitle().equals(title)) {
+      if (conversation.title == title) {
         return conversation;
       }
     }

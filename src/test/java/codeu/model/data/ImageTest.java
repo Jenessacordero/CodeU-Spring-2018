@@ -14,27 +14,22 @@
 
 package codeu.model.data;
 
-import java.time.Instant;
 import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class MessageTest {
+public class ImageTest {
 
-  @Test
-  public void testCreate() {
-    UUID id = UUID.randomUUID();
-    UUID conversation = UUID.randomUUID();
-    UUID author = UUID.randomUUID();
-    String content = "test content";
-    Instant creation = Instant.now();
+    @Test
+    public void testCreate() {
+        String filename1 = "file1";
+        String destination = "random";
+        UUID id = UUID.randomUUID();
 
-    Message message = new Message(id, conversation, author, content, creation, 'm');
+        Images newImage = new Images(filename1, destination, id);
 
-    Assert.assertEquals(id, message.getId());
-    Assert.assertEquals(conversation, message.getConversationId());
-    Assert.assertEquals(author, message.getAuthorId());
-    Assert.assertEquals(content, message.getContent());
-    Assert.assertEquals(creation, message.getCreationTime());
-  }
+        Assert.assertEquals(id, newImage.getID());
+        Assert.assertEquals(destination, newImage.returnDestination());
+        Assert.assertEquals(filename1, newImage.returnFileName());
+    }
 }

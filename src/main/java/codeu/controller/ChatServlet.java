@@ -24,6 +24,7 @@ import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import javax.servlet.ServletException;
@@ -102,17 +103,18 @@ public class ChatServlet extends HttpServlet {
     String requestUrl = request.getRequestURI();
     String conversationTitle = requestUrl.substring("/chat/".length());
 
+
     Conversation conversation = conversationStore.getConversationWithTitle(conversationTitle);
     if (conversation == null) {
       // couldn't find conversation, redirect to conversation list
       System.out.println("Conversation was null: " + conversationTitle);
-      response.sendRedirect("/conversations");
+      response.sendRedirect("/destinations");
       return;
     }
 
     UUID conversationId = conversation.getId();
 
-    List<Message> messages = messageStore.getMessagesInConversation(conversationId);
+    LinkedList<Message> messages = messageStore.getMessagesInConversation(conversationId);
 
     request.setAttribute("conversation", conversation);
     request.setAttribute("messages", messages);
@@ -153,19 +155,35 @@ public class ChatServlet extends HttpServlet {
       return;
     }
 
-    String messageContent = request.getParameter("message");
+    Message message;
+    String cleanedMessageContent;
 
-    // this removes any HTML from the message content
-    String cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
+    if (request.getParameter("message") != null) {
+      String messageContent = request.getParameter("message");
 
-    // Creates a message.
-    Message message =
-        new Message(
-            UUID.randomUUID(),
-            conversation.getId(),
-            user.getId(),
-            cleanedMessageContent,
-            Instant.now());
+      // this removes any HTML from the message content
+      cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
+
+      // Creates a message.
+      message = new Message(UUID.randomUUID(),
+              conversation.getId(),
+              user.getId(),
+              cleanedMessageContent,
+              Instant.now(), 'm');
+
+    } else {
+
+      String messageContent = request.getParameter("filename");
+      cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
+
+      // Creates a message.
+      message = new Message(
+                      UUID.randomUUID(),
+                      conversation.getId(),
+                      user.getId(),
+                      cleanedMessageContent,
+                      Instant.now(), 'i');
+    }
 
     messageStore.addMessage(message);
     user.changeNumPersonalMessageCount();

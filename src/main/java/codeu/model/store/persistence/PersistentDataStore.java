@@ -21,6 +21,8 @@ import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
+import codeu.model.data.Images;
+import codeu.model.data.Message;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -30,9 +32,13 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.SortDirection;
+
+import java.awt.*;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.UUID;
 
 /**
@@ -108,8 +114,11 @@ public class PersistentDataStore {
         String title = (String) entity.getProperty("title");
         UUID destinationUuid = UUID.fromString((String) entity.getProperty("destination_uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        Conversation conversation = new Conversation(uuid, ownerUuid, destinationUuid, title, creationTime);
+        String url = (String) entity.getProperty("url");
+
+        Conversation conversation = new Conversation(uuid, ownerUuid, destinationUuid, title, creationTime, url);
         conversations.add(conversation);
+
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
         // occur include network errors, Datastore service errors, authorization errors,
@@ -122,15 +131,13 @@ public class PersistentDataStore {
   }
 
   /**
-   * Loads all Message objects from the Datastore service and returns them in a List, sorted in
-   * ascending order by creation time.
-   *
+   * Loads all Message objects from the Datastore service and returns them in a HashMap by ConversationID
    * @throws PersistentDataStoreException if an error was detected during the load from the
    *     Datastore service
    */
-  public List<Message> loadMessages() throws PersistentDataStoreException {
+  public HashMap<UUID, LinkedList<Message>> loadMessagesByConversation() throws PersistentDataStoreException {
 
-    List<Message> messages = new ArrayList<>();
+    HashMap<UUID, LinkedList<Message>> messagesByConversation = new HashMap<>();
 
     // Retrieve all messages from the datastore.
     Query query = new Query("chat-messages").addSort("creation_time", SortDirection.ASCENDING);
@@ -143,8 +150,13 @@ public class PersistentDataStore {
         UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
         String content = (String) entity.getProperty("content");
-        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
-        messages.add(message);
+        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime, 'm');
+        LinkedList<Message> tempMessages = new LinkedList<>();
+        if (messagesByConversation.containsKey(conversationUuid)) {
+            tempMessages = messagesByConversation.get(conversationUuid);
+        }
+        tempMessages.add(message);
+;       messagesByConversation.put(conversationUuid, tempMessages);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
         // occur include network errors, Datastore service errors, authorization errors,
@@ -152,9 +164,47 @@ public class PersistentDataStore {
         throw new PersistentDataStoreException(e);
       }
     }
-
-    return messages;
+    return messagesByConversation;
   }
+
+    /**
+     * Loads all Message objects from the Datastore service and returns them in a HashMap by UserID
+     *
+     * @throws PersistentDataStoreException if an error was detected during the load from the
+     *     Datastore service
+     */
+    public HashMap<UUID, LinkedList<Message>> loadMessagesByUser() throws PersistentDataStoreException {
+
+        HashMap<UUID, LinkedList<Message>> messagesByUser = new HashMap<>();
+
+        // Retrieve all messages from the datastore.
+        Query query = new Query("chat-messages").addSort("creation_time", SortDirection.ASCENDING);
+        PreparedQuery results = datastore.prepare(query);
+
+        for (Entity entity : results.asIterable()) {
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                UUID conversationUuid = UUID.fromString((String) entity.getProperty("conv_uuid"));
+                UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
+                Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+                String content = (String) entity.getProperty("content");
+                Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime, 'm');
+                LinkedList<Message> tempList = new LinkedList<>();
+                if (messagesByUser.containsKey(authorUuid)) {
+                    tempList = messagesByUser.get(authorUuid);
+                }
+                tempList.add(message);
+                messagesByUser.put(authorUuid, tempList);
+
+            } catch (Exception e) {
+                // In a production environment, errors should be very rare. Errors which may
+                // occur include network errors, Datastore service errors, authorization errors,
+                // database entity definition mismatches, or service mismatches.
+                throw new PersistentDataStoreException(e);
+            }
+        }
+        return messagesByUser;
+    }
   
   /**
    * Loads all AboutMe objects from the Datastore service and returns them in a List.
@@ -271,6 +321,32 @@ public class PersistentDataStore {
 	    return destinations;
 	  }
 
+    public List<Images> loadImages() throws PersistentDataStoreException {
+
+        List<Images> uploadedImages = new ArrayList<>();
+
+        // Retrieve all messages from the datastore.
+        Query query = new Query("images").addSort("uuid", SortDirection.DESCENDING);
+        PreparedQuery results = datastore.prepare(query);
+
+        for (Entity entity : results.asIterable()) {
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                String filename = (String) entity.getProperty("filename");
+                String destination = (String) entity.getProperty("destination");
+                Images uploadedImage = new Images(filename, destination, uuid);
+                uploadedImages.add(uploadedImage);
+            } catch (Exception e) {
+                // In a production environment, errors should be very rare. Errors which may
+                // occur include network errors, Datastore service errors, authorization errors,
+                // database entity definition mismatches, or service mismatches.
+                throw new PersistentDataStoreException(e);
+            }
+        }
+
+        return uploadedImages;
+    }
+
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
 	  
@@ -301,6 +377,7 @@ public class PersistentDataStore {
     conversationEntity.setProperty("title", conversation.getTitle());
     conversationEntity.setProperty("destination_uuid", conversation.getDestinationId().toString());
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
+    conversationEntity.setProperty("url", conversation.getUrl());
     datastore.put(conversationEntity);
   }
   
@@ -353,6 +430,15 @@ public class PersistentDataStore {
     userActionEntity.setProperty("creation_time", userAction.getCreationTime().toString());
     datastore.put(userActionEntity);
   }
+
+    /** Write an Image object to the Datastore service. */
+    public void writeThrough(Images image) {
+        Entity UploadedImageEntity = new Entity("images", image.getID().toString());
+        UploadedImageEntity.setProperty("uuid", image.getID().toString());
+        UploadedImageEntity.setProperty("filename", image.returnFileName());
+        UploadedImageEntity.setProperty("destination", image.returnDestination());
+        datastore.put(UploadedImageEntity);
+    }
   
   /** Write a Destination object to the Datastore service. */
   public void writeThrough(Destination destination) {

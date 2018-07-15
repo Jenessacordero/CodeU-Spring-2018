@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
-<%@ page import="java.util.List" %>
+<%@ page import="java.util.LinkedList" %>
 <%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.data.Message" %>
 <%@ page import="codeu.model.data.User" %>
@@ -24,7 +24,7 @@
 
 <%
 Conversation conversation = (Conversation) request.getAttribute("conversation");
-List<Message> messages = (List<Message>) request.getAttribute("messages");
+LinkedList<Message> messages = (LinkedList<Message>) request.getAttribute("messages");
 %>
 
 <!DOCTYPE html>
@@ -52,23 +52,24 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 <body onload="scrollChat()">
 
   <nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
-    <a href="/about.jsp">About</a>
-    <a href="/activityfeed">Activity Feed</a>
-    <% if(request.getSession().getAttribute("user") != null){ %>
-      <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
-    <% } else{ %>
-      <a href="/login">Login</a>
-    <% } %>
-    <% if(request.getSession().getAttribute("user") != null){ %>
-      <a href="/user/<%=request.getSession().getAttribute("user") %>">Profile Page</a>
-    <% } %>
-    <a href="/destinations">Destinations</a>
-    <% if(request.getSession().getAttribute("user") != null && (request.getSession().getAttribute("user").equals("cavalos99") || 
-    		request.getSession().getAttribute("user").equals("jenessacordero") || request.getSession().getAttribute("user").equals("agarwalv"))) {%>
-    <a href="/adminpage">Admin</a>
-    <% } %>
-  </nav>
+      <a id="navTitle" href="/">CodeU Chat App</a>
+      <% if(request.getSession().getAttribute("user") != null && (request.getSession().getAttribute("user").equals("cavalos99") ||
+          		request.getSession().getAttribute("user").equals("jenessacordero") || request.getSession().getAttribute("user").equals("agarwalv"))) {%>
+          <a href="/adminpage">Admin</a>
+      <% } %>
+      <a href="/about.jsp">About</a>
+      <a href="/activityfeed">Activity Feed</a>
+      <a href="/destination">Destinations</a>
+      <% if(request.getSession().getAttribute("user") != null){ %>
+        <a href="/user/<%=request.getSession().getAttribute("user") %>">Profile Page</a>
+      <% } %>
+      <% if(request.getSession().getAttribute("user") != null){ %>
+            <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
+          <% } else{ %>
+            <a href="/login">Login</a>
+      <% } %>
+
+    </nav>
 
   <div id="container">
 
@@ -87,14 +88,25 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
     %>
 
     <%
-      for (Message message : messages) {
-        String author = UserStore.getInstance()
-          .getUser(message.getAuthorId()).getName();
-         User user = UserStore.getInstance()
-                .getUser(message.getAuthorId());
-    %>
-      <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <%= processor.process(message.getContent()) %></li>
-    <%
+      if (messages != null) {
+          for (int i = 0; i < messages.size(); i++) {
+            Message message = messages.get(i);
+            String author = UserStore.getInstance()
+              .getUser(message.getAuthorId()).getName();
+             User user = UserStore.getInstance()
+                    .getUser(message.getAuthorId());
+            Character type = message.getType();
+            if (type == 'm') {
+                %>
+                      <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <%= message.getContent() %></li>
+                    <%
+
+            } else {
+                %>
+                      <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <a href = "<%= message.getContent() %>"> <img src="<%= message.getContent() %>" height = "100" width = "100"></a></li>
+                    <%
+                 }
+           }
       }
     %>
       </ul>
@@ -105,9 +117,15 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
     <% if (request.getSession().getAttribute("user") != null) { %>
     <form action="/chat/<%= conversation.getTitle() %>" method="POST">
         <input type="text" name="message">
-        <br/>
+
         <button type="submit">Send</button>
     </form>
+    <form action="/chat/<%= conversation.getTitle() %>" method="POST">
+            <input type="text" name="filename">
+
+            <button type="submit">Send Image</button>
+        </form>
+
     <% } else { %>
       <p><a href="/login">Login</a> to send a message.</p>
     <% } %>

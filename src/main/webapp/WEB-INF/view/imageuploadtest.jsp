@@ -14,6 +14,8 @@
   limitations under the License.
   -- currently outputs a blank webpage for testing purposes
 --%>
+<%@ page import="java.util.List" %>
+<%@ page import="codeu.model.data.Images" %>
 
 
 <!DOCTYPE html>
@@ -25,18 +27,24 @@
 <body>
 
   <nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
-    <a href="/conversations">Conversations</a>
-    <% if(request.getSession().getAttribute("user") != null){ %>
-      <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
-    <% } else{ %>
-      <a href="/login">Login</a>
-    <% } %>
-    <a href="/about.jsp">About</a>
-    <% if(request.getSession().getAttribute("user") != null){ %>
-      <a href="/user/<%=request.getSession().getAttribute("user") %>">Profile Page</a>
-    <% } %>
-  </nav>
+      <a id="navTitle" href="/">CodeU Chat App</a>
+      <% if(request.getSession().getAttribute("user") != null && (request.getSession().getAttribute("user").equals("cavalos99") ||
+          		request.getSession().getAttribute("user").equals("jenessacordero") || request.getSession().getAttribute("user").equals("agarwalv"))) {%>
+          <a href="/adminpage">Admin</a>
+      <% } %>
+      <a href="/about.jsp">About</a>
+      <a href="/activityfeed">Activity Feed</a>
+      <a href="/destination">Destinations</a>
+      <% if(request.getSession().getAttribute("user") != null){ %>
+        <a href="/user/<%=request.getSession().getAttribute("user") %>">Profile Page</a>
+      <% } %>
+      <% if(request.getSession().getAttribute("user") != null){ %>
+            <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
+          <% } else{ %>
+            <a href="/login">Login</a>
+      <% } %>
+
+    </nav>
 
   <div id="container">
 
@@ -49,8 +57,25 @@
       <hr/>
     <% } %>
 
-    <h1>Test</h1>
+    <h3>File Upload:</h3>
+          Select a file to upload: <br />
+          <form action="/imageuploadtest" method="POST">
+                    <div class="form-group">
+                      <label class="form-control-label">Title:</label>
+                    <input type="text" name="filename">
+                  </div>
+
+                  <button type="submit">Create</button>
+                </form>
+
     <hr/>
+
+    <%
+        List<Images> uploadedImages = (List<Images>) request.getAttribute("images");
+        for(Images images : uploadedImages) { %>
+            <img src = "<%= images.returnFileName() %>" height ="50" width ="50">
+        <% }
+    %>
   </div>
 </body>
 </html>

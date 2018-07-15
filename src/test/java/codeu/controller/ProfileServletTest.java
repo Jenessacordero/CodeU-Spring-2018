@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.UUID;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -88,15 +89,15 @@ public class ProfileServletTest {
 		            "$2a$10$.e.4EEfngEXmxAO085XnYOmDntkqod0C384jOR9oagwxMnPNHaGLa",
 		            Instant.now());
 	
-	 List<Message> fakeMessageList = new ArrayList<>();
-	 
+	 LinkedList<Message> fakeMessageList = new LinkedList<>();
+
 	 fakeMessageList.add(
 		        new Message(
 		            UUID.randomUUID(),
 		            UUID.randomUUID(),
 		            userId,
 		            "test content",
-		            Instant.now()));
+		            Instant.now(), 'm'));
 	 	 
 
 	 AboutMe fakeAboutMe = new AboutMe(

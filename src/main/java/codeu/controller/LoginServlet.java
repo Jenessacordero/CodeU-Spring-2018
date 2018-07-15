@@ -85,10 +85,10 @@ public class LoginServlet extends HttpServlet {
     request.getSession().setAttribute("user", username);
 
     if (username.equals("jenessacordero") || username.equals("agarwalv") || username.equals("cavalos99")) {
-      response.sendRedirect("/adminpage");
+      response.sendRedirect("/destinations");
     }
     else {
-      response.sendRedirect("/conversations");
+      response.sendRedirect("/destinations");
     }
   }
 }

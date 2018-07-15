@@ -4,6 +4,8 @@ import codeu.model.data.Message;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import org.junit.Assert;
@@ -24,32 +26,42 @@ public class MessageStoreTest {
           CONVERSATION_ID_ONE,
           UUID.randomUUID(),
           "message one",
-          Instant.ofEpochMilli(1000));
+          Instant.ofEpochMilli(1000), 'm');
   private final Message MESSAGE_TWO =
       new Message(
           UUID.randomUUID(),
           CONVERSATION_ID_ONE,
           UUID.randomUUID(),
           "message two",
-          Instant.ofEpochMilli(2000));
+          Instant.ofEpochMilli(2000), 'm');
   private final Message MESSAGE_THREE =
       new Message(
           UUID.randomUUID(),
           UUID.randomUUID(),
           UUID.randomUUID(),
           "message three",
-          Instant.ofEpochMilli(3000));
+          Instant.ofEpochMilli(3000), 'm');
 
   @Before
   public void setup() {
     mockPersistentStorageAgent = Mockito.mock(PersistentStorageAgent.class);
     messageStore = MessageStore.getTestInstance(mockPersistentStorageAgent);
 
-    final List<Message> messageList = new ArrayList<>();
-    messageList.add(MESSAGE_ONE);
-    messageList.add(MESSAGE_TWO);
-    messageList.add(MESSAGE_THREE);
-    messageStore.setMessages(messageList);
+    final HashMap<UUID, LinkedList<Message>> messageListbyConvo = new HashMap<>();
+    LinkedList temp1 = new LinkedList();
+    LinkedList temp2 = new LinkedList();
+    LinkedList temp3 = new LinkedList();
+    temp1.add(MESSAGE_ONE);
+    temp1.add(MESSAGE_TWO);
+    temp3.add(MESSAGE_THREE);
+    messageListbyConvo.put(MESSAGE_ONE.getConversationId(), temp1);
+    messageListbyConvo.put(MESSAGE_THREE.getConversationId(), temp3);
+
+    final HashMap<UUID, LinkedList<Message>> messageListByUser = new HashMap<>();
+    messageListByUser.put(MESSAGE_ONE.getAuthorId(), temp1);
+    messageListByUser.put(MESSAGE_TWO.getAuthorId(), temp2);
+    messageListByUser.put(MESSAGE_THREE.getAuthorId(), temp3);
+    messageStore.setMessages(messageListbyConvo, messageListByUser);
   }
 
   @Test
@@ -70,10 +82,10 @@ public class MessageStoreTest {
             inputConversationId,
             UUID.randomUUID(),
             "test message",
-            Instant.now());
+            Instant.now(), 'm');
 
     messageStore.addMessage(inputMessage);
-    Message resultMessage = messageStore.getMessagesInConversation(inputConversationId).get(0);
+    Message resultMessage = messageStore.getMessagesInConversation(inputConversationId).getLast();
 
     assertEquals(inputMessage, resultMessage);
     Mockito.verify(mockPersistentStorageAgent).writeThrough(inputMessage);
