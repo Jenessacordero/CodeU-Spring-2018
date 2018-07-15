@@ -19,10 +19,12 @@ import codeu.model.data.Destination;
 import codeu.model.data.Message;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
+import codeu.model.data.Image;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.ImageStore;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
@@ -47,6 +49,9 @@ public class DestinationPageServlet extends HttpServlet {
   /** Store class that gives access to UserActions. */
   private UserActionStore userActionStore;
 
+  /** Store class that gives access to Images. */
+  private ImageStore imageStore;
+
   /**
    * Set up state for handling conversation-related requests. This method is only called when
    * running in a server, not when running in a test.
@@ -58,6 +63,7 @@ public class DestinationPageServlet extends HttpServlet {
     setConversationStore(ConversationStore.getInstance());
     setDestinationStore(DestinationStore.getInstance());
     setUserActionStore(UserActionStore.getInstance());
+    setImageStore(ImageStore.getInstance());
   }
 
   /**
@@ -96,16 +102,27 @@ public class DestinationPageServlet extends HttpServlet {
    * This function fires when a user navigates to the conversations page. It gets all of the
    * conversations from the model and forwards to conversations.jsp for rendering the list.
    */
+
+  void setImageStore(ImageStore imageStore) {
+    this.imageStore = imageStore;
+  }
+
+  /**
+   * This function fires when a user navigates to the conversations page. It gets all of the
+   * conversations from the model and forwards to conversations.jsp for rendering the list.
+   */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 	  String requestUrl = request.getRequestURI();
 	  String destinationTitle = requestUrl.substring("/destination/".length());
 	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
+	  List<Image> images = imageStore.returnImagesInDestination(destination);
 
     List<Conversation> conversations = conversationStore.getConvosInDestination(destination.getId());
     request.setAttribute("conversations", conversations);
     request.setAttribute("destinationTitle", destinationTitle);
+    request.setAttribute("images", images);
     request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
   }
 
@@ -121,6 +138,7 @@ public class DestinationPageServlet extends HttpServlet {
 	  String requestUrl = request.getRequestURI();
 	  String destinationTitle = requestUrl.substring("/destination/".length());
 	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
+
 	  
     String username = (String) request.getSession().getAttribute("user");
     if (username == null) {
@@ -139,28 +157,38 @@ public class DestinationPageServlet extends HttpServlet {
   
 
     String conversationTitle = request.getParameter("conversationTitle");
-    if (!conversationTitle.matches("[\\w*]*")) {
-      request.setAttribute("error", "Please enter only letters and numbers.");
-      request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
-      return;
-    }
 
-    if (conversationStore.isTitleTaken(conversationTitle)) {
-      // conversation title is already taken, just go into that conversation instead of creating a
-      // new one
+    if (conversationTitle != null) {
+      if (!conversationTitle.matches("[\\w*]*")) {
+        request.setAttribute("error", "Please enter only letters and numbers.");
+        request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
+        return;
+      }
+      if (conversationStore.isTitleTaken(conversationTitle)) {
+        // conversation title is already taken, just go into that conversation instead of creating a
+        // new one
+        response.sendRedirect("/chat/" + conversationTitle);
+        return;
+      }
+
+      Conversation conversation =
+              new Conversation(UUID.randomUUID(), user.getId(), destination.getId(), conversationTitle, Instant.now());
+
+      conversationStore.addConversation(conversation);
+
+      // Creates a new user action.
+      UserAction newConversation = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has created a new conversation: "
+              + conversationTitle, Instant.now());
+      userActionStore.addUserAction(newConversation);
       response.sendRedirect("/chat/" + conversationTitle);
-      return;
     }
-
-    Conversation conversation =
-        new Conversation(UUID.randomUUID(), user.getId(), destination.getId(), conversationTitle, Instant.now());
-
-    conversationStore.addConversation(conversation);
-    
-    // Creates a new user action.
-    UserAction newConversation = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has created a new conversation: "
-    		+ conversationTitle, Instant.now());
-    userActionStore.addUserAction(newConversation);
-    response.sendRedirect("/chat/" + conversationTitle);
+    else {
+      String imageFilename = request.getParameter("filename");
+      if (imageFilename != null) {
+        Image newImage = new Image(imageFilename, destinationTitle, UUID.randomUUID(), Instant.now());
+        imageStore.addImage(newImage);
+        response.sendRedirect("/destination/" + destinationTitle);
+      }
+    }
   }
 }

@@ -21,6 +21,7 @@ import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
+import codeu.model.data.Image;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -143,7 +144,8 @@ public class PersistentDataStore {
         UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
         String content = (String) entity.getProperty("content");
-        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
+        Character type = ((String) entity.getProperty("type")).charAt(0);
+        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime, type);
         messages.add(message);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -271,6 +273,33 @@ public class PersistentDataStore {
 	    return destinations;
 	  }
 
+    public List<Image> loadImages() throws PersistentDataStoreException {
+
+        List<Image> images = new ArrayList<>();
+
+        // Retrieve all messages from the datastore.
+        Query query = new Query("images").addSort("creation_time", SortDirection.ASCENDING);
+        PreparedQuery results = datastore.prepare(query);
+
+        for (Entity entity : results.asIterable()) {
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                String destination = (String) entity.getProperty("destination");
+                String filename = (String) entity.getProperty("filename");
+                Instant now = Instant.parse((String) entity.getProperty("creation_time"));
+                Image image = new Image(filename, destination, uuid, now);
+                images.add(image);
+            } catch (Exception e) {
+                // In a production environment, errors should be very rare. Errors which may
+                // occur include network errors, Datastore service errors, authorization errors,
+                // database entity definition mismatches, or service mismatches.
+                throw new PersistentDataStoreException(e);
+            }
+        }
+
+        return images;
+    }
+
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
 	  
@@ -290,6 +319,7 @@ public class PersistentDataStore {
     messageEntity.setProperty("author_uuid", message.getAuthorId().toString());
     messageEntity.setProperty("content", message.getContent());
     messageEntity.setProperty("creation_time", message.getCreationTime().toString());
+    messageEntity.setProperty("type", message.getType().toString());
     datastore.put(messageEntity);
   }
 
@@ -363,5 +393,15 @@ public class PersistentDataStore {
     destinationEntity.setProperty("creation_time", destination.getCreationTime().toString());
     datastore.put(destinationEntity);
   }
+
+    /** Write a Image object to the Datastore service. */
+    public void writeThrough(Image image) {
+        Entity imageEntity = new Entity("images", image.getId().toString());
+        imageEntity.setProperty("uuid", image.getId().toString());
+        imageEntity.setProperty("filename", image.returnFilename());
+        imageEntity.setProperty("destination", image.returnDestination());
+        imageEntity.setProperty("creation_time", image.getCreation().toString());
+        datastore.put(imageEntity);
+    }
 }
 

@@ -18,10 +18,12 @@ import codeu.model.data.Conversation;
 import codeu.model.data.Destination;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
+import codeu.model.data.Image;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.ImageStore;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -49,6 +51,7 @@ public class DestinationPageServletTest {
   private DestinationStore mockDestinationStore;
   private UserStore mockUserStore;
   private UserActionStore mockUserActionStore;
+  private ImageStore mockImageStore;
 
   @Before
   public void setup() {
@@ -74,6 +77,9 @@ public class DestinationPageServletTest {
     
     mockUserActionStore = Mockito.mock(UserActionStore.class);
     destinationPageServlet.setUserActionStore(mockUserActionStore);
+
+    mockImageStore = Mockito.mock(ImageStore.class);
+    destinationPageServlet.setImageStore(mockImageStore);
   }
 
   @Test
@@ -92,10 +98,15 @@ public class DestinationPageServletTest {
         new Conversation(UUID.randomUUID(), UUID.randomUUID(), fakeDestinationId, "test_conversation", Instant.now()));
     Mockito.when(mockConversationStore.getConvosInDestination(fakeDestinationId)).thenReturn(fakeConversationList);
 
+    List<Image> fakeImageList = new ArrayList<>();
+    fakeImageList.add(new Image("random", "test_destination", UUID.randomUUID(), Instant.now()));
+    Mockito.when(mockImageStore.returnImagesInDestination(fakeDestination)).thenReturn(fakeImageList);
+
     destinationPageServlet.doGet(mockRequest, mockResponse);
 
     Mockito.verify(mockRequest).setAttribute("conversations", fakeConversationList);
     Mockito.verify(mockRequest).setAttribute("destinationTitle", "test_destination");
+    Mockito.verify(mockRequest).setAttribute("images", fakeImageList);
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
 

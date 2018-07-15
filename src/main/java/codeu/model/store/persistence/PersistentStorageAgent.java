@@ -21,6 +21,7 @@ import codeu.model.data.StatusUpdate;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
+import codeu.model.data.Image;
 import codeu.model.store.persistence.PersistentDataStore;
 import java.util.List;
 
@@ -133,6 +134,16 @@ public class PersistentStorageAgent {
     return persistentDataStore.loadDestinations();
   }
 
+  /**
+   * Retrieve all Image objects from the Datastore service. The returned list may be empty.
+   *
+   * @throws PersistentDataStoreException if an error was detected during the load from the
+   *     Datastore service
+   */
+  public List<Image> loadImages() throws PersistentDataStoreException {
+    return persistentDataStore.loadImages();
+  }
+
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
     persistentDataStore.writeThrough(user);
@@ -167,6 +178,11 @@ public class PersistentStorageAgent {
   /** Write a Destination object to the Datastore service. */
   public void writeThrough(Destination destination) {
     persistentDataStore.writeThrough(destination);
+  }
+
+  /** Write an Image object to the Datastore service. */
+  public void writeThrough(Image image) {
+    persistentDataStore.writeThrough(image);
   }
 
 }
