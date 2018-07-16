@@ -93,21 +93,35 @@
     <servlet-name>ImageUploadTestServlet</servlet-name>
     <url-pattern>/imageuploadtest</url-pattern>
   </servlet-mapping>
+
   <servlet>
   	<servlet-name>DestinationsServlet</servlet-name>
   	<servlet-class>codeu.controller.DestinationsServlet</servlet-class>
   </servlet>
+
   <servlet-mapping>
   	<servlet-name>DestinationsServlet</servlet-name>
   	<url-pattern>/destinations</url-pattern>
   </servlet-mapping>
+
   <servlet>
   	<servlet-name>DestinationPageServlet</servlet-name>
   	<servlet-class>codeu.controller.DestinationPageServlet</servlet-class>
   </servlet>
+
   <servlet-mapping>
   	<servlet-name>DestinationPageServlet</servlet-name>
   	<url-pattern>/destination/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>RankingsServlet</servlet-name>
+    <servlet-class>codeu.controller.RankingsServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>RankingsServlet</servlet-name>
+    <url-pattern>/rankingPage</url-pattern>
   </servlet-mapping>
 
 </web-app>

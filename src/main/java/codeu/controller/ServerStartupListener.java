@@ -49,6 +49,9 @@ public class ServerStartupListener implements ServletContextListener {
 
       List<Image> images = PersistentStorageAgent.getInstance().loadImages();
       ImageStore.getInstance().setImages(images);
+      //TODO implement functions -> done!
+      List<Destination> rankedDestinations = PersistentStorageAgent.getInstance().loadRankedDestinations();
+      DestinationStore.getInstance().setRankedDestinations(rankedDestinations);
 
     } catch (PersistentDataStoreException e) {
       System.err.println("Server didn't start correctly. An error occurred during Datastore load!");
