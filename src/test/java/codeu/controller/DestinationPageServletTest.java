@@ -89,7 +89,7 @@ public class DestinationPageServletTest {
     Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
     
     Destination fakeDestination =
-            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now());
+            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now(), "");
         Mockito.when(mockDestinationStore.getDestinationWithTitle("test_destination"))
             .thenReturn(fakeDestination);
         
@@ -117,7 +117,7 @@ public class DestinationPageServletTest {
 	    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
 	    
 	    Destination fakeDestination =
-	            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now());
+	            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now(), "");
 	        Mockito.when(mockDestinationStore.getDestinationWithTitle("test_destination"))
 	            .thenReturn(fakeDestination);
     Mockito.when(mockSession.getAttribute("user")).thenReturn(null);
@@ -136,7 +136,7 @@ public class DestinationPageServletTest {
 	    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
 	    
 	    Destination fakeDestination =
-	            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now());
+	            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now(), "");
 	        Mockito.when(mockDestinationStore.getDestinationWithTitle("test_destination"))
 	            .thenReturn(fakeDestination);
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
@@ -156,7 +156,7 @@ public class DestinationPageServletTest {
 	    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
 	    
 	    Destination fakeDestination =
-	            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now());
+	            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now(), "");
 	        Mockito.when(mockDestinationStore.getDestinationWithTitle("test_destination"))
 	            .thenReturn(fakeDestination);
     Mockito.when(mockRequest.getParameter("conversationTitle")).thenReturn("bad !@#$% name");
@@ -180,7 +180,7 @@ public class DestinationPageServletTest {
 	    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
 	    
 	    Destination fakeDestination =
-	            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now());
+	            new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now(), "");
 	        Mockito.when(mockDestinationStore.getDestinationWithTitle("test_destination"))
 	            .thenReturn(fakeDestination);
     Mockito.when(mockRequest.getParameter("conversationTitle")).thenReturn("test_conversation");
@@ -204,7 +204,7 @@ public class DestinationPageServletTest {
     Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
     
     Destination fakeDestination =
-            new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now());
+            new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), "");
         Mockito.when(mockDestinationStore.getDestinationWithTitle("test_destination"))
             .thenReturn(fakeDestination);
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");

@@ -55,6 +55,14 @@
 
       <h1><%= request.getAttribute("destinationTitle") %></h1>
 
+    <img src="<%=request.getAttribute("banner")%>" height="400" width="800"/>
+    <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
+      <div class="form-group">
+        <label class="form-control-label">Upload/Change the Banner Image (Image Address Only): </label>
+        <input type="text" name="banner">
+      </div>
+
+
     <h2>Photos:</h2>
 
     <% List<Image> images = (List<Image>) request.getAttribute("images");

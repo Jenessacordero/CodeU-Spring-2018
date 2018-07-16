@@ -260,7 +260,8 @@ public class PersistentDataStore {
 	        UUID owner = UUID.fromString((String) entity.getProperty("owner"));
 	        String title = (String) entity.getProperty("title");
 	        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-	        Destination destination = new Destination(uuid, owner, title, creationTime);
+	        String banner = "";
+	        Destination destination = new Destination(uuid, owner, title, creationTime, banner);
 	        destinations.add(destination);
 	      } catch (Exception e) {
 	        // In a production environment, errors should be very rare. Errors which may
@@ -391,6 +392,7 @@ public class PersistentDataStore {
     destinationEntity.setProperty("owner", destination.getOwnerId().toString());
     destinationEntity.setProperty("title", destination.getTitle());
     destinationEntity.setProperty("creation_time", destination.getCreationTime().toString());
+    destinationEntity.setProperty("banner", destination.getBanner());
     datastore.put(destinationEntity);
   }
 

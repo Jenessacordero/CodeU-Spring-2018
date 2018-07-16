@@ -139,7 +139,7 @@ public class PersistentStorageAgentTest {
   public void testWriteThroughDestination() throws PersistentDataStoreException {
     Destination destination =
         new Destination(
-            UUID.randomUUID(), UUID.randomUUID(), "test title", Instant.now());
+            UUID.randomUUID(), UUID.randomUUID(), "test title", Instant.now(), "");
     persistentStorageAgent.writeThrough(destination);
     Mockito.verify(mockPersistentDataStore).writeThrough(destination);
   }

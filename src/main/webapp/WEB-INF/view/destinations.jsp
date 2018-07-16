@@ -56,9 +56,12 @@
           <div class="form-group">
             <label class="form-control-label">Title:</label>
           <input type="text" name="destinationTitle">
+            <br/>
+            <label class="form-control-label">Banner Image:</label>
+            <input type="text" name="banner">
         </div>
 
-        <button type="submit">Create</button>
+        <button type="submit">Create Destination</button>
       </form>
 
       <hr/>

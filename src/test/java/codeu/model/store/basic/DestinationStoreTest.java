@@ -19,11 +19,11 @@ public class DestinationStoreTest {
 
   private final Destination DESTINATION_ONE =
       new Destination(
-          UUID.randomUUID(), UUID.randomUUID(), "destination_one", Instant.ofEpochMilli(1000));
+          UUID.randomUUID(), UUID.randomUUID(), "destination_one", Instant.ofEpochMilli(1000), "");
   
   private final Destination DESTINATION_TWO =
 	      new Destination(
-	          UUID.randomUUID(), UUID.randomUUID(), "destination_two", Instant.ofEpochMilli(1000));
+	          UUID.randomUUID(), UUID.randomUUID(), "destination_two", Instant.ofEpochMilli(1000), "");
 	  
 
   @Before
@@ -72,7 +72,7 @@ public class DestinationStoreTest {
   @Test
   public void testAddDestination() {
     Destination inputDestination =
-        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now());
+        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), "");
 
     destinationStore.addDestination(inputDestination);
     
@@ -89,5 +89,6 @@ public class DestinationStoreTest {
     Assert.assertEquals(expectedDestination.getTitle(), actualDestination.getTitle());
     Assert.assertEquals(
     		expectedDestination.getCreationTime(), actualDestination.getCreationTime());
+    Assert.assertEquals(expectedDestination.getBanner(), actualDestination.getBanner());
   }
 }

@@ -118,11 +118,13 @@ public class DestinationPageServlet extends HttpServlet {
 	  String destinationTitle = requestUrl.substring("/destination/".length());
 	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
 	  List<Image> images = imageStore.returnImagesInDestination(destination);
+	  String banner = destination.getBanner();
 
     List<Conversation> conversations = conversationStore.getConvosInDestination(destination.getId());
     request.setAttribute("conversations", conversations);
     request.setAttribute("destinationTitle", destinationTitle);
     request.setAttribute("images", images);
+    request.setAttribute("banner", banner);
     request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
   }
 
@@ -157,7 +159,10 @@ public class DestinationPageServlet extends HttpServlet {
   
 
     String conversationTitle = request.getParameter("conversationTitle");
-
+    String banner = request.getParameter("banner");
+    if (banner != null || banner != "") {
+      destination.changeBanner(banner);
+    }
     if (conversationTitle != null) {
       if (!conversationTitle.matches("[\\w*]*")) {
         request.setAttribute("error", "Please enter only letters and numbers.");

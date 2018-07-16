@@ -69,7 +69,7 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
       <form action="/user/<%= request.getSession().getAttribute("user") %>" method="POST">
         <textarea name="aboutme"><%= aboutMe.getContent() %></textarea>
         <br/>
-        <button type="submit">Submit</button>
+        <button type="submit">Update Bio</button>
     </form>
         <% } else if(!request.getSession().getAttribute("user").equals(request.getAttribute("username"))){ %>
         <h1><%= request.getAttribute("username") %>'s bio:</h1>
@@ -98,9 +98,16 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
       for (Message message : messages) {
         String author = UserStore.getInstance()
           .getUser(message.getAuthorId()).getName();
-    %>
-      <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
-    <%
+        if (message.getType().equals('m')) {
+        %>
+          <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
+          <%
+        } else {
+          %>
+            <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong></li>
+            <a href="<%=message.getContent()%>"><img src="<%=message.getContent()%>" width = "75" height = "75"></a>
+          <%
+        }
       }
     %>
       </ul>

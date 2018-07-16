@@ -26,6 +26,7 @@ public class Destination {
   public final UUID owner;
   public final String title;
   public final Instant creation;
+  public String banner;
 
   /**
    * Constructs a new Conversation.
@@ -35,11 +36,12 @@ public class Destination {
    * @param title the title of this Destination
    * @param creation the creation time of this Destination
    */
-  public Destination(UUID id, UUID owner, String title, Instant creation) {
+  public Destination(UUID id, UUID owner, String title, Instant creation, String banner) {
     this.id = id;
     this.owner = owner;
     this.creation = creation;
     this.title = title;
+    this.banner = banner;
   }
 
   /** Returns the ID of this Destination. */
@@ -60,5 +62,14 @@ public class Destination {
   /** Returns the creation time of this Destination. */
   public Instant getCreationTime() {
     return creation;
+  }
+
+  /** Returns the banner of this Destination. */
+  public String getBanner() {
+    return banner;
+  }
+
+  public void changeBanner(String filename) {
+    banner = filename;
   }
 }
