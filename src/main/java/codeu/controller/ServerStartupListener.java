@@ -52,6 +52,10 @@ public class ServerStartupListener implements ServletContextListener {
       List<Destination> destinations = PersistentStorageAgent.getInstance().loadDestinations();
       DestinationStore.getInstance().setDestinations(destinations);
 
+      //TODO implement functions -> done!
+      List<Destination> rankedDestinations = PersistentStorageAgent.getInstance().loadRankedDestinations();
+      DestinationStore.getInstance().setRankedDestinations(rankedDestinations);
+
     } catch (PersistentDataStoreException e) {
       System.err.println("Server didn't start correctly. An error occurred during Datastore load!");
       System.err.println("This is usually caused by loading data that's in an invalid format.");

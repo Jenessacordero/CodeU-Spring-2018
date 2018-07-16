@@ -39,7 +39,7 @@ public class DestinationsServlet extends HttpServlet {
 
   /** Store class that gives access to Destinations. */
   private DestinationStore destinationStore;
-  
+
   /** Store class that gives access to UserActions. */
   private UserActionStore userActionStore;
 
@@ -70,7 +70,7 @@ public class DestinationsServlet extends HttpServlet {
   void setDestinationStore(DestinationStore destinationStore) {
     this.destinationStore = destinationStore;
   }
-  
+
   /**
    * Sets the UserActionStore used by this servlet. This function provides a common setup method
    * for use by the test framework or the servlet's init() function.
@@ -85,7 +85,7 @@ public class DestinationsServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+          throws IOException, ServletException {
     List<Destination> destinations = destinationStore.getAllDestinations();
     request.setAttribute("destinations", destinations);
     request.getRequestDispatcher("/WEB-INF/view/destinations.jsp").forward(request, response);
@@ -98,7 +98,7 @@ public class DestinationsServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+          throws IOException, ServletException {
 
     String username = (String) request.getSession().getAttribute("user");
     if (username == null) {
@@ -114,7 +114,7 @@ public class DestinationsServlet extends HttpServlet {
       response.sendRedirect("/destinations");
       return;
     }
-  
+
 
     String destinationTitle = request.getParameter("destinationTitle");
     if (!destinationTitle.matches("[\\w*]*")) {
@@ -131,13 +131,13 @@ public class DestinationsServlet extends HttpServlet {
     }
 
     Destination destination =
-        new Destination(UUID.randomUUID(), user.getId(), destinationTitle, Instant.now());
+            new Destination(UUID.randomUUID(), user.getId(), destinationTitle, Instant.now());
 
     destinationStore.addDestination(destination);
-    
+
     // Creates a new user action.
     UserAction newDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has created a new destination: "
-    		+ destinationTitle, Instant.now());
+            + destinationTitle, Instant.now());
     userActionStore.addUserAction(newDestination);
     response.sendRedirect("/destination/" + destinationTitle);
   }
