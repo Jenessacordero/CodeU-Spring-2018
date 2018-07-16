@@ -271,6 +271,35 @@ public class PersistentDataStore {
 	    return destinations;
 	  }
 
+	  //TODO implement/modify for ranked destinations -> done!
+    public List<Destination> loadRankedDestinations() throws PersistentDataStoreException {
+
+        List<Destination> rankedDestinations = new ArrayList<>();
+//
+//        // Retrieve from the datastore.
+        Query query = new Query("rankedDestinations").addSort("creation_time", SortDirection.ASCENDING);
+        PreparedQuery results = datastore.prepare(query);
+//
+        for (Entity entity : results.asIterable()) {
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                UUID owner = UUID.fromString((String) entity.getProperty("owner"));
+                String title = (String) entity.getProperty("title");
+                Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+                int votes = (int) entity.getProperty("votes");
+                Destination destination = new Destination(uuid, owner, title, creationTime, votes);
+                rankedDestinations.add(destination);
+            } catch (Exception e) {
+                // In a production environment, errors should be very rare. Errors which may
+                // occur include network errors, Datastore service errors, authorization errors,
+                // database entity definition mismatches, or service mismatches.
+                throw new PersistentDataStoreException(e);
+            }
+        }
+//
+        return rankedDestinations;
+    }
+
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
 	  

@@ -14,15 +14,18 @@
   limitations under the License.
 --%>
 <%@ page import="java.util.List" %>
+<%@ page import="codeu.model.data.Destination" %>
 <%@ page import="codeu.model.data.UserAction" %>
 <%@ page import="codeu.model.data.Message" %>
 <%@ page import="codeu.model.data.UserAction" %>
-<%@ page import="codeu.model.store.basic.UserStore" %><%
-List<UserAction> userActions = (List<UserAction>) request.getAttribute("userActions");
-%><!DOCTYPE html>
+<%@ page import="codeu.model.store.basic.UserStore" %>
+
+
+
+<!DOCTYPE html>
 <html>
 <head>
-  <title>Activity Feed</title>
+  <title>Rankings</title>
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
@@ -34,33 +37,37 @@ List<UserAction> userActions = (List<UserAction>) request.getAttribute("userActi
     <% if(request.getAttribute("error") != null){ %>
         <h2 style="color:red"><%= request.getAttribute("error") %></h2>
     <% } %>
-    <h1>Activity</h1>
-    <p>Here's everything that's happened on the site so far!</p>
+
+    <h1>Ranks</h1>
+    <p>Here are the trending places to visit - where will you go next?</p>
     <hr/>
 
   <div id="chat">
-      <ul>
+      <ol>
     <%
-      for (UserAction userAction : userActions) {
+      List<Destination> rankedDestinations = (List<Destination>) request.getAttribute("rankedDestinations");
+      for (Destination destination : rankedDestinations) {
     %>
-      <li><strong><%= userAction.getFormattedTime() %>: </strong><%= userAction.getMessage() %></li>
+
+        <li>
+         <form action="${pageContext.request.contextPath}/rankingPage" method="post">
+             <button type="submit" name="upvote" value =<%=destination.getTitle()%> >Upvote</button>
+             <button type="submit" name="downvote" value =<%=destination.getTitle()%> >Downvote</button>
+         </form>
+
+          <strong><%= destination.getVotes() %> </strong>       <a href="/destination/<%= destination.getTitle() %>"><%= destination.getTitle() %></a></li>
+        </li>
     <%
       }
     %>
-      </ul>
+      </ol>
     </div>
-    
+
     <hr/>
 
 	<div>
-    <% if (request.getSession().getAttribute("user") != null) { %>
-    <form action="/activityfeed" method="POST">
-        <textarea name="status-update"> </textarea>
-        <br/>
-        <button type="submit">Send</button>
-    </form>
-    <% } else { %>
-      <p><a href="/login">Login</a> to post a status update!</p>
+    <% if (request.getSession().getAttribute("user") == null) { %>
+      <p><a href="/login">Login</a> to vote on destinations!</p>
     <% } %>
     </div>
 
