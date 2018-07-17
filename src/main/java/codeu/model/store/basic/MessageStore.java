@@ -92,15 +92,15 @@ public class MessageStore {
   /** Access the current set of Messages by the current user. */
   public List<Message> getMessagesByUser(UUID user) {
 
-    List<Message> messagesInConversation = new ArrayList<>();
+    List<Message> messagesByUser = new ArrayList<>();
 
     for (Message message : messages) {
       if (message.getAuthorId().equals(user)) {
-        messagesInConversation.add(message);
+    	  messagesByUser.add(message);
       }
     }
 
-    return messagesInConversation;
+    return messagesByUser;
   }
 
   /** Sets the List of Messages stored by this MessageStore. */

@@ -117,11 +117,12 @@ public class DestinationsServlet extends HttpServlet {
   
 
     String destinationTitle = request.getParameter("destinationTitle");
-    if (!destinationTitle.matches("[\\w*]*")) {
-      request.setAttribute("error", "Please enter only letters and numbers.");
-      request.getRequestDispatcher("/WEB-INF/view/destinations.jsp").forward(request, response);
-      return;
-    }
+//    System.out.println(destinationTitle);
+//    if (!destinationTitle.matches("[\\w*]*")) {
+//      request.setAttribute("error", "Please enter only letters and numbers.");
+//      request.getRequestDispatcher("/WEB-INF/view/destinations.jsp").forward(request, response);
+//      return;
+//    }
 
     if (destinationStore.isTitleTaken(destinationTitle)) {
       // destination title is already taken, just go into that conversation instead of creating a

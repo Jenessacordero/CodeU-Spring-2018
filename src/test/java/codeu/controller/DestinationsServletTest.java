@@ -110,21 +110,6 @@ public class DestinationsServletTest {
     Mockito.verify(mockResponse).sendRedirect("/destinations");
   }
 
-  @Test
-  public void testDoPost_BadDestinationName() throws IOException, ServletException {
-    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("bad !@#$% name");
-    Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
-
-    User fakeUser = new User(UUID.randomUUID(), "test_username", "test_username", Instant.now());
-    Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
-
-    destinationsServlet.doPost(mockRequest, mockResponse);
-
-    Mockito.verify(mockDestinationStore, Mockito.never())
-        .addDestination(Mockito.any(Destination.class));
-    Mockito.verify(mockRequest).setAttribute("error", "Please enter only letters and numbers.");
-    Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
-  }
 
   @Test
   public void testDoPost_DestinationNameTaken() throws IOException, ServletException {

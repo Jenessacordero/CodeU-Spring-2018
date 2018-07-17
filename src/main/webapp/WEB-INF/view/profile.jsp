@@ -15,11 +15,11 @@
 --%>
 <%@ page import="java.util.List" %>
 <%@ page import="codeu.model.data.Conversation" %>
-<%@ page import="codeu.model.data.Message" %>
+<%@ page import="codeu.model.data.UserAction" %>
 <%@ page import="codeu.model.data.AboutMe" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
 <%
-List<Message> messages = (List<Message>) request.getAttribute("messages");
+List<UserAction> userActions = (List<UserAction>) request.getAttribute("userActions");
 AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
 %>
 <!DOCTYPE html>
@@ -88,18 +88,16 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
         
      
 	
-    <h1>Messages</h1>
+    <h1>User Activity</h1>
     <hr/>
 
     <div id="chat">
     
       <ul>
     <%
-      for (Message message : messages) {
-        String author = UserStore.getInstance()
-          .getUser(message.getAuthorId()).getName();
+      for (UserAction userAction : userActions) {
     %>
-      <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
+      <li><strong><%= userAction.getFormattedTime() %>: </strong><%= userAction.getMessage() %></li>
     <%
       }
     %>

@@ -17,9 +17,11 @@ package codeu.controller;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
+import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
+import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import codeu.model.store.basic.AboutMeStore;
@@ -43,8 +45,8 @@ public class ProfileServlet extends HttpServlet {
 	/** Store class that gives access to Conversations. */
 	private ConversationStore conversationStore;
 	
-	/** Store class that gives access to Messages. */
-	private MessageStore messageStore;
+	/** Store class that gives access to UserActions. */
+	private UserActionStore userActionStore;
 	
 	/** Store class that gives access to AboutMes. */
 	private AboutMeStore aboutMeStore;
@@ -58,7 +60,7 @@ public class ProfileServlet extends HttpServlet {
 		 super.init();
 		 setUserStore(UserStore.getInstance());
 		 setConversationStore(ConversationStore.getInstance());
-		 setMessageStore(MessageStore.getInstance());
+		 setUserActionStore(UserActionStore.getInstance());
 		 setAboutMeStore(AboutMeStore.getInstance());
 	  }
 
@@ -79,11 +81,11 @@ public class ProfileServlet extends HttpServlet {
 	  }
 	  
 	  /**
-	   * Sets the MessageStore used by this servlet. This function provides a common setup method for use
+	   * Sets the UserActionStore used by this servlet. This function provides a common setup method for use
 	   * by the test framework or the servlet's init() function.
 	   */
-	  void setMessageStore(MessageStore messageStore) {
-	    this.messageStore = messageStore;
+	  void setUserActionStore(UserActionStore userActionStore) {
+	    this.userActionStore = userActionStore;
 	  }
 	  
 	  /**
@@ -107,10 +109,10 @@ public class ProfileServlet extends HttpServlet {
 		  User user = userStore.getUser(username);
 		  UUID userID = user.getId();
 		  
-		  List<Message> messages = messageStore.getMessagesByUser(userID);
+		  List<UserAction> userActions = userActionStore.returnUserActionsByUser(userID);
 		  AboutMe aboutMe = aboutMeStore.getAboutMeByUser(userID);
 		  
-		  request.setAttribute("messages", messages);
+		  request.setAttribute("userActions", userActions);
 		  request.setAttribute("user", user);
 		  request.setAttribute("username", username);
 		  request.setAttribute("aboutMe", aboutMe);

@@ -55,7 +55,12 @@
       <form action="/destinations" method="POST">
           <div class="form-group">
             <label class="form-control-label">Title:</label>
-          <input type="text" name="destinationTitle">
+          <select name="destinationTitle">
+          <option value="Japan">Japan</option>
+          <option value="Italy">Italy</option>
+          <option value="France">France</option>
+          <option value="Mexico">Mexico</option>
+          </select>
         </div>
 
         <button type="submit">Create</button>
