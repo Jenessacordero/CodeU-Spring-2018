@@ -26,6 +26,7 @@ public class Destination {
   public final UUID owner;
   public final String title;
   public final Instant creation;
+  private int votes;
 
   /**
    * Constructs a new Conversation.
@@ -34,12 +35,22 @@ public class Destination {
    * @param owner the ID of the User who created this Destination
    * @param title the title of this Destination
    * @param creation the creation time of this Destination
+   * @param votes the number of votes from users it has, default is zero if not defined
    */
+  public Destination(UUID id, UUID owner, String title, Instant creation, int votes) {
+    this.id = id;
+    this.owner = owner;
+    this.creation = creation;
+    this.title = title;
+    this.votes = votes;
+  }
+
   public Destination(UUID id, UUID owner, String title, Instant creation) {
     this.id = id;
     this.owner = owner;
     this.creation = creation;
     this.title = title;
+    this.votes = 0;
   }
 
   /** Returns the ID of this Destination. */
@@ -60,5 +71,19 @@ public class Destination {
   /** Returns the creation time of this Destination. */
   public Instant getCreationTime() {
     return creation;
+  }
+
+  public int getVotes() {
+    return votes;
+  }
+
+  /** Called when a user likes a destination. */
+  public void upVote() {
+    this.votes += 1;
+  }
+
+  /** Called when a user dislikes a destination. */
+  public void downVote() {
+    this.votes += -1;
   }
 }

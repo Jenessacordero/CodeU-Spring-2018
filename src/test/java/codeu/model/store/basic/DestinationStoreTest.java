@@ -1,16 +1,18 @@
 package codeu.model.store.basic;
 
 import codeu.model.data.Destination;
-import codeu.model.data.Conversation;
 import codeu.model.store.persistence.PersistentStorageAgent;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static org.hamcrest.CoreMatchers.is;
 
 public class DestinationStoreTest {
 
@@ -19,12 +21,16 @@ public class DestinationStoreTest {
 
   private final Destination DESTINATION_ONE =
       new Destination(
-          UUID.randomUUID(), UUID.randomUUID(), "destination_one", Instant.ofEpochMilli(1000));
+          UUID.randomUUID(), UUID.randomUUID(), "destination_one", Instant.ofEpochMilli(1000), 5);
   
   private final Destination DESTINATION_TWO =
 	      new Destination(
-	          UUID.randomUUID(), UUID.randomUUID(), "destination_two", Instant.ofEpochMilli(1000));
-	  
+	          UUID.randomUUID(), UUID.randomUUID(), "destination_two", Instant.ofEpochMilli(1000), 0);
+
+  private final Destination DESTINATION_THREE =
+          new Destination(
+                  UUID.randomUUID(), UUID.randomUUID(), "destination_three", Instant.ofEpochMilli(1000), -2);
+
 
   @Before
   public void setup() {
@@ -32,6 +38,7 @@ public class DestinationStoreTest {
     destinationStore = DestinationStore.getTestInstance(mockPersistentStorageAgent);
 
     final List<Destination> destinationList = new ArrayList<>();
+    destinationList.add(DESTINATION_THREE);
     destinationList.add(DESTINATION_ONE);
     destinationList.add(DESTINATION_TWO);
     destinationStore.setDestinations(destinationList);
@@ -83,6 +90,16 @@ public class DestinationStoreTest {
     Mockito.verify(mockPersistentStorageAgent).writeThrough(inputDestination);
   }
 
+
+  @Test
+  public void testGetRankedDestinations() {
+    List<Destination> expectedRankedList = new ArrayList<>();
+    expectedRankedList.add(DESTINATION_ONE);
+    expectedRankedList.add(DESTINATION_TWO);
+    expectedRankedList.add(DESTINATION_THREE);
+    Assert.assertThat(expectedRankedList, is(destinationStore.getRankedDestinations()));
+  }
+
   private void assertEquals(Destination expectedDestination, Destination actualDestination) {
     Assert.assertEquals(expectedDestination.getId(), actualDestination.getId());
     Assert.assertEquals(expectedDestination.getOwnerId(), actualDestination.getOwnerId());
@@ -90,4 +107,5 @@ public class DestinationStoreTest {
     Assert.assertEquals(
     		expectedDestination.getCreationTime(), actualDestination.getCreationTime());
   }
+
 }
