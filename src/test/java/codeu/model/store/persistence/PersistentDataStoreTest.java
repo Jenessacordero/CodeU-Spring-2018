@@ -4,6 +4,7 @@ import codeu.model.data.*;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import org.junit.After;
@@ -337,6 +338,42 @@ public class PersistentDataStoreTest {
     Assert.assertEquals(destination2, resultImageTwo.returnDestination());
     Assert.assertEquals(id2, resultImageTwo.getId());
     Assert.assertEquals(now2, resultImageTwo.getCreation());
+
+  }
+
+  @Test
+  public void testSaveandLoadBanners() throws PersistentDataStoreException {
+    String filename = "test";
+    String destination = "test";
+    UUID id = UUID.randomUUID();
+    Instant now = Instant.ofEpochMilli(1000);
+    Banner banner = new Banner(filename, destination, id, now);
+
+    String filename2 = "random";
+    String destination2 = "random";
+    UUID id2 = UUID.randomUUID();
+    Instant now2 = Instant.ofEpochMilli(2000);
+    Banner banner2 = new Banner(filename2, destination2, id2, now2);
+
+    // save
+    persistentDataStore.writeThrough(banner);
+    persistentDataStore.writeThrough(banner2);
+
+    // load
+    HashMap<String, Banner> resultBanners = persistentDataStore.loadBanners();
+
+    // confirm that what we saved matches what we loaded
+    Banner result1 = resultBanners.get("test");
+    Assert.assertEquals(filename, result1.returnBanner());
+    Assert.assertEquals(destination, result1.returnDestination());
+    Assert.assertEquals(id, result1.returnID());
+    Assert.assertEquals(now, result1.returnCreation());
+
+    Banner result2 = resultBanners.get("random");
+    Assert.assertEquals(filename2, result2.returnBanner());
+    Assert.assertEquals(destination2, result2.returnDestination());
+    Assert.assertEquals(id2, result2.returnID());
+    Assert.assertEquals(now2, result2.returnCreation());
 
   }
 }

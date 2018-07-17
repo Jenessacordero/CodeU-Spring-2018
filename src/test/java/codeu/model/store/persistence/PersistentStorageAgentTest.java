@@ -1,13 +1,7 @@
 package codeu.model.store.persistence;
 
-import codeu.model.data.Conversation;
-import codeu.model.data.Destination;
-import codeu.model.data.Message;
-import codeu.model.data.StatusUpdate;
-import codeu.model.data.User;
-import codeu.model.data.UserAction;
-import codeu.model.data.AboutMe;
-import codeu.model.data.Image;
+import codeu.model.data.*;
+
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.Before;
@@ -80,6 +74,12 @@ public class PersistentStorageAgentTest {
   }
 
   @Test
+  public void testLoadBanners() throws PersistentDataStoreException {
+    persistentStorageAgent.loadBanners();
+    Mockito.verify(mockPersistentDataStore).loadBanners();
+  }
+
+  @Test
   public void testWriteThroughUser() {
     User user =
         new User(
@@ -149,5 +149,12 @@ public class PersistentStorageAgentTest {
     Image testImage = new Image("test", "test", UUID.randomUUID(), Instant.now());
     persistentStorageAgent.writeThrough(testImage);
     Mockito.verify(mockPersistentDataStore).writeThrough(testImage);
+  }
+
+  @Test
+  public void testWriteThroughBanner() throws PersistentDataStoreException {
+    Banner testBanner = new Banner("test", "test", UUID.randomUUID(), Instant.now());
+    persistentStorageAgent.writeThrough(testBanner);
+    Mockito.verify(mockPersistentDataStore).writeThrough(testBanner);
   }
 }

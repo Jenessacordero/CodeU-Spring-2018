@@ -14,14 +14,7 @@
 
 package codeu.model.store.persistence;
 
-import codeu.model.data.Conversation;
-import codeu.model.data.Destination;
-import codeu.model.data.Message;
-import codeu.model.data.StatusUpdate;
-import codeu.model.data.User;
-import codeu.model.data.UserAction;
-import codeu.model.data.AboutMe;
-import codeu.model.data.Image;
+import codeu.model.data.*;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -33,6 +26,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -299,6 +293,33 @@ public class PersistentDataStore {
         }
         return images;
     }
+
+    public HashMap<String, Banner> loadBanners() throws PersistentDataStoreException {
+
+        HashMap<String, Banner> banners = new HashMap<>();
+
+        // Retrieve all banners from the datastore.
+        Query query = new Query("banners").addSort("creation_time", SortDirection.ASCENDING);
+        PreparedQuery results = datastore.prepare(query);
+
+        for (Entity entity : results.asIterable()) {
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                String destination = (String) entity.getProperty("destination");
+                String filename = (String) entity.getProperty("filename");
+                Instant now = Instant.parse((String) entity.getProperty("creation_time"));
+                Banner banner = new Banner(filename, destination, uuid, now);
+                banners.put(destination, banner);
+            } catch (Exception e) {
+                // In a production environment, errors should be very rare. Errors which may
+                // occur include network errors, Datastore service errors, authorization errors,
+                // database entity definition mismatches, or service mismatches.
+                throw new PersistentDataStoreException(e);
+            }
+        }
+        return banners;
+    }
+
 	  //TODO implement/modify for ranked destinations -> done!
     public List<Destination> loadRankedDestinations() throws PersistentDataStoreException {
 
@@ -430,6 +451,16 @@ public class PersistentDataStore {
         imageEntity.setProperty("destination", image.returnDestination());
         imageEntity.setProperty("creation_time", image.getCreation().toString());
         datastore.put(imageEntity);
+    }
+
+    /** Write a Banner object to the Datastore service. */
+    public void writeThrough(Banner banner) {
+        Entity bannerEntity = new Entity("banners", banner.returnID().toString());
+        bannerEntity.setProperty("destination", banner.returnDestination());
+        bannerEntity.setProperty("uuid", banner.returnID().toString());
+        bannerEntity.setProperty("filename", banner.returnBanner());
+        bannerEntity.setProperty("creation_time", banner.returnCreation().toString());
+        datastore.put(bannerEntity);
     }
 }
 

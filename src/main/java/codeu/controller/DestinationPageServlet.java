@@ -16,15 +16,11 @@ package codeu.controller;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Destination;
-import codeu.model.data.Message;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.data.Image;
-import codeu.model.store.basic.ConversationStore;
-import codeu.model.store.basic.DestinationStore;
-import codeu.model.store.basic.UserActionStore;
-import codeu.model.store.basic.UserStore;
-import codeu.model.store.basic.ImageStore;
+import codeu.model.store.basic.*;
+import codeu.model.data.Banner;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
@@ -52,6 +48,9 @@ public class DestinationPageServlet extends HttpServlet {
   /** Store class that gives access to Images. */
   private ImageStore imageStore;
 
+  /** Store class that gives access to Images. */
+  private BannerStore bannerStore;
+
   /**
    * Set up state for handling conversation-related requests. This method is only called when
    * running in a server, not when running in a test.
@@ -64,6 +63,7 @@ public class DestinationPageServlet extends HttpServlet {
     setDestinationStore(DestinationStore.getInstance());
     setUserActionStore(UserActionStore.getInstance());
     setImageStore(ImageStore.getInstance());
+    setBannerStore(BannerStore.getInstance());
   }
 
   /**
@@ -99,12 +99,21 @@ public class DestinationPageServlet extends HttpServlet {
   }
 
   /**
-   * This function fires when a user navigates to the conversations page. It gets all of the
-   * conversations from the model and forwards to conversations.jsp for rendering the list.
+   * Sets the ImageStore used by this servlet. This function provides a common setup method
+   * for use by the test framework or the servlet's init() function.
    */
 
   void setImageStore(ImageStore imageStore) {
     this.imageStore = imageStore;
+  }
+
+  /**
+   * Sets the BannerStore used by this servlet. This function provides a common setup method
+   * for use by the test framework or the servlet's init() function.
+   */
+
+  void setBannerStore(BannerStore bannerStore) {
+    this.bannerStore = bannerStore;
   }
 
   /**
@@ -119,12 +128,13 @@ public class DestinationPageServlet extends HttpServlet {
 	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
 	  List<Image> images = imageStore.returnImagesInDestination(destination);
 	  String banner = destination.getBanner();
+	  Banner banner2 = bannerStore.returnBanner(destination.getTitle());
 
     List<Conversation> conversations = conversationStore.getConvosInDestination(destination.getId());
     request.setAttribute("conversations", conversations);
     request.setAttribute("destinationTitle", destinationTitle);
     request.setAttribute("images", images);
-    request.setAttribute("banner", banner);
+    request.setAttribute("banner", banner2.returnBanner());
     request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
   }
 
@@ -156,14 +166,11 @@ public class DestinationPageServlet extends HttpServlet {
       response.sendRedirect("/login");
       return;
     }
-  
+
+    // conversation form
 
     String conversationTitle = request.getParameter("conversationTitle");
-    String banner = request.getParameter("banner");
-    if (banner != null || banner != "") {
-      destination.changeBanner(banner);
-    }
-    if (conversationTitle != null) {
+    if (conversationTitle != null && conversationTitle != "") {
       if (!conversationTitle.matches("[\\w*]*")) {
         request.setAttribute("error", "Please enter only letters and numbers.");
         request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
@@ -187,13 +194,20 @@ public class DestinationPageServlet extends HttpServlet {
       userActionStore.addUserAction(newConversation);
       response.sendRedirect("/chat/" + conversationTitle);
     }
-    else {
-      String imageFilename = request.getParameter("filename");
-      if (imageFilename != null) {
-        Image newImage = new Image(imageFilename, destinationTitle, UUID.randomUUID(), Instant.now());
-        imageStore.addImage(newImage);
+    else if (request.getParameter("banner") != null && request.getParameter("banner") != "") {
+        String banner = request.getParameter("banner");
+        destination.changeBanner(banner);
+        bannerStore.addBanner(destinationTitle, new Banner(banner, destinationTitle, UUID.randomUUID(), Instant.now()));
         response.sendRedirect("/destination/" + destinationTitle);
+        return;
+      }
+      else {
+        if (request.getParameter("filename") != null && request.getParameter("filename") != "") {
+          String imageFilename = request.getParameter("filename");
+          Image newImage = new Image(imageFilename, destinationTitle, UUID.randomUUID(), Instant.now());
+          imageStore.addImage(newImage);
+          response.sendRedirect("/destination/" + destinationTitle);
+        }
       }
     }
   }
-}

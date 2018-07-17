@@ -14,15 +14,10 @@
 
 package codeu.model.store.persistence;
 
-import codeu.model.data.Conversation;
-import codeu.model.data.Destination;
-import codeu.model.data.Message;
-import codeu.model.data.StatusUpdate;
-import codeu.model.data.User;
-import codeu.model.data.UserAction;
-import codeu.model.data.AboutMe;
-import codeu.model.data.Image;
+import codeu.model.data.*;
 import codeu.model.store.persistence.PersistentDataStore;
+
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -144,6 +139,16 @@ public class PersistentStorageAgent {
     return persistentDataStore.loadImages();
   }
 
+  /**
+   * Retrieve all Banner objects from the Datastore service. The returned list may be empty.
+   *
+   * @throws PersistentDataStoreException if an error was detected during the load from the
+   *     Datastore service
+   */
+  public HashMap<String, Banner> loadBanners() throws PersistentDataStoreException {
+    return persistentDataStore.loadBanners();
+  }
+
   public List<Destination> loadRankedDestinations() throws PersistentDataStoreException {
     return persistentDataStore.loadRankedDestinations();
   }
@@ -187,6 +192,11 @@ public class PersistentStorageAgent {
   /** Write an Image object to the Datastore service. */
   public void writeThrough(Image image) {
     persistentDataStore.writeThrough(image);
+  }
+
+  /** Write an Banner object to the Datastore service. */
+  public void writeThrough(Banner banner) {
+    persistentDataStore.writeThrough(banner);
   }
 
 }

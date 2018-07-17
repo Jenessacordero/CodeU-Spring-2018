@@ -44,6 +44,7 @@
         <label class="form-control-label">Upload/Change the Banner Image (Image Address Only): </label>
         <input type="text" name="banner">
       </div>
+    </form>
 
 
     <h2>Photos:</h2>

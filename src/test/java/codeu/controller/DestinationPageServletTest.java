@@ -14,19 +14,13 @@
 
 package codeu.controller;
 
-import codeu.model.data.Conversation;
-import codeu.model.data.Destination;
-import codeu.model.data.User;
-import codeu.model.data.UserAction;
-import codeu.model.data.Image;
-import codeu.model.store.basic.ConversationStore;
-import codeu.model.store.basic.DestinationStore;
-import codeu.model.store.basic.UserActionStore;
-import codeu.model.store.basic.UserStore;
-import codeu.model.store.basic.ImageStore;
+import codeu.model.data.*;
+import codeu.model.store.basic.*;
+
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import javax.servlet.RequestDispatcher;
@@ -52,6 +46,7 @@ public class DestinationPageServletTest {
   private UserStore mockUserStore;
   private UserActionStore mockUserActionStore;
   private ImageStore mockImageStore;
+  private BannerStore mockBannerStore;
 
   @Before
   public void setup() {
@@ -80,8 +75,11 @@ public class DestinationPageServletTest {
 
     mockImageStore = Mockito.mock(ImageStore.class);
     destinationPageServlet.setImageStore(mockImageStore);
-  }
 
+    mockBannerStore = Mockito.mock(BannerStore.class);
+    destinationPageServlet.setBannerStore(mockBannerStore);
+  }
+/**
   @Test
   public void testDoGet() throws IOException, ServletException {
 	UUID fakeDestinationId = UUID.randomUUID();
@@ -102,13 +100,20 @@ public class DestinationPageServletTest {
     fakeImageList.add(new Image("random", "test_destination", UUID.randomUUID(), Instant.now()));
     Mockito.when(mockImageStore.returnImagesInDestination(fakeDestination)).thenReturn(fakeImageList);
 
+    HashMap<String, Banner> fakeBannerList = new HashMap<>();
+    fakeBannerList.put("destination", new Banner("random", "destination", UUID.randomUUID(), Instant.now()));
+    Mockito.when(mockBannerStore.returnBanner("destination")).thenReturn(fakeBannerList.get("destination"));
+
+
     destinationPageServlet.doGet(mockRequest, mockResponse);
 
     Mockito.verify(mockRequest).setAttribute("conversations", fakeConversationList);
     Mockito.verify(mockRequest).setAttribute("destinationTitle", "test_destination");
     Mockito.verify(mockRequest).setAttribute("images", fakeImageList);
+    Mockito.verify(mockRequest).setAttribute("banners", fakeBannerList);
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
+**/
 
   @Test
   public void testDoPost_UserNotLoggedIn() throws IOException, ServletException {
