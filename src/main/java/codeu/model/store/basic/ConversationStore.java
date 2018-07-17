@@ -15,7 +15,6 @@
 package codeu.model.store.basic;
 
 import codeu.model.data.Conversation;
-import codeu.model.data.Message;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
 import java.util.List;
