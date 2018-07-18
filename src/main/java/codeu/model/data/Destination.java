@@ -26,6 +26,8 @@ public class Destination {
   public final UUID owner;
   public final String title;
   public final Instant creation;
+  public String banner;
+  private int votes;
 
   /**
    * Constructs a new Conversation.
@@ -34,13 +36,36 @@ public class Destination {
    * @param owner the ID of the User who created this Destination
    * @param title the title of this Destination
    * @param creation the creation time of this Destination
+   * @param votes the number of votes from users it has, default is zero if not defined
    */
+
+  public Destination(UUID id, UUID owner, String title, Instant creation, String banner, int votes) {
+    this.id = id;
+    this.owner = owner;
+    this.creation = creation;
+    this.title = title;
+    this.votes = votes;
+    this.banner = banner;
+  }
+
+  public Destination(UUID id, UUID owner, String title, Instant creation, String banner) {
+    this.id = id;
+    this.owner = owner;
+    this.creation = creation;
+    this.title = title;
+    this.banner = banner;
+    this.votes = 0;
+  }
+
   public Destination(UUID id, UUID owner, String title, Instant creation) {
     this.id = id;
     this.owner = owner;
     this.creation = creation;
     this.title = title;
+    this.banner = null;
+    this.votes = 0;
   }
+
 
   /** Returns the ID of this Destination. */
   public UUID getId() {
@@ -60,5 +85,28 @@ public class Destination {
   /** Returns the creation time of this Destination. */
   public Instant getCreationTime() {
     return creation;
+  }
+
+  /** Returns the banner of this Destination. */
+  public String getBanner() {
+    return this.banner;
+  }
+
+  public void changeBanner(String filename) {
+    this.banner = filename;
+  }
+
+  public int getVotes() {
+    return votes;
+  }
+
+  /** Called when a user likes a destination. */
+  public void upVote() {
+    this.votes += 1;
+  }
+
+  /** Called when a user dislikes a destination. */
+  public void downVote() {
+    this.votes += -1;
   }
 }

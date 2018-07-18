@@ -1,12 +1,9 @@
 <%--
   Copyright 2017 Google Inc.
-
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
      http://www.apache.org/licenses/LICENSE-2.0
-
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,24 +28,7 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
 </head>
 <body>
 
-  <nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
-    <a href="/about.jsp">About</a>
-    <a href="/activityfeed">Activity Feed</a>
-    <% if(request.getSession().getAttribute("user") != null){ %>
-      <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
-    <% } else{ %>
-      <a href="/login">Login</a>
-    <% } %>
-    <% if(request.getSession().getAttribute("user") != null){ %>
-      <a href="/user/<%=request.getSession().getAttribute("user") %>">Profile Page</a>
-    <% } %>
-    <a href="/destinations">Destinations</a>
-    <% if(request.getSession().getAttribute("user") != null && (request.getSession().getAttribute("user").equals("cavalos99") || 
-    		request.getSession().getAttribute("user").equals("jenessacordero") || request.getSession().getAttribute("user").equals("agarwalv"))) {%>
-    <a href="/adminpage">Admin</a>
-    <% } %>
-  </nav>
+    <%@include file="nav.jsp" %>
   
    <div style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;" id="container">
     <div>

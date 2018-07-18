@@ -1,12 +1,7 @@
 package codeu.model.store.persistence;
 
-import codeu.model.data.Conversation;
-import codeu.model.data.Destination;
-import codeu.model.data.Message;
-import codeu.model.data.StatusUpdate;
-import codeu.model.data.User;
-import codeu.model.data.UserAction;
-import codeu.model.data.AboutMe;
+import codeu.model.data.*;
+
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.Before;
@@ -71,7 +66,19 @@ public class PersistentStorageAgentTest {
     persistentStorageAgent.loadDestinations();
     Mockito.verify(mockPersistentDataStore).loadDestinations();
   }
-  
+
+  @Test
+  public void testLoadImage() throws PersistentDataStoreException {
+    persistentStorageAgent.loadImages();
+    Mockito.verify(mockPersistentDataStore).loadImages();
+  }
+
+  @Test
+  public void testLoadBanners() throws PersistentDataStoreException {
+    persistentStorageAgent.loadBanners();
+    Mockito.verify(mockPersistentDataStore).loadBanners();
+  }
+
   @Test
   public void testWriteThroughUser() {
     User user =
@@ -96,7 +103,7 @@ public class PersistentStorageAgentTest {
   public void testWriteThroughMessage() {
     Message message =
         new Message(
-            UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "test content", Instant.now());
+            UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "test content", Instant.now(), 'm');
     persistentStorageAgent.writeThrough(message);
     Mockito.verify(mockPersistentDataStore).writeThrough(message);
   }
@@ -132,8 +139,22 @@ public class PersistentStorageAgentTest {
   public void testWriteThroughDestination() throws PersistentDataStoreException {
     Destination destination =
         new Destination(
-            UUID.randomUUID(), UUID.randomUUID(), "test title", Instant.now());
+            UUID.randomUUID(), UUID.randomUUID(), "test title", Instant.now(), "");
     persistentStorageAgent.writeThrough(destination);
     Mockito.verify(mockPersistentDataStore).writeThrough(destination);
+  }
+
+  @Test
+  public void testWriteThroughImage() throws PersistentDataStoreException {
+    Image testImage = new Image("test", "test", UUID.randomUUID(), Instant.now());
+    persistentStorageAgent.writeThrough(testImage);
+    Mockito.verify(mockPersistentDataStore).writeThrough(testImage);
+  }
+
+  @Test
+  public void testWriteThroughBanner() throws PersistentDataStoreException {
+    Banner testBanner = new Banner("test", "test", UUID.randomUUID(), Instant.now());
+    persistentStorageAgent.writeThrough(testBanner);
+    Mockito.verify(mockPersistentDataStore).writeThrough(testBanner);
   }
 }

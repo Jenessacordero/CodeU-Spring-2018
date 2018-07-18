@@ -16,8 +16,12 @@ import codeu.model.store.basic.TipStore;
 import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
 import codeu.model.store.basic.AboutMeStore;
+import codeu.model.data.*;
+import codeu.model.store.basic.*;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import codeu.model.store.persistence.PersistentStorageAgent;
+
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletContextEvent;
@@ -56,6 +60,16 @@ public class ServerStartupListener implements ServletContextListener {
       
       List<Tip> tips = PersistentStorageAgent.getInstance().loadTips();
       TipStore.getInstance().setTips(tips);
+
+      List<Image> images = PersistentStorageAgent.getInstance().loadImages();
+      ImageStore.getInstance().setImages(images);
+
+      HashMap<String, Banner> banners = PersistentStorageAgent.getInstance().loadBanners();
+      BannerStore.getInstance().setBanner(banners);
+
+      //TODO implement functions -> done!
+      List<Destination> rankedDestinations = PersistentStorageAgent.getInstance().loadRankedDestinations();
+      DestinationStore.getInstance().setRankedDestinations(rankedDestinations);
 
     } catch (PersistentDataStoreException e) {
       System.err.println("Server didn't start correctly. An error occurred during Datastore load!");

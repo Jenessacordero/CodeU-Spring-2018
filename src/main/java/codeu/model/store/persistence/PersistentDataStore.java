@@ -22,6 +22,7 @@ import codeu.model.data.Tip;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
+import codeu.model.data.*;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -33,6 +34,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -144,7 +146,8 @@ public class PersistentDataStore {
         UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
         String content = (String) entity.getProperty("content");
-        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
+        Character type = ((String) entity.getProperty("type")).charAt(0);
+        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime, type);
         messages.add(message);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -259,7 +262,8 @@ public class PersistentDataStore {
 	        UUID owner = UUID.fromString((String) entity.getProperty("owner"));
 	        String title = (String) entity.getProperty("title");
 	        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-	        Destination destination = new Destination(uuid, owner, title, creationTime);
+	        String banner = "";
+	        Destination destination = new Destination(uuid, owner, title, creationTime, banner);
 	        destinations.add(destination);
 	      } catch (Exception e) {
 	        // In a production environment, errors should be very rare. Errors which may
@@ -301,6 +305,86 @@ public class PersistentDataStore {
 	  }
 
 
+    public List<Image> loadImages() throws PersistentDataStoreException {
+
+        List<Image> images = new ArrayList<>();
+
+        // Retrieve all messages from the datastore.
+        Query query = new Query("images").addSort("creation_time", SortDirection.ASCENDING);
+        PreparedQuery results = datastore.prepare(query);
+
+        for (Entity entity : results.asIterable()) {
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                String destination = (String) entity.getProperty("destination");
+                String filename = (String) entity.getProperty("filename");
+                Instant now = Instant.parse((String) entity.getProperty("creation_time"));
+                Image image = new Image(filename, destination, uuid, now);
+                images.add(image);
+            } catch (Exception e) {
+                // In a production environment, errors should be very rare. Errors which may
+                // occur include network errors, Datastore service errors, authorization errors,
+                // database entity definition mismatches, or service mismatches.
+                throw new PersistentDataStoreException(e);
+            }
+        }
+        return images;
+    }
+
+    public HashMap<String, Banner> loadBanners() throws PersistentDataStoreException {
+
+        HashMap<String, Banner> banners = new HashMap<>();
+
+        // Retrieve all banners from the datastore.
+        Query query = new Query("banners").addSort("creation_time", SortDirection.ASCENDING);
+        PreparedQuery results = datastore.prepare(query);
+
+        for (Entity entity : results.asIterable()) {
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                String destination = (String) entity.getProperty("destination");
+                String filename = (String) entity.getProperty("filename");
+                Instant now = Instant.parse((String) entity.getProperty("creation_time"));
+                Banner banner = new Banner(filename, destination, uuid, now);
+                banners.put(destination, banner);
+            } catch (Exception e) {
+                // In a production environment, errors should be very rare. Errors which may
+                // occur include network errors, Datastore service errors, authorization errors,
+                // database entity definition mismatches, or service mismatches.
+                throw new PersistentDataStoreException(e);
+            }
+        }
+        return banners;
+    }
+
+	  //TODO implement/modify for ranked destinations -> done!
+    public List<Destination> loadRankedDestinations() throws PersistentDataStoreException {
+
+        List<Destination> rankedDestinations = new ArrayList<>();
+//
+//        // Retrieve from the datastore.
+        Query query = new Query("rankedDestinations").addSort("creation_time", SortDirection.ASCENDING);
+        PreparedQuery results = datastore.prepare(query);
+//
+        for (Entity entity : results.asIterable()) {
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                UUID owner = UUID.fromString((String) entity.getProperty("owner"));
+                String title = (String) entity.getProperty("title");
+                Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+                int votes = (int) entity.getProperty("votes");
+                Destination destination = new Destination(uuid, owner, title, creationTime, "", votes);
+                rankedDestinations.add(destination);
+            } catch (Exception e) {
+                // In a production environment, errors should be very rare. Errors which may
+                // occur include network errors, Datastore service errors, authorization errors,
+                // database entity definition mismatches, or service mismatches.
+                throw new PersistentDataStoreException(e);
+            }
+        }
+        return rankedDestinations;
+    }
+
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
 	  
@@ -320,6 +404,7 @@ public class PersistentDataStore {
     messageEntity.setProperty("author_uuid", message.getAuthorId().toString());
     messageEntity.setProperty("content", message.getContent());
     messageEntity.setProperty("creation_time", message.getCreationTime().toString());
+    messageEntity.setProperty("type", message.getType().toString());
     datastore.put(messageEntity);
   }
 
@@ -391,6 +476,7 @@ public class PersistentDataStore {
     destinationEntity.setProperty("owner", destination.getOwnerId().toString());
     destinationEntity.setProperty("title", destination.getTitle());
     destinationEntity.setProperty("creation_time", destination.getCreationTime().toString());
+    destinationEntity.setProperty("banner", destination.getBanner());
     datastore.put(destinationEntity);
   }
   
@@ -404,5 +490,25 @@ public class PersistentDataStore {
     tipEntity.setProperty("creation_time", tip.getCreationTime().toString());
     datastore.put(tipEntity);
   }
+
+    /** Write a Image object to the Datastore service. */
+    public void writeThrough(Image image) {
+        Entity imageEntity = new Entity("images", image.getId().toString());
+        imageEntity.setProperty("uuid", image.getId().toString());
+        imageEntity.setProperty("filename", image.returnFilename());
+        imageEntity.setProperty("destination", image.returnDestination());
+        imageEntity.setProperty("creation_time", image.getCreation().toString());
+        datastore.put(imageEntity);
+    }
+
+    /** Write a Banner object to the Datastore service. */
+    public void writeThrough(Banner banner) {
+        Entity bannerEntity = new Entity("banners", banner.returnID().toString());
+        bannerEntity.setProperty("destination", banner.returnDestination());
+        bannerEntity.setProperty("uuid", banner.returnID().toString());
+        bannerEntity.setProperty("filename", banner.returnBanner());
+        bannerEntity.setProperty("creation_time", banner.returnCreation().toString());
+        datastore.put(bannerEntity);
+    }
 }
 

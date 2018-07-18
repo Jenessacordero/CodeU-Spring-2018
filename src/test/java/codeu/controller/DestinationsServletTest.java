@@ -78,7 +78,8 @@ public class DestinationsServletTest {
         
     List<Destination> fakeDestinationList = new ArrayList<>();
     fakeDestinationList.add(
-        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now()));
+        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), ""));
+
     Mockito.when(mockDestinationStore.getAllDestinations()).thenReturn(fakeDestinationList);
 
     destinationsServlet.doGet(mockRequest, mockResponse);
@@ -95,7 +96,7 @@ public class DestinationsServletTest {
 
     Mockito.verify(mockDestinationStore, Mockito.never())
         .addDestination(Mockito.any(Destination.class));
-    Mockito.verify(mockResponse).sendRedirect("/destinations");
+    Mockito.verify(mockResponse).sendRedirect("/login");
   }
 
   @Test

@@ -16,6 +16,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.data.User" %>
+<%@ page import="codeu.model.data.Image" %>
+
 
 <!DOCTYPE html>
 <html>
@@ -25,25 +27,8 @@
 </head>
 <body>
 
-  <nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
-    <a href="/about.jsp">About</a>
-    <a href="/activityfeed">Activity Feed</a>
-    <% if(request.getSession().getAttribute("user") != null){ %>
-      <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
-    <% } else{ %>
-      <a href="/login">Login</a>
-    <% } %>
-    <% if(request.getSession().getAttribute("user") != null){ %>
-      <a href="/user/<%=request.getSession().getAttribute("user") %>">Profile Page</a>
-    <% } %>
-    <a href="/destinations">Destinations</a>
-    <% if(request.getSession().getAttribute("user") != null && (request.getSession().getAttribute("user").equals("cavalos99") || 
-    		request.getSession().getAttribute("user").equals("jenessacordero") || request.getSession().getAttribute("user").equals("agarwalv"))) {%>
-    <a href="/adminpage">Admin</a>
-    <% } %>
-  </nav>
-  
+  <%@include file="nav.jsp" %>
+
   <div id="container">
 
     <% if(request.getAttribute("error") != null){ %>
@@ -52,13 +37,54 @@
 
 
       <h1><%= request.getAttribute("destinationTitle") %></h1>
+
+    <% if (request.getAttribute("banner") != null) { %>
+        <img src="<%=request.getAttribute("banner")%>" height="400" width="800"/>
+    <% } %>
+
+    <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
+      <div class="form-group">
+        <label class="form-control-label">Upload/Change the Banner Image (Image Address Only): </label>
+        <input type="text" name="banner">
+      </div>
+    </form>
+
+
+    <h2>Photos:</h2>
+
+    <% List<Image> images = (List<Image>) request.getAttribute("images");
+    if (images == null || images.isEmpty()) { %>
+        <p>Be the first to add an image of this destination!</p>
+    <% }
+    else { %>
+      <%
+        for(Image image : images ){
+      %>
+    <a href="<%=image.returnFilename()%>"><img src="<%=image.returnFilename()%>" width = "100" height = "100"/></a>
+      <%
+        }
+      %>
+    <% } %>
+
+    <%-- New form to submit new photos, then below are the photos displayed --%>
+    <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
+      <div class="form-group">
+        <label class="form-control-label">Title:</label>
+        <input type="text" name="filename">
+      </div>
+
+      <button type="submit">Upload Image</button> <p>Copy and Paste Image Address Only!</p>
+    </form>
+
+    <hr/>
+
       <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
           <div class="form-group">
             <label class="form-control-label">Title:</label>
           <input type="text" name="conversationTitle">
         </div>
 
-        <button type="submit">Create</button>
+        <button type="submit">Start Conversation</button>
       </form>
 
       <hr/>

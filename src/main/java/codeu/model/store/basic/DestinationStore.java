@@ -15,8 +15,11 @@
 package codeu.model.store.basic;
 
 import codeu.model.data.Destination;
+import codeu.model.data.DestinationRankComparator;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -26,7 +29,9 @@ import java.util.List;
  */
 public class DestinationStore {
 
-  /** Singleton instance of DestinationStore. */
+  /**
+   * Singleton instance of DestinationStore.
+   */
   private static DestinationStore instance;
 
   /**
@@ -55,27 +60,38 @@ public class DestinationStore {
    */
   private PersistentStorageAgent persistentStorageAgent;
 
-  /** The in-memory list of Destinations. */
+  /**
+   * The in-memory list of Destinations (and ranked Destinations).
+   */
   private List<Destination> destinations;
+  private List<Destination> rankedDestinations;
 
-  /** This class is a singleton, so its constructor is private. Call getInstance() instead. */
+  /**
+   * This class is a singleton, so its constructor is private. Call getInstance() instead.
+   */
   private DestinationStore(PersistentStorageAgent persistentStorageAgent) {
     this.persistentStorageAgent = persistentStorageAgent;
     destinations = new ArrayList<>();
   }
 
-/** Access the current set of destinations known to the application. */
+  /**
+   * Access the current set of destinations known to the application.
+   */
   public List<Destination> getAllDestinations() {
     return destinations;
   }
 
-  /** Add a new destination to the current set of destinations known to the application. */
+  /**
+   * Add a new destination to the current set of destinations known to the application.
+   */
   public void addDestination(Destination destination) {
-	  destinations.add(destination);
-	  persistentStorageAgent.writeThrough(destination);
+    destinations.add(destination);
+    persistentStorageAgent.writeThrough(destination);
   }
 
-  /** Check whether a Destination title is already known to the application. */
+  /**
+   * Check whether a Destination title is already known to the application.
+   */
   public boolean isTitleTaken(String title) {
     // This approach will be pretty slow if we have many Conversations.
     for (Destination destination : destinations) {
@@ -86,7 +102,9 @@ public class DestinationStore {
     return false;
   }
 
-  /** Find and return the Destination with the given title. */
+  /**
+   * Find and return the Destination with the given title.
+   */
   public Destination getDestinationWithTitle(String title) {
     for (Destination destination : destinations) {
       if (destination.getTitle().equals(title)) {
@@ -96,8 +114,22 @@ public class DestinationStore {
     return null;
   }
 
-  /** Sets the List of Destinations stored by this DestinationStore. */
+  /**
+   * Sets the List of Destinations stored by this DestinationStore.
+   */
   public void setDestinations(List<Destination> destinations) {
     this.destinations = destinations;
+  }
+
+  public List<Destination> getRankedDestinations() {
+
+    rankedDestinations = getAllDestinations();
+    Collections.sort(rankedDestinations, new DestinationRankComparator());
+
+    return rankedDestinations;
+  }
+
+  public void setRankedDestinations(List<Destination> rankedDestinations) {
+    this.rankedDestinations = rankedDestinations;
   }
 }

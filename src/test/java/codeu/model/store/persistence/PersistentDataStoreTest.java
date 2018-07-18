@@ -1,15 +1,10 @@
 package codeu.model.store.persistence;
 
-import codeu.model.data.Conversation;
-import codeu.model.data.Destination;
-import codeu.model.data.Message;
-import codeu.model.data.StatusUpdate;
-import codeu.model.data.User;
-import codeu.model.data.UserAction;
-import codeu.model.data.AboutMe;
+import codeu.model.data.*;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import org.junit.After;
@@ -121,16 +116,18 @@ public class PersistentDataStoreTest {
     UUID authorOne = UUID.fromString("10000002-2222-3333-4444-555555555555");
     String contentOne = "test content one";
     Instant creationOne = Instant.ofEpochMilli(1000);
+    Character type = 'm';
     Message inputMessageOne =
-        new Message(idOne, conversationOne, authorOne, contentOne, creationOne);
+        new Message(idOne, conversationOne, authorOne, contentOne, creationOne, type);
 
     UUID idTwo = UUID.fromString("10000003-2222-3333-4444-555555555555");
     UUID conversationTwo = UUID.fromString("10000004-2222-3333-4444-555555555555");
     UUID authorTwo = UUID.fromString("10000005-2222-3333-4444-555555555555");
     String contentTwo = "test content one";
     Instant creationTwo = Instant.ofEpochMilli(2000);
+    Character type2 = 'm';
     Message inputMessageTwo =
-        new Message(idTwo, conversationTwo, authorTwo, contentTwo, creationTwo);
+        new Message(idTwo, conversationTwo, authorTwo, contentTwo, creationTwo, type2);
 
     // save
     persistentDataStore.writeThrough(inputMessageOne);
@@ -146,6 +143,7 @@ public class PersistentDataStoreTest {
     Assert.assertEquals(authorOne, resultMessageOne.getAuthorId());
     Assert.assertEquals(contentOne, resultMessageOne.getContent());
     Assert.assertEquals(creationOne, resultMessageOne.getCreationTime());
+    Assert.assertEquals(type, resultMessageOne.getType());
 
     Message resultMessageTwo = resultMessages.get(1);
     Assert.assertEquals(idTwo, resultMessageTwo.getId());
@@ -153,6 +151,7 @@ public class PersistentDataStoreTest {
     Assert.assertEquals(authorTwo, resultMessageTwo.getAuthorId());
     Assert.assertEquals(contentTwo, resultMessageTwo.getContent());
     Assert.assertEquals(creationTwo, resultMessageTwo.getCreationTime());
+    Assert.assertEquals(type2, resultMessageTwo.getType());
   }
   
   @Test
@@ -272,15 +271,17 @@ public class PersistentDataStoreTest {
     UUID userOne = UUID.fromString("10000002-2222-3333-4444-555555555555");
     String titleOne = "test title one";
     Instant creationOne = Instant.ofEpochMilli(1000);
+    String banner1 = "";
     Destination inputDestinationOne =
-        new Destination(idOne, userOne, titleOne, creationOne);
+        new Destination(idOne, userOne, titleOne, creationOne, banner1);
 
     UUID idTwo = UUID.fromString("10000003-2222-3333-4444-555555555555");
     UUID userTwo = UUID.fromString("10000005-2222-3333-4444-555555555555");
     String titleTwo = "test title two";
     Instant creationTwo = Instant.ofEpochMilli(2000);
+    String banner2 = "";
     Destination inputDestinationTwo =
-        new Destination(idTwo, userTwo, titleTwo, creationTwo);
+        new Destination(idTwo, userTwo, titleTwo, creationTwo, banner2);
 
     // save
     persistentDataStore.writeThrough(inputDestinationOne);
@@ -301,6 +302,78 @@ public class PersistentDataStoreTest {
     Assert.assertEquals(userTwo, resultDestinationTwo.getOwnerId());
     Assert.assertEquals(titleTwo, resultDestinationTwo.getTitle());
     Assert.assertEquals(creationTwo, resultDestinationTwo.getCreationTime());
+
+  }
+
+  @Test
+  public void testSaveAndLoadImages() throws PersistentDataStoreException {
+    String filename = "test";
+    String destination = "test";
+    UUID id = UUID.randomUUID();
+    Instant now = Instant.ofEpochMilli(1000);
+    Image image = new Image(filename, destination, id, now);
+
+    String filename2 = "random";
+    String destination2 = "random";
+    UUID id2 = UUID.randomUUID();
+    Instant now2 = Instant.ofEpochMilli(2000);
+    Image image2 = new Image(filename2, destination2, id2, now2);
+
+    // save
+    persistentDataStore.writeThrough(image);
+    persistentDataStore.writeThrough(image2);
+
+    // load
+    List<Image> resultImages = persistentDataStore.loadImages();
+
+    // confirm that what we saved matches what we loaded
+    Image resultImageOne = resultImages.get(0);
+    Assert.assertEquals(filename, resultImageOne.returnFilename());
+    Assert.assertEquals(destination, resultImageOne.returnDestination());
+    Assert.assertEquals(id, resultImageOne.getId());
+    Assert.assertEquals(now, resultImageOne.getCreation());
+
+    Image resultImageTwo = resultImages.get(1);
+    Assert.assertEquals(filename2, resultImageTwo.returnFilename());
+    Assert.assertEquals(destination2, resultImageTwo.returnDestination());
+    Assert.assertEquals(id2, resultImageTwo.getId());
+    Assert.assertEquals(now2, resultImageTwo.getCreation());
+
+  }
+
+  @Test
+  public void testSaveandLoadBanners() throws PersistentDataStoreException {
+    String filename = "test";
+    String destination = "test";
+    UUID id = UUID.randomUUID();
+    Instant now = Instant.ofEpochMilli(1000);
+    Banner banner = new Banner(filename, destination, id, now);
+
+    String filename2 = "random";
+    String destination2 = "random";
+    UUID id2 = UUID.randomUUID();
+    Instant now2 = Instant.ofEpochMilli(2000);
+    Banner banner2 = new Banner(filename2, destination2, id2, now2);
+
+    // save
+    persistentDataStore.writeThrough(banner);
+    persistentDataStore.writeThrough(banner2);
+
+    // load
+    HashMap<String, Banner> resultBanners = persistentDataStore.loadBanners();
+
+    // confirm that what we saved matches what we loaded
+    Banner result1 = resultBanners.get("test");
+    Assert.assertEquals(filename, result1.returnBanner());
+    Assert.assertEquals(destination, result1.returnDestination());
+    Assert.assertEquals(id, result1.returnID());
+    Assert.assertEquals(now, result1.returnCreation());
+
+    Banner result2 = resultBanners.get("random");
+    Assert.assertEquals(filename2, result2.returnBanner());
+    Assert.assertEquals(destination2, result2.returnDestination());
+    Assert.assertEquals(id2, result2.returnID());
+    Assert.assertEquals(now2, result2.returnCreation());
 
   }
 }
