@@ -21,8 +21,8 @@
 </head>
 <body>
 
-  <%@include file="nav.jsp" %>
-  
+<%@ include file="WEB-INF/view/nav.jsp" %>
+
   <div id="container">
     <div
       style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">

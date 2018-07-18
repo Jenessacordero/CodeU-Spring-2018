@@ -14,14 +14,9 @@
 
 package codeu.controller;
 
-import codeu.model.data.Conversation;
-import codeu.model.data.Message;
-import codeu.model.data.User;
-import codeu.model.data.UserAction;
-import codeu.model.store.basic.ConversationStore;
-import codeu.model.store.basic.MessageStore;
-import codeu.model.store.basic.UserActionStore;
-import codeu.model.store.basic.UserStore;
+import codeu.model.data.*;
+import codeu.model.store.basic.*;
+
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
@@ -48,6 +43,9 @@ public class ChatServlet extends HttpServlet {
   /** Store class that gives access to UserActions. */
   private UserActionStore userActionStore;
 
+  /** Store class that gives access to UserActions. */
+  private ImageStore imageStore;
+
   
   /** Set up state for handling chat requests. */
   @Override
@@ -57,6 +55,7 @@ public class ChatServlet extends HttpServlet {
     setMessageStore(MessageStore.getInstance());
     setUserStore(UserStore.getInstance());
     setUserActionStore(UserActionStore.getInstance());
+    setImageStore(ImageStore.getInstance());
   }
 
   /**
@@ -89,6 +88,14 @@ public class ChatServlet extends HttpServlet {
    */
   void setUserStore(UserStore userStore) {
     this.userStore = userStore;
+  }
+
+  /**
+   * Sets the UserStore used by this servlet. This function provides a common setup method for use
+   * by the test framework or the servlet's init() function.
+   */
+  void setImageStore(ImageStore imageStore) {
+    this.imageStore = imageStore;
   }
 
   /**
@@ -128,7 +135,8 @@ public class ChatServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-
+    String cleanedMessageContent = "";
+    Character type = 'm';
     String username = (String) request.getSession().getAttribute("user");
     if (username == null) {
       // user is not logged in, don't let them add a message
@@ -152,30 +160,40 @@ public class ChatServlet extends HttpServlet {
       response.sendRedirect("/conversations");
       return;
     }
+    if (request.getParameter("message") != null) {
+      String messageContent = request.getParameter("message");
 
-    String messageContent = request.getParameter("message");
+      // this removes any HTML from the message content
+      cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
 
-    // this removes any HTML from the message content
-    String cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
+
+      // Creates a new user action.
+      UserAction newMessage = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has sent a message in " + conversationTitle
+              + ": " + "\"" + cleanedMessageContent + "\"", Instant.now());
+      userActionStore.addUserAction(newMessage);
+    }
+    else {
+      if (request.getParameter("image") != null) {
+        cleanedMessageContent = request.getParameter("image");
+        type = 'i';
+        UserAction newMessage = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has sent an image in " + conversationTitle
+                + ": " + "\"" + cleanedMessageContent + "\"", Instant.now());
+        userActionStore.addUserAction(newMessage);
+      }
+    }
 
     // Creates a message.
     Message message =
-        new Message(
-            UUID.randomUUID(),
-            conversation.getId(),
-            user.getId(),
-            cleanedMessageContent,
-            Instant.now());
+            new Message(
+                    UUID.randomUUID(),
+                    conversation.getId(),
+                    user.getId(),
+                    cleanedMessageContent,
+                    Instant.now(), type);
 
     messageStore.addMessage(message);
     user.changeNumPersonalMessageCount();
     user.changeNumWords(message.getContent());
-    
-    // Creates a new user action.
-    UserAction newMessage = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has sent a message in " + conversationTitle
-    		+ ": " + "\"" + cleanedMessageContent + "\"", Instant.now());
-    userActionStore.addUserAction(newMessage);
-
     response.sendRedirect("/chat/" + conversationTitle);
   }
 }

@@ -129,9 +129,9 @@ public class DestinationsServlet extends HttpServlet {
       response.sendRedirect("/destination/" + destinationTitle);
       return;
     }
-
+    String banner = request.getParameter("banner");
     Destination destination =
-            new Destination(UUID.randomUUID(), user.getId(), destinationTitle, Instant.now());
+            new Destination(UUID.randomUUID(), user.getId(), destinationTitle, Instant.now(), "");
 
     destinationStore.addDestination(destination);
 

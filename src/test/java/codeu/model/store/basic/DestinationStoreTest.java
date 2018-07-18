@@ -20,17 +20,16 @@ public class DestinationStoreTest {
   private PersistentStorageAgent mockPersistentStorageAgent;
 
   private final Destination DESTINATION_ONE =
-      new Destination(
-          UUID.randomUUID(), UUID.randomUUID(), "destination_one", Instant.ofEpochMilli(1000), 5);
+	      new Destination(
+          UUID.randomUUID(), UUID.randomUUID(), "destination_one", Instant.ofEpochMilli(1000), "", 5);
   
   private final Destination DESTINATION_TWO =
 	      new Destination(
-	          UUID.randomUUID(), UUID.randomUUID(), "destination_two", Instant.ofEpochMilli(1000), 0);
+	          UUID.randomUUID(), UUID.randomUUID(), "destination_two", Instant.ofEpochMilli(1000), "", 0);
 
   private final Destination DESTINATION_THREE =
           new Destination(
-                  UUID.randomUUID(), UUID.randomUUID(), "destination_three", Instant.ofEpochMilli(1000), -2);
-
+                  UUID.randomUUID(), UUID.randomUUID(), "destination_three", Instant.ofEpochMilli(1000), "", -2);
 
   @Before
   public void setup() {
@@ -79,7 +78,7 @@ public class DestinationStoreTest {
   @Test
   public void testAddDestination() {
     Destination inputDestination =
-        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now());
+        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), "");
 
     destinationStore.addDestination(inputDestination);
     
@@ -106,6 +105,7 @@ public class DestinationStoreTest {
     Assert.assertEquals(expectedDestination.getTitle(), actualDestination.getTitle());
     Assert.assertEquals(
     		expectedDestination.getCreationTime(), actualDestination.getCreationTime());
+    Assert.assertEquals(expectedDestination.getBanner(), actualDestination.getBanner());
   }
 
 }

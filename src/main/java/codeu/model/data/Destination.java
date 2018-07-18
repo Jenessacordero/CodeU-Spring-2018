@@ -26,6 +26,7 @@ public class Destination {
   public final UUID owner;
   public final String title;
   public final Instant creation;
+  public String banner;
   private int votes;
 
   /**
@@ -37,19 +38,22 @@ public class Destination {
    * @param creation the creation time of this Destination
    * @param votes the number of votes from users it has, default is zero if not defined
    */
-  public Destination(UUID id, UUID owner, String title, Instant creation, int votes) {
+
+  public Destination(UUID id, UUID owner, String title, Instant creation, String banner, int votes) {
     this.id = id;
     this.owner = owner;
     this.creation = creation;
     this.title = title;
     this.votes = votes;
+    this.banner = banner;
   }
 
-  public Destination(UUID id, UUID owner, String title, Instant creation) {
+  public Destination(UUID id, UUID owner, String title, Instant creation, String banner) {
     this.id = id;
     this.owner = owner;
     this.creation = creation;
     this.title = title;
+    this.banner = banner;
     this.votes = 0;
   }
 
@@ -71,6 +75,15 @@ public class Destination {
   /** Returns the creation time of this Destination. */
   public Instant getCreationTime() {
     return creation;
+  }
+
+  /** Returns the banner of this Destination. */
+  public String getBanner() {
+    return this.banner;
+  }
+
+  public void changeBanner(String filename) {
+    this.banner = filename;
   }
 
   public int getVotes() {

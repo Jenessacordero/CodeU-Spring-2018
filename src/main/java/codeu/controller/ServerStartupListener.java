@@ -1,21 +1,11 @@
 package codeu.controller;
 
-import codeu.model.data.Conversation;
-import codeu.model.data.Message;
-import codeu.model.data.StatusUpdate;
-import codeu.model.data.User;
-import codeu.model.data.UserAction;
-import codeu.model.data.AboutMe;
-import codeu.model.data.Destination;
-import codeu.model.store.basic.ConversationStore;
-import codeu.model.store.basic.DestinationStore;
-import codeu.model.store.basic.MessageStore;
-import codeu.model.store.basic.StatusUpdateStore;
-import codeu.model.store.basic.UserActionStore;
-import codeu.model.store.basic.UserStore;
-import codeu.model.store.basic.AboutMeStore;
+import codeu.model.data.*;
+import codeu.model.store.basic.*;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import codeu.model.store.persistence.PersistentStorageAgent;
+
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletContextEvent;
@@ -51,6 +41,12 @@ public class ServerStartupListener implements ServletContextListener {
       
       List<Destination> destinations = PersistentStorageAgent.getInstance().loadDestinations();
       DestinationStore.getInstance().setDestinations(destinations);
+
+      List<Image> images = PersistentStorageAgent.getInstance().loadImages();
+      ImageStore.getInstance().setImages(images);
+
+      HashMap<String, Banner> banners = PersistentStorageAgent.getInstance().loadBanners();
+      BannerStore.getInstance().setBanner(banners);
 
       //TODO implement functions -> done!
       List<Destination> rankedDestinations = PersistentStorageAgent.getInstance().loadRankedDestinations();

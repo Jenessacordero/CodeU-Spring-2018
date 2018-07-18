@@ -27,12 +27,14 @@ public class DestinationTest {
     UUID owner = UUID.randomUUID();
     String title = "Test_Title";
     Instant creation = Instant.now();
+    String banner = "";
 
-    Destination destination = new Destination(id, owner, title, creation);
+    Destination destination = new Destination(id, owner, title, creation, banner);
 
     Assert.assertEquals(id, destination.getId());
     Assert.assertEquals(owner, destination.getOwnerId());
     Assert.assertEquals(title, destination.getTitle());
     Assert.assertEquals(creation, destination.getCreationTime());
+    Assert.assertEquals(banner, destination.getBanner());
   }
 }

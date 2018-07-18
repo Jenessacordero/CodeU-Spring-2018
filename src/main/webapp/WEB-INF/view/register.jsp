@@ -20,9 +20,7 @@
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-
   <%@include file="nav.jsp" %>
-
   <div id="container">
     <h1>Register</h1>
 

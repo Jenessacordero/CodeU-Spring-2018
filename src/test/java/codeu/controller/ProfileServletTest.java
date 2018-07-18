@@ -96,7 +96,7 @@ public class ProfileServletTest {
 		            UUID.randomUUID(),
 		            userId,
 		            "test content",
-		            Instant.now()));
+		            Instant.now(), 'm'));
 	 	 
 
 	 AboutMe fakeAboutMe = new AboutMe(

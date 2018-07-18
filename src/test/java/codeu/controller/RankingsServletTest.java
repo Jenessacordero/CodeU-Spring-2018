@@ -62,11 +62,11 @@ public class RankingsServletTest {
     public void testDoGet() {
         List<Destination> fakeRankedDestinationList = new ArrayList<>();
         fakeRankedDestinationList.add(
-                new Destination(UUID.randomUUID(), UUID.randomUUID(), "location1", Instant.now(), 5));
+                new Destination(UUID.randomUUID(), UUID.randomUUID(), "location1", Instant.now(), "", 5));
         fakeRankedDestinationList.add(
-                new Destination(UUID.randomUUID(), UUID.randomUUID(), "location2", Instant.now(), 0));
+                new Destination(UUID.randomUUID(), UUID.randomUUID(), "location2", Instant.now(), "", 0));
         fakeRankedDestinationList.add(
-                new Destination(UUID.randomUUID(), UUID.randomUUID(), "location3", Instant.now(), -2));
+                new Destination(UUID.randomUUID(), UUID.randomUUID(), "location3", Instant.now(), "", -2));
         Mockito.when(mockDestinationStore.getRankedDestinations()).thenReturn(fakeRankedDestinationList);
     }
 

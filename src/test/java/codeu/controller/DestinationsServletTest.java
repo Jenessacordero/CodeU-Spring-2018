@@ -78,7 +78,7 @@ public class DestinationsServletTest {
         
     List<Destination> fakeDestinationList = new ArrayList<>();
     fakeDestinationList.add(
-        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now()));
+        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), ""));
 
     Mockito.when(mockDestinationStore.getAllDestinations()).thenReturn(fakeDestinationList);
 

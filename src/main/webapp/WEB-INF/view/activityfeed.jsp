@@ -26,7 +26,6 @@ List<UserAction> userActions = (List<UserAction>) request.getAttribute("userActi
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-
   <%@include file="nav.jsp" %>
 
   <div id="container">

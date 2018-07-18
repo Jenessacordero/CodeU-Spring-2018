@@ -18,10 +18,8 @@ import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
-import codeu.model.store.basic.ConversationStore;
-import codeu.model.store.basic.MessageStore;
-import codeu.model.store.basic.UserActionStore;
-import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.*;
+
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -49,6 +47,7 @@ public class ChatServletTest {
   private MessageStore mockMessageStore;
   private UserStore mockUserStore;
   private UserActionStore mockUserActionStore;
+  private ImageStore mockImageStore;
 
   @Before
   public void setup() {
@@ -74,6 +73,9 @@ public class ChatServletTest {
     
     mockUserActionStore = Mockito.mock(UserActionStore.class);
     chatServlet.setUserActionStore(mockUserActionStore);
+
+    mockImageStore = Mockito.mock(ImageStore.class);
+    chatServlet.setImageStore(mockImageStore);
   }
 
   @Test
@@ -93,7 +95,7 @@ public class ChatServletTest {
             fakeConversationId,
             UUID.randomUUID(),
             "test message",
-            Instant.now()));
+            Instant.now(), 'm'));
     Mockito.when(mockMessageStore.getMessagesInConversation(fakeConversationId))
         .thenReturn(fakeMessageList);
 
