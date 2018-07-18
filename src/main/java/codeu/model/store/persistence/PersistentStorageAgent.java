@@ -22,7 +22,10 @@ import codeu.model.data.Tip;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
+import codeu.model.data.*;
 import codeu.model.store.persistence.PersistentDataStore;
+
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -144,6 +147,26 @@ public class PersistentStorageAgent {
     return persistentDataStore.loadTips();
   }
 
+  /**
+   * Retrieve all Image objects from the Datastore service. The returned list may be empty.
+   *
+   * @throws PersistentDataStoreException if an error was detected during the load from the
+   *     Datastore service
+   */
+  public List<Image> loadImages() throws PersistentDataStoreException {
+    return persistentDataStore.loadImages();
+  }
+
+  /**
+   * Retrieve all Banner objects from the Datastore service. The returned list may be empty.
+   *
+   * @throws PersistentDataStoreException if an error was detected during the load from the
+   *     Datastore service
+   */
+  public HashMap<String, Banner> loadBanners() throws PersistentDataStoreException {
+    return persistentDataStore.loadBanners();
+  }
+
   public List<Destination> loadRankedDestinations() throws PersistentDataStoreException {
     return persistentDataStore.loadRankedDestinations();
   }
@@ -187,6 +210,16 @@ public class PersistentStorageAgent {
   /** Write a Tip object to the Datastore service. */
   public void writeThrough(Tip tip) {
     persistentDataStore.writeThrough(tip);
+  }
+
+  /** Write an Image object to the Datastore service. */
+  public void writeThrough(Image image) {
+    persistentDataStore.writeThrough(image);
+  }
+
+  /** Write an Banner object to the Datastore service. */
+  public void writeThrough(Banner banner) {
+    persistentDataStore.writeThrough(banner);
   }
 
 }

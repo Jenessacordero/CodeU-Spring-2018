@@ -38,15 +38,22 @@
       <form action="/destinations" method="POST">
           <div class="form-group">
             <label class="form-control-label">Title:</label>
+<<<<<<< HEAD
           <select name="destinationTitle">
           <option value="Japan">Japan</option>
           <option value="Italy">Italy</option>
           <option value="France">France</option>
           <option value="Mexico">Mexico</option>
           </select>
+=======
+          <input type="text" name="destinationTitle">
+            <br/>
+            <label class="form-control-label">Banner Image:</label>
+            <input type="text" name="banner">
+>>>>>>> 278636cb1bc05d437a657ee77b8cbd14a3a5e774
         </div>
 
-        <button type="submit">Create</button>
+        <button type="submit">Create Destination</button>
       </form>
 
       <hr/>

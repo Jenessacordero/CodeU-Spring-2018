@@ -16,6 +16,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.data.User" %>
+<%@ page import="codeu.model.data.Image" %>
+
 
 <!DOCTYPE html>
 <html>
@@ -26,7 +28,7 @@
 <body>
 
   <%@include file="nav.jsp" %>
-  
+
   <div id="container">
 
     <% if(request.getAttribute("error") != null){ %>
@@ -35,13 +37,51 @@
 
 
       <h1><%= request.getAttribute("destinationTitle") %></h1>
+
+    <img src="<%=request.getAttribute("banner")%>" height="400" width="800"/>
+    <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
+      <div class="form-group">
+        <label class="form-control-label">Upload/Change the Banner Image (Image Address Only): </label>
+        <input type="text" name="banner">
+      </div>
+    </form>
+
+
+    <h2>Photos:</h2>
+
+    <% List<Image> images = (List<Image>) request.getAttribute("images");
+    if (images == null || images.isEmpty()) { %>
+        <p>Be the first to add an image of this destination!</p>
+    <% }
+    else { %>
+      <%
+        for(Image image : images ){
+      %>
+    <a href="<%=image.returnFilename()%>"><img src="<%=image.returnFilename()%>" width = "100" height = "100"/></a>
+      <%
+        }
+      %>
+    <% } %>
+
+    <%-- New form to submit new photos, then below are the photos displayed --%>
+    <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
+      <div class="form-group">
+        <label class="form-control-label">Title:</label>
+        <input type="text" name="filename">
+      </div>
+
+      <button type="submit">Upload Image</button> <p>Copy and Paste Image Address Only!</p>
+    </form>
+
+    <hr/>
+
       <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
           <div class="form-group">
             <label class="form-control-label">Title:</label>
           <input type="text" name="conversationTitle">
         </div>
 
-        <button type="submit">Create</button>
+        <button type="submit">Start Conversation</button>
       </form>
 
       <hr/>

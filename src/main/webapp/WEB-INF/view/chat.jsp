@@ -75,9 +75,16 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
           .getUser(message.getAuthorId()).getName();
          User user = UserStore.getInstance()
                 .getUser(message.getAuthorId());
-    %>
-      <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <%= processor.process(message.getContent()) %></li>
-    <%
+         if (message.getType().equals('m')) {
+        %>
+            <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <%= processor.process(message.getContent()) %></li>
+        <%
+         } else {
+             %>
+            <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong></li>
+        <a href="<%=message.getContent()%>"><img src="<%=message.getContent()%>" width = "75" height = "75"></a>
+        <%
+         }
       }
     %>
       </ul>
@@ -89,8 +96,13 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
     <form action="/chat/<%= conversation.getTitle() %>" method="POST">
         <input type="text" name="message">
         <br/>
-        <button type="submit">Send</button>
+        <button type="submit">Send Message</button>
     </form>
+      <form action="/chat/<%= conversation.getTitle() %>" method="POST">
+          <input type="text" name="image">
+          <br/>
+          <button type="submit">Send Image (Image Address Only)</button>
+      </form>
     <% } else { %>
       <p><a href="/login">Login</a> to send a message.</p>
     <% } %>

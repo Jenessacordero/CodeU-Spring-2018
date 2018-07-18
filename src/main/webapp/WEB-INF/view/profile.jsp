@@ -30,7 +30,6 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-
     <%@include file="nav.jsp" %>
   
    <div style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;" id="container">
@@ -52,7 +51,7 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
       <form action="/user/<%= request.getSession().getAttribute("user") %>" method="POST">
         <textarea name="aboutme"><%= aboutMe.getContent() %></textarea>
         <br/>
-        <button type="submit">Submit</button>
+        <button type="submit">Update Bio</button>
     </form>
         <% } else if(!request.getSession().getAttribute("user").equals(request.getAttribute("username"))){ %>
         <h1><%= request.getAttribute("username") %>'s bio:</h1>
@@ -78,10 +77,26 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
     
       <ul>
     <%
+<<<<<<< HEAD
       for (UserAction userAction : userActions) {
     %>
       <li><strong><%= userAction.getFormattedTime() %>: </strong><%= userAction.getMessage() %></li>
     <%
+=======
+      for (Message message : messages) {
+        String author = UserStore.getInstance()
+          .getUser(message.getAuthorId()).getName();
+        if (message.getType().equals('m')) {
+        %>
+          <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
+          <%
+        } else {
+          %>
+            <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong></li>
+            <a href="<%=message.getContent()%>"><img src="<%=message.getContent()%>" width = "75" height = "75"></a>
+          <%
+        }
+>>>>>>> 278636cb1bc05d437a657ee77b8cbd14a3a5e774
       }
     %>
       </ul>

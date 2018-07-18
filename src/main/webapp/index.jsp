@@ -21,7 +21,11 @@
 </head>
 <body>
 
+<<<<<<< HEAD
   <%@include file="WEB-INF/view/nav.jsp" %>
+=======
+<%@ include file="WEB-INF/view/nav.jsp" %>
+>>>>>>> 278636cb1bc05d437a657ee77b8cbd14a3a5e774
 
   <div id="container">
     <div
