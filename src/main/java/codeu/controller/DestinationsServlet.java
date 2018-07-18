@@ -103,7 +103,7 @@ public class DestinationsServlet extends HttpServlet {
     String username = (String) request.getSession().getAttribute("user");
     if (username == null) {
       // user is not logged in, don't let them create a destination
-      response.sendRedirect("/destinations");
+      response.sendRedirect("/login");
       return;
     }
 

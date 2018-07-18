@@ -38,7 +38,10 @@
 
       <h1><%= request.getAttribute("destinationTitle") %></h1>
 
-    <img src="<%=request.getAttribute("banner")%>" height="400" width="800"/>
+    <% if (request.getAttribute("banner") != null) { %>
+        <img src="<%=request.getAttribute("banner")%>" height="400" width="800"/>
+    <% } %>
+
     <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
       <div class="form-group">
         <label class="form-control-label">Upload/Change the Banner Image (Image Address Only): </label>
