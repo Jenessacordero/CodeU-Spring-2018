@@ -16,12 +16,14 @@ package codeu.controller;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.User;
+import codeu.model.data.UserAction;
 import codeu.model.data.Message;
 import codeu.model.data.AboutMe;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.UserStore;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import codeu.model.store.basic.MessageStore;
+import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.AboutMeStore;
 import java.io.IOException;
 import java.time.Instant;
@@ -46,7 +48,7 @@ public class ProfileServletTest {
   private HttpSession mockSession;
   private HttpServletResponse mockResponse;
   private RequestDispatcher mockRequestDispatcher;
-  private MessageStore mockMessageStore;
+  private UserActionStore mockUserActionStore;
   private UserStore mockUserStore;
   private AboutMeStore mockAboutMeStore;
 
@@ -63,8 +65,8 @@ public class ProfileServletTest {
     Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/profile.jsp"))
         .thenReturn(mockRequestDispatcher);
 
-    mockMessageStore = Mockito.mock(MessageStore.class);
-    profileServlet.setMessageStore(mockMessageStore);
+    mockUserActionStore = Mockito.mock(UserActionStore.class);
+    profileServlet.setUserActionStore(mockUserActionStore);
 
     mockUserStore = Mockito.mock(UserStore.class);
     profileServlet.setUserStore(mockUserStore);
@@ -88,15 +90,14 @@ public class ProfileServletTest {
 		            "$2a$10$.e.4EEfngEXmxAO085XnYOmDntkqod0C384jOR9oagwxMnPNHaGLa",
 		            Instant.now());
 	
-	 List<Message> fakeMessageList = new ArrayList<>();
+	 List<UserAction> fakeUserActionList = new ArrayList<>();
 	 
-	 fakeMessageList.add(
-		        new Message(
+	 fakeUserActionList.add(
+		        new UserAction(
 		            UUID.randomUUID(),
 		            UUID.randomUUID(),
-		            userId,
 		            "test content",
-		            Instant.now(), 'm'));
+		            Instant.now()));
 	 	 
 
 	 AboutMe fakeAboutMe = new AboutMe(
@@ -108,8 +109,8 @@ public class ProfileServletTest {
 
 	 Mockito.when(mockRequest.getRequestURI()).thenReturn("/user/test username");
 	 Mockito.when(mockUserStore.getUser("test username")).thenReturn(user);
-	 Mockito.when(mockMessageStore.getMessagesByUser(userId))
-	 .thenReturn(fakeMessageList);
+	 Mockito.when(mockUserActionStore.returnUserActionsByUser(userId))
+	 .thenReturn(fakeUserActionList);
 	 Mockito.when(mockAboutMeStore.getAboutMeByUser(userId))
 	 .thenReturn(fakeAboutMe);
 
@@ -119,7 +120,7 @@ public class ProfileServletTest {
 	 profileServlet.doGet(mockRequest, mockResponse);
     
     Mockito.verify(mockRequest).setAttribute("user", user);
-    Mockito.verify(mockRequest).setAttribute("messages", fakeMessageList);
+    Mockito.verify(mockRequest).setAttribute("userActions", fakeUserActionList);
     Mockito.verify(mockRequest).setAttribute("aboutMe", fakeAboutMe);
 
 

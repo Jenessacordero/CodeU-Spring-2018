@@ -18,6 +18,7 @@ import codeu.model.data.Conversation;
 import codeu.model.data.Destination;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
+import codeu.model.data.Countries;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.basic.UserActionStore;
@@ -87,7 +88,9 @@ public class DestinationsServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response)
           throws IOException, ServletException {
     List<Destination> destinations = destinationStore.getAllDestinations();
+    List<String> countryList = Countries.getGlobalInstance().countryList;
     request.setAttribute("destinations", destinations);
+    request.setAttribute("countryList", countryList);
     request.getRequestDispatcher("/WEB-INF/view/destinations.jsp").forward(request, response);
   }
 
@@ -117,11 +120,12 @@ public class DestinationsServlet extends HttpServlet {
 
 
     String destinationTitle = request.getParameter("destinationTitle");
-    if (!destinationTitle.matches("[\\w*]*")) {
-      request.setAttribute("error", "Please enter only letters and numbers.");
-      request.getRequestDispatcher("/WEB-INF/view/destinations.jsp").forward(request, response);
-      return;
-    }
+//    System.out.println(destinationTitle);
+//    if (!destinationTitle.matches("[\\w*]*")) {
+//      request.setAttribute("error", "Please enter only letters and numbers.");
+//      request.getRequestDispatcher("/WEB-INF/view/destinations.jsp").forward(request, response);
+//      return;
+//    }
 
     if (destinationStore.isTitleTaken(destinationTitle)) {
       // destination title is already taken, just go into that conversation instead of creating a

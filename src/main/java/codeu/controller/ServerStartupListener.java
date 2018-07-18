@@ -1,5 +1,22 @@
 package codeu.controller;
 
+import codeu.model.data.Conversation;
+import codeu.model.data.Message;
+import codeu.model.data.StatusUpdate;
+import codeu.model.data.Tip;
+import codeu.model.data.User;
+import codeu.model.data.UserAction;
+import codeu.model.data.AboutMe;
+import codeu.model.data.Destination;
+import codeu.model.store.basic.ConversationStore;
+import codeu.model.store.basic.DestinationStore;
+import codeu.model.store.basic.MessageStore;
+import codeu.model.store.basic.StatusUpdateStore;
+import codeu.model.store.basic.TipStore;
+import codeu.model.store.basic.UserActionStore;
+import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.AboutMeStore;
+
 import codeu.model.data.*;
 import codeu.model.store.basic.*;
 import codeu.model.store.persistence.PersistentDataStoreException;
@@ -41,6 +58,9 @@ public class ServerStartupListener implements ServletContextListener {
       
       List<Destination> destinations = PersistentStorageAgent.getInstance().loadDestinations();
       DestinationStore.getInstance().setDestinations(destinations);
+      
+      List<Tip> tips = PersistentStorageAgent.getInstance().loadTips();
+      TipStore.getInstance().setTips(tips);
 
       List<Image> images = PersistentStorageAgent.getInstance().loadImages();
       ImageStore.getInstance().setImages(images);
@@ -51,6 +71,8 @@ public class ServerStartupListener implements ServletContextListener {
       //TODO implement functions -> done!
       List<Destination> rankedDestinations = PersistentStorageAgent.getInstance().loadRankedDestinations();
       DestinationStore.getInstance().setRankedDestinations(rankedDestinations);
+      
+      Countries.setGlobalInstance();
 
     } catch (PersistentDataStoreException e) {
       System.err.println("Server didn't start correctly. An error occurred during Datastore load!");

@@ -14,6 +14,14 @@
 
 package codeu.model.store.persistence;
 
+import codeu.model.data.Conversation;
+import codeu.model.data.Destination;
+import codeu.model.data.Message;
+import codeu.model.data.StatusUpdate;
+import codeu.model.data.Tip;
+import codeu.model.data.User;
+import codeu.model.data.UserAction;
+import codeu.model.data.AboutMe;
 import codeu.model.data.*;
 import codeu.model.store.persistence.PersistentDataStore;
 
@@ -128,6 +136,16 @@ public class PersistentStorageAgent {
   public List<Destination> loadDestinations() throws PersistentDataStoreException {
     return persistentDataStore.loadDestinations();
   }
+  
+  /**
+   * Retrieve all Tip objects from the Datastore service. The returned list may be empty.
+   *
+   * @throws PersistentDataStoreException if an error was detected during the load from the
+   *     Datastore service
+   */
+  public List<Tip> loadTips() throws PersistentDataStoreException {
+    return persistentDataStore.loadTips();
+  }
 
   /**
    * Retrieve all Image objects from the Datastore service. The returned list may be empty.
@@ -152,6 +170,7 @@ public class PersistentStorageAgent {
   public List<Destination> loadRankedDestinations() throws PersistentDataStoreException {
     return persistentDataStore.loadRankedDestinations();
   }
+
 
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
@@ -188,6 +207,11 @@ public class PersistentStorageAgent {
   public void writeThrough(Destination destination) {
     persistentDataStore.writeThrough(destination);
   }
+  
+  /** Write a Tip object to the Datastore service. */
+  public void writeThrough(Tip tip) {
+    persistentDataStore.writeThrough(tip);
+  }
 
   /** Write an Image object to the Datastore service. */
   public void writeThrough(Image image) {
@@ -198,5 +222,7 @@ public class PersistentStorageAgent {
   public void writeThrough(Banner banner) {
     persistentDataStore.writeThrough(banner);
   }
+
+  
 
 }

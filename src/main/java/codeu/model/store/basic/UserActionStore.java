@@ -14,6 +14,8 @@
 
 package codeu.model.store.basic;
 
+import codeu.model.data.Conversation;
+import codeu.model.data.Message;
 import codeu.model.data.UserAction;
 import codeu.model.store.persistence.PersistentStorageAgent;
 
@@ -76,6 +78,20 @@ public class UserActionStore {
   public void addUserAction(UserAction userAction) {
     userActions.add(0, userAction);
     persistentStorageAgent.writeThrough(userAction);
+  }
+  
+  /** Return set of UserActions by User. 
+ * @return */
+  public List<UserAction> returnUserActionsByUser(UUID user) {
+	  List<UserAction> userActionsByUser = new ArrayList<>();
+	  
+	  for (UserAction userAction : userActions) {
+	      if (userAction.getUserId().equals(user)) {
+	    	  userActionsByUser.add(userAction);
+	      }
+	    }
+
+	    return userActionsByUser;
   }
 
   /** Sets the List of UserActions stored by this UserActionStore. */

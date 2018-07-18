@@ -1,12 +1,9 @@
 <%--
   Copyright 2017 Google Inc.
-
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
      http://www.apache.org/licenses/LICENSE-2.0
-
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,11 +12,11 @@
 --%>
 <%@ page import="java.util.List" %>
 <%@ page import="codeu.model.data.Conversation" %>
-<%@ page import="codeu.model.data.Message" %>
+<%@ page import="codeu.model.data.UserAction" %>
 <%@ page import="codeu.model.data.AboutMe" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
 <%
-List<Message> messages = (List<Message>) request.getAttribute("messages");
+List<UserAction> userActions = (List<UserAction>) request.getAttribute("userActions");
 AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
 %>
 <!DOCTYPE html>
@@ -30,6 +27,10 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
+<<<<<<< HEAD
+
+=======
+>>>>>>> b05052125da6d657071c8e055b5037b366dd3904
     <%@include file="nav.jsp" %>
   
    <div style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;" id="container">
@@ -70,12 +71,16 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
         
      
 	
-    <h1>Messages</h1>
+    <h1>User Activity</h1>
     <hr/>
 
     <div id="chat">
     
       <ul>
+    <%
+      for (UserAction userAction : userActions) {
+    %>
+      <li><strong><%= userAction.getFormattedTime() %>: </strong><%= userAction.getMessage() %></li>
     <%
       for (Message message : messages) {
         String author = UserStore.getInstance()

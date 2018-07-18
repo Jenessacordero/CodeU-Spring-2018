@@ -16,6 +16,10 @@
 <%@ page import="java.util.List" %>
 <%@ page import="codeu.model.data.Destination" %>
 <%@ page import="codeu.model.data.User" %>
+<%@ page import="codeu.model.data.Countries" %>
+<%
+List<String> countryList = (List<String>) request.getAttribute("countryList");
+%>
 
 <!DOCTYPE html>
 <html>
@@ -38,6 +42,14 @@
       <form action="/destinations" method="POST">
           <div class="form-group">
             <label class="form-control-label">Title:</label>
+          <select name="destinationTitle">
+          <%
+      for(String country : countryList){%>
+          <option value="<%= country %>"><%= country %></option>
+          <%
+          }
+          %>
+          </select>
           <input type="text" name="destinationTitle">
             <br/>
             <label class="form-control-label">Banner Image:</label>

@@ -14,6 +14,14 @@
 
 package codeu.model.store.persistence;
 
+import codeu.model.data.Conversation;
+import codeu.model.data.Destination;
+import codeu.model.data.Message;
+import codeu.model.data.StatusUpdate;
+import codeu.model.data.Tip;
+import codeu.model.data.User;
+import codeu.model.data.UserAction;
+import codeu.model.data.AboutMe;
 import codeu.model.data.*;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -267,6 +275,35 @@ public class PersistentDataStore {
 
 	    return destinations;
 	  }
+  
+  public List<Tip> loadTips() throws PersistentDataStoreException {
+
+	    List<Tip> tips = new ArrayList<>();
+
+	    // Retrieve all messages from the datastore.
+	    Query query = new Query("tips").addSort("creation_time", SortDirection.ASCENDING);
+	    PreparedQuery results = datastore.prepare(query);
+
+	    for (Entity entity : results.asIterable()) {
+	      try {
+	    	  UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+	          UUID destinationUuid = UUID.fromString((String) entity.getProperty("dest_uuid"));
+	          UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
+	          Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+	          String content = (String) entity.getProperty("content");
+	          Tip tip = new Tip(uuid, destinationUuid, authorUuid, content, creationTime);
+	          tips.add(tip);
+	      } catch (Exception e) {
+	        // In a production environment, errors should be very rare. Errors which may
+	        // occur include network errors, Datastore service errors, authorization errors,
+	        // database entity definition mismatches, or service mismatches.
+	        throw new PersistentDataStoreException(e);
+	      }
+	    }
+
+	    return tips;
+	  }
+
 
     public List<Image> loadImages() throws PersistentDataStoreException {
 
@@ -347,6 +384,9 @@ public class PersistentDataStore {
         }
         return rankedDestinations;
     }
+
+
+
 
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
@@ -441,6 +481,17 @@ public class PersistentDataStore {
     destinationEntity.setProperty("creation_time", destination.getCreationTime().toString());
     destinationEntity.setProperty("banner", destination.getBanner());
     datastore.put(destinationEntity);
+  }
+  
+  /** Write a Tip object to the Datastore service. */
+  public void writeThrough(Tip tip) {
+    Entity tipEntity = new Entity("tips", tip.getId().toString());
+    tipEntity.setProperty("uuid", tip.getId().toString());
+    tipEntity.setProperty("conv_uuid", tip.getDestinationId().toString());
+    tipEntity.setProperty("author_uuid", tip.getAuthorId().toString());
+    tipEntity.setProperty("content", tip.getContent());
+    tipEntity.setProperty("creation_time", tip.getCreationTime().toString());
+    datastore.put(tipEntity);
   }
 
     /** Write a Image object to the Datastore service. */
