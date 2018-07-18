@@ -385,6 +385,9 @@ public class PersistentDataStore {
         return rankedDestinations;
     }
 
+
+
+
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
 	  

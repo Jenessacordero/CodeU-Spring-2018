@@ -171,6 +171,7 @@ public class PersistentStorageAgent {
     return persistentDataStore.loadRankedDestinations();
   }
 
+
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
     persistentDataStore.writeThrough(user);
@@ -221,5 +222,7 @@ public class PersistentStorageAgent {
   public void writeThrough(Banner banner) {
     persistentDataStore.writeThrough(banner);
   }
+
+  
 
 }

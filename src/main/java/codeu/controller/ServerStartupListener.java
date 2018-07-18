@@ -16,6 +16,7 @@ import codeu.model.store.basic.TipStore;
 import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
 import codeu.model.store.basic.AboutMeStore;
+
 import codeu.model.data.*;
 import codeu.model.store.basic.*;
 import codeu.model.store.persistence.PersistentDataStoreException;
