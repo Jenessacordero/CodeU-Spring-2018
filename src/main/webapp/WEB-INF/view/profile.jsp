@@ -78,12 +78,10 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
     
       <ul>
     <%
-<<<<<<< HEAD
       for (UserAction userAction : userActions) {
     %>
       <li><strong><%= userAction.getFormattedTime() %>: </strong><%= userAction.getMessage() %></li>
     <%
-=======
       for (Message message : messages) {
         String author = UserStore.getInstance()
           .getUser(message.getAuthorId()).getName();
@@ -97,7 +95,6 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
             <a href="<%=message.getContent()%>"><img src="<%=message.getContent()%>" width = "75" height = "75"></a>
           <%
         }
->>>>>>> b05052125da6d657071c8e055b5037b366dd3904
       }
     %>
       </ul>
