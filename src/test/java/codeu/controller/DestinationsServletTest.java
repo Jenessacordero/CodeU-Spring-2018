@@ -96,7 +96,7 @@ public class DestinationsServletTest {
 
     Mockito.verify(mockDestinationStore, Mockito.never())
         .addDestination(Mockito.any(Destination.class));
-    Mockito.verify(mockResponse).sendRedirect("/destinations");
+    Mockito.verify(mockResponse).sendRedirect("/login");
   }
 
   @Test

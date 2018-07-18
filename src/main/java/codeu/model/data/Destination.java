@@ -57,6 +57,16 @@ public class Destination {
     this.votes = 0;
   }
 
+  public Destination(UUID id, UUID owner, String title, Instant creation) {
+    this.id = id;
+    this.owner = owner;
+    this.creation = creation;
+    this.title = title;
+    this.banner = null;
+    this.votes = 0;
+  }
+
+
   /** Returns the ID of this Destination. */
   public UUID getId() {
     return id;

@@ -127,15 +127,24 @@ public class DestinationPageServlet extends HttpServlet {
 	  String destinationTitle = requestUrl.substring("/destination/".length());
 	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
 	  List<Image> images = imageStore.returnImagesInDestination(destination);
-	  String banner = destination.getBanner();
-	  Banner banner2 = bannerStore.returnBanner(destination.getTitle());
+      List<Conversation> conversations = conversationStore.getConvosInDestination(destination.getId());
+      request.setAttribute("conversations", conversations);
+      request.setAttribute("destinationTitle", destinationTitle);
+      request.setAttribute("images", images);
 
-    List<Conversation> conversations = conversationStore.getConvosInDestination(destination.getId());
-    request.setAttribute("conversations", conversations);
-    request.setAttribute("destinationTitle", destinationTitle);
-    request.setAttribute("images", images);
-    request.setAttribute("banner", banner2.returnBanner());
-    request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
+      String banner = destination.getBanner();
+      if (banner != null) {
+        Banner banner2 = bannerStore.returnBanner(destination.getTitle());
+        if (banner2 != null) {
+          request.setAttribute("banner", banner2.returnBanner());
+        } else {
+          request.setAttribute("banner", null);
+        }
+      } else {
+        request.setAttribute("banner", null);
+      }
+
+      request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
   }
 
   /**
