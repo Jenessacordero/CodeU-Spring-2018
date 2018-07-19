@@ -376,4 +376,45 @@ public class PersistentDataStoreTest {
     Assert.assertEquals(now2, result2.returnCreation());
 
   }
+  
+  @Test
+  public void testSaveAndLoadTips() throws PersistentDataStoreException {
+    UUID idOne = UUID.fromString("10000000-2222-3333-4444-555555555555");
+    UUID destinationOne = UUID.fromString("10000001-2222-3333-4444-555555555555");
+    UUID authorOne = UUID.fromString("10000002-2222-3333-4444-555555555555");
+    String contentOne = "test content one";
+    Instant creationOne = Instant.ofEpochMilli(1000);
+    Tip inputTipOne =
+        new Tip(idOne, destinationOne, authorOne, contentOne, creationOne);
+
+    UUID idTwo = UUID.fromString("10000003-2222-3333-4444-555555555555");
+    UUID destinationTwo = UUID.fromString("10000004-2222-3333-4444-555555555555");
+    UUID authorTwo = UUID.fromString("10000005-2222-3333-4444-555555555555");
+    String contentTwo = "test content one";
+    Instant creationTwo = Instant.ofEpochMilli(2000);
+    Tip inputTipTwo =
+        new Tip(idTwo, destinationTwo, authorTwo, contentTwo, creationTwo);
+
+    // save
+    persistentDataStore.writeThrough(inputTipOne);
+    persistentDataStore.writeThrough(inputTipTwo);
+
+    // load
+    List<Tip> resultTips = persistentDataStore.loadTips();
+
+    // confirm that what we saved matches what we loaded
+    Tip resultTipOne = resultTips.get(0);
+    Assert.assertEquals(idOne, resultTipOne.getId());
+    Assert.assertEquals(destinationOne, resultTipOne.getDestinationId());
+    Assert.assertEquals(authorOne, resultTipOne.getAuthorId());
+    Assert.assertEquals(contentOne, resultTipOne.getContent());
+    Assert.assertEquals(creationOne, resultTipOne.getCreationTime());
+
+    Tip resultTipTwo = resultTips.get(1);
+    Assert.assertEquals(idTwo, resultTipTwo.getId());
+    Assert.assertEquals(destinationTwo, resultTipTwo.getDestinationId());
+    Assert.assertEquals(authorTwo, resultTipTwo.getAuthorId());
+    Assert.assertEquals(contentTwo, resultTipTwo.getContent());
+    Assert.assertEquals(creationTwo, resultTipTwo.getCreationTime());
+  }
 }

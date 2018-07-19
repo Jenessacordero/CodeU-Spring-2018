@@ -487,7 +487,7 @@ public class PersistentDataStore {
   public void writeThrough(Tip tip) {
     Entity tipEntity = new Entity("tips", tip.getId().toString());
     tipEntity.setProperty("uuid", tip.getId().toString());
-    tipEntity.setProperty("conv_uuid", tip.getDestinationId().toString());
+    tipEntity.setProperty("dest_uuid", tip.getDestinationId().toString());
     tipEntity.setProperty("author_uuid", tip.getAuthorId().toString());
     tipEntity.setProperty("content", tip.getContent());
     tipEntity.setProperty("creation_time", tip.getCreationTime().toString());

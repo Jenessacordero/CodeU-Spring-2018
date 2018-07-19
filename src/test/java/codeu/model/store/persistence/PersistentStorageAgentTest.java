@@ -78,6 +78,12 @@ public class PersistentStorageAgentTest {
     persistentStorageAgent.loadBanners();
     Mockito.verify(mockPersistentDataStore).loadBanners();
   }
+  
+  @Test
+  public void testLoadTips() throws PersistentDataStoreException {
+    persistentStorageAgent.loadTips();
+    Mockito.verify(mockPersistentDataStore).loadTips();
+  }
 
   @Test
   public void testWriteThroughUser() {
@@ -156,5 +162,14 @@ public class PersistentStorageAgentTest {
     Banner testBanner = new Banner("test", "test", UUID.randomUUID(), Instant.now());
     persistentStorageAgent.writeThrough(testBanner);
     Mockito.verify(mockPersistentDataStore).writeThrough(testBanner);
+  }
+  
+  @Test
+  public void testWriteThroughTip() {
+    Tip tip =
+        new Tip(
+            UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "test content", Instant.now());
+    persistentStorageAgent.writeThrough(tip);
+    Mockito.verify(mockPersistentDataStore).writeThrough(tip);
   }
 }
