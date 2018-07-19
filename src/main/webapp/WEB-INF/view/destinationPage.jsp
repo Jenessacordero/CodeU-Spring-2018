@@ -17,6 +17,7 @@
 <%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.data.User" %>
 <%@ page import="codeu.model.data.Image" %>
+<%@ page import="codeu.model.data.Tip" %>
 
 
 <!DOCTYPE html>
@@ -89,7 +90,13 @@
 
       <hr/>
 
-
+	 <div>
+    <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
+        <input type="text" name="tip">
+        <br/>
+        <button type="submit">Add a tip!</button>
+    </form>
+      </div>
 
     <h1>Conversations</h1>
     <% if(request.getSession().getAttribute("user") == null){ %>
@@ -119,6 +126,35 @@
     <%
     }
     %>
+    
+	<div>
+	<h1>Tips</h1>
+    <% if(request.getSession().getAttribute("user") == null){ %>
+      <p>Login to add a tip!</p>
+    <% } %>
+	<%
+    List<Tip> tips =
+      (List<Tip>) request.getAttribute("tips");
+    if(tips == null || tips.isEmpty()){
+    %>
+      <p>Add some tips!.</p>
+    <%
+    }
+    else{
+    %>
+      <ul class="mdl-list">
+    <%
+      for(Tip tip : tips){
+    %>
+        <%= tip.getContent() %></li>
+    <%
+      }
+    %>
+      </ul>
+    <%
+    }
+    %>
+	</div>
     <hr/>
   </div>
 </body>
