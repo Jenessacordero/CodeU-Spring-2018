@@ -1,6 +1,7 @@
 package codeu.model.store.basic;
 
 import codeu.model.data.Destination;
+import codeu.model.store.persistence.PersistentDataStoreException;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import org.junit.Assert;
 import org.junit.Before;
@@ -76,7 +77,7 @@ public class DestinationStoreTest {
   }
 
   @Test
-  public void testAddDestination() {
+  public void testAddDestination() throws PersistentDataStoreException {
     Destination inputDestination =
         new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), "");
 
@@ -105,6 +106,7 @@ public class DestinationStoreTest {
     Assert.assertEquals(expectedDestination.getTitle(), actualDestination.getTitle());
     Assert.assertEquals(
     		expectedDestination.getCreationTime(), actualDestination.getCreationTime());
+    Assert.assertEquals(expectedDestination.getVotes(), actualDestination.getVotes());
     Assert.assertEquals(expectedDestination.getBanner(), actualDestination.getBanner());
   }
 

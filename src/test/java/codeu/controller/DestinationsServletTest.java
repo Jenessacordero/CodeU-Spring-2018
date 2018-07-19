@@ -32,6 +32,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import codeu.model.store.persistence.PersistentDataStoreException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +91,7 @@ public class DestinationsServletTest {
 //  }
 
   @Test
-  public void testDoPost_UserNotLoggedIn() throws IOException, ServletException {
+  public void testDoPost_UserNotLoggedIn() throws IOException, ServletException, PersistentDataStoreException {
     Mockito.when(mockSession.getAttribute("user")).thenReturn(null);
 
     destinationsServlet.doPost(mockRequest, mockResponse);
@@ -100,7 +102,7 @@ public class DestinationsServletTest {
   }
 
   @Test
-  public void testDoPost_InvalidUser() throws IOException, ServletException {
+  public void testDoPost_InvalidUser() throws IOException, ServletException, PersistentDataStoreException {
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
     Mockito.when(mockUserStore.getUser("test_username")).thenReturn(null);
 
@@ -113,7 +115,7 @@ public class DestinationsServletTest {
 
 
   @Test
-  public void testDoPost_DestinationNameTaken() throws IOException, ServletException {
+  public void testDoPost_DestinationNameTaken() throws IOException, ServletException, PersistentDataStoreException {
     Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
 
@@ -130,7 +132,7 @@ public class DestinationsServletTest {
   }
 
   @Test
-  public void testDoPost_NewDestination() throws IOException, ServletException {
+  public void testDoPost_NewDestination() throws IOException, ServletException, PersistentDataStoreException {
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
     Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
 

@@ -272,16 +272,18 @@ public class PersistentDataStoreTest {
     String titleOne = "test title one";
     Instant creationOne = Instant.ofEpochMilli(1000);
     String banner1 = "";
+    int votes1 = 5;
     Destination inputDestinationOne =
-        new Destination(idOne, userOne, titleOne, creationOne, banner1);
+        new Destination(idOne, userOne, titleOne, creationOne, banner1, votes1);
 
     UUID idTwo = UUID.fromString("10000003-2222-3333-4444-555555555555");
     UUID userTwo = UUID.fromString("10000005-2222-3333-4444-555555555555");
     String titleTwo = "test title two";
     Instant creationTwo = Instant.ofEpochMilli(2000);
     String banner2 = "";
+    int votes2 = 0;
     Destination inputDestinationTwo =
-        new Destination(idTwo, userTwo, titleTwo, creationTwo, banner2);
+        new Destination(idTwo, userTwo, titleTwo, creationTwo, banner2, votes2);
 
     // save
     persistentDataStore.writeThrough(inputDestinationOne);
@@ -289,20 +291,23 @@ public class PersistentDataStoreTest {
 
     // load
     List<Destination> resultDestinations = persistentDataStore.loadDestinations();
-
+//
     // confirm that what we saved matches what we loaded
     Destination resultDestinationOne = resultDestinations.get(0);
     Assert.assertEquals(idOne, resultDestinationOne.getId());
     Assert.assertEquals(userOne, resultDestinationOne.getOwnerId());
     Assert.assertEquals(titleOne, resultDestinationOne.getTitle());
     Assert.assertEquals(creationOne, resultDestinationOne.getCreationTime());
+    Assert.assertEquals(banner1, resultDestinationOne.getBanner());
+    Assert.assertEquals(votes1, resultDestinationOne.getVotes());
 
     Destination resultDestinationTwo = resultDestinations.get(1);
     Assert.assertEquals(idTwo, resultDestinationTwo.getId());
     Assert.assertEquals(userTwo, resultDestinationTwo.getOwnerId());
     Assert.assertEquals(titleTwo, resultDestinationTwo.getTitle());
     Assert.assertEquals(creationTwo, resultDestinationTwo.getCreationTime());
-
+    Assert.assertEquals(banner2, resultDestinationTwo.getBanner());
+    Assert.assertEquals(votes2, resultDestinationTwo.getVotes());
   }
 
   @Test

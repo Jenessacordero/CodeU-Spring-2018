@@ -204,7 +204,7 @@ public class PersistentStorageAgent {
   }
   
   /** Write a Destination object to the Datastore service. */
-  public void writeThrough(Destination destination) {
+  public void writeThrough(Destination destination) throws PersistentDataStoreException{
     persistentDataStore.writeThrough(destination);
   }
   

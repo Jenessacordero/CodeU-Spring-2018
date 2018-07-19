@@ -6,7 +6,7 @@ import codeu.model.data.UserAction;
 import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
-import sun.security.krb5.internal.crypto.Des;
+import codeu.model.store.persistence.PersistentDataStoreException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -106,17 +106,29 @@ public class RankingsServlet extends HttpServlet {
         //TODO: add checks for if they've already voted once
         //Vote and create new user action
         if (request.getParameter("upvote") != null) {
-            destinationStore.getDestinationWithTitle(request.getParameter("upvote")).upVote();
+            Destination destination = destinationStore.getDestinationWithTitle(request.getParameter("upvote"));
+            destination.upVote();
             UserAction voteDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has upvoted  "
                     + request.getParameter("upvote") + "!", Instant.now());
             userActionStore.addUserAction(voteDestination);
+            try {
+                destinationStore.updateDestination(destination);
+            } catch (PersistentDataStoreException e) {
+                e.printStackTrace();
+            }
             response.sendRedirect("/rankingPage");
 
         } else if (request.getParameter("downvote") != null) {
-            destinationStore.getDestinationWithTitle(request.getParameter("downvote")).downVote();
+            Destination destination = destinationStore.getDestinationWithTitle(request.getParameter("downvote"));
+            destination.downVote();
             UserAction voteDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has downvoted  "
                     + request.getParameter("downvote") + "!", Instant.now());
             userActionStore.addUserAction(voteDestination);
+            try {
+                destinationStore.updateDestination(destination);
+            } catch (PersistentDataStoreException e) {
+                e.printStackTrace();
+            }
             response.sendRedirect("/rankingPage");
         }
     }

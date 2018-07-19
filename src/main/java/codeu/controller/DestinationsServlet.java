@@ -23,6 +23,8 @@ import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.persistence.PersistentDataStoreException;
+
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
@@ -137,7 +139,11 @@ public class DestinationsServlet extends HttpServlet {
     Destination destination =
             new Destination(UUID.randomUUID(), user.getId(), destinationTitle, Instant.now(), "");
 
-    destinationStore.addDestination(destination);
+    try {
+      destinationStore.addDestination(destination);
+    } catch (PersistentDataStoreException e) {
+      e.printStackTrace();
+    }
 
     // Creates a new user action.
     UserAction newDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has created a new destination: "

@@ -16,10 +16,11 @@ package codeu.model.store.basic;
 
 import codeu.model.data.Destination;
 import codeu.model.data.DestinationRankComparator;
+import codeu.model.store.persistence.PersistentDataStoreException;
 import codeu.model.store.persistence.PersistentStorageAgent;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -84,8 +85,12 @@ public class DestinationStore {
   /**
    * Add a new destination to the current set of destinations known to the application.
    */
-  public void addDestination(Destination destination) {
+  public void addDestination(Destination destination) throws  PersistentDataStoreException{
     destinations.add(destination);
+    persistentStorageAgent.writeThrough(destination);
+  }
+
+  public void updateDestination(Destination destination) throws PersistentDataStoreException {
     persistentStorageAgent.writeThrough(destination);
   }
 

@@ -75,12 +75,9 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
           .getUser(message.getAuthorId()).getName();
          User user = UserStore.getInstance()
                 .getUser(message.getAuthorId());
-         if (message.getType().equals('m')) {
-        %>
+         if (message.getType().equals('m')) { %>
             <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong> <%= processor.process(message.getContent()) %></li>
-        <%
-         } else {
-             %>
+        <%} else { %>
             <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong></li>
         <a href="<%=message.getContent()%>"><img src="<%=message.getContent()%>" width = "75" height = "75"></a>
         <%

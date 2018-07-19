@@ -28,6 +28,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
@@ -159,7 +160,7 @@ public class PersistentDataStore {
 
     return messages;
   }
-  
+
   /**
    * Loads all AboutMe objects from the Datastore service and returns them in a List.
    *
@@ -192,7 +193,7 @@ public class PersistentDataStore {
 
     return aboutMes;
   }
-  
+
   public List<StatusUpdate> loadStatusUpdates() throws PersistentDataStoreException {
 
 	    List<StatusUpdate> statusUpdates = new ArrayList<>();
@@ -219,7 +220,7 @@ public class PersistentDataStore {
 
 	    return statusUpdates;
 	  }
-  
+
   public List<UserAction> loadUserActions() throws PersistentDataStoreException {
 
 	    List<UserAction> userActions = new ArrayList<>();
@@ -236,7 +237,7 @@ public class PersistentDataStore {
 	        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
 	        UserAction userAction = new UserAction(uuid, userUuid, message, creationTime);
 	        userActions.add(userAction);
-	    	  
+
 	      } catch (Exception e) {
 	        // In a production environment, errors should be very rare. Errors which may
 	        // occur include network errors, Datastore service errors, authorization errors,
@@ -247,8 +248,8 @@ public class PersistentDataStore {
 
 	    return userActions;
 	  }
-  
-  public List<Destination> loadDestinations() throws PersistentDataStoreException {
+
+  public List<Destination> loadDestinations() throws PersistentDataStoreException, ClassCastException{
 
 	    List<Destination> destinations = new ArrayList<>();
 
@@ -263,19 +264,22 @@ public class PersistentDataStore {
 	        String title = (String) entity.getProperty("title");
 	        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
 	        String banner = "";
-	        Destination destination = new Destination(uuid, owner, title, creationTime, banner);
+//	        int votes = (int) entity.getProperty("votes");
+	        int votes = Long.valueOf((Long) entity.getProperty("votes")).intValue();
+	        Destination destination = new Destination(uuid, owner, title, creationTime, banner, votes);
+//            Destination destination = new Destination(uuid, owner, title, creationTime, banner);
 	        destinations.add(destination);
 	      } catch (Exception e) {
-	        // In a production environment, errors should be very rare. Errors which may
-	        // occur include network errors, Datastore service errors, authorization errors,
-	        // database entity definition mismatches, or service mismatches.
-	        throw new PersistentDataStoreException(e);
-	      }
+              // In a production environment, errors should be very rare. Errors which may
+              // occur include network errors, Datastore service errors, authorization errors,
+              // database entity definition mismatches, or service mismatches.
+              throw new PersistentDataStoreException(e);
+          }
 	    }
 
 	    return destinations;
 	  }
-  
+
   public List<Tip> loadTips() throws PersistentDataStoreException {
 
 	    List<Tip> tips = new ArrayList<>();
@@ -372,7 +376,7 @@ public class PersistentDataStore {
                 UUID owner = UUID.fromString((String) entity.getProperty("owner"));
                 String title = (String) entity.getProperty("title");
                 Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-                int votes = (int) entity.getProperty("votes");
+                int votes = Long.valueOf((Long) entity.getProperty("votes")).intValue();
                 Destination destination = new Destination(uuid, owner, title, creationTime, "", votes);
                 rankedDestinations.add(destination);
             } catch (Exception e) {
@@ -390,7 +394,7 @@ public class PersistentDataStore {
 
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
-	  
+
     Entity userEntity = new Entity("chat-users", user.getId().toString());
     userEntity.setProperty("uuid", user.getId().toString());
     userEntity.setProperty("username", user.getName());
@@ -421,8 +425,8 @@ public class PersistentDataStore {
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
     datastore.put(conversationEntity);
   }
-  
-  /** Write an AboutMe object to the Datastore service. 
+
+  /** Write an AboutMe object to the Datastore service.
    * @throws PersistentDataStoreException */
   public void writeThrough(AboutMe aboutMe) throws PersistentDataStoreException {
 	// Retrieve all aboutmes from the datastore.
@@ -443,7 +447,7 @@ public class PersistentDataStore {
 	        throw new PersistentDataStoreException(e);
 	      }
 	    }
-	    
+
 	    Entity aboutMeEntity = new Entity("chat-aboutmes", aboutMe.getId().toString());
 	    aboutMeEntity.setProperty("uuid", aboutMe.getId().toString());
 	    aboutMeEntity.setProperty("owner", aboutMe.getOwner().toString());
@@ -451,7 +455,7 @@ public class PersistentDataStore {
 	    aboutMeEntity.setProperty("creation_time", aboutMe.getCreationTime().toString());
 	    datastore.put(aboutMeEntity);
   }
-  
+
   /** Write a StatusUpdate object to the Datastore service. */
   public void writeThrough(StatusUpdate statusUpdate) {
     Entity statusUpdateEntity = new Entity("status-updates", statusUpdate.getId().toString());
@@ -461,7 +465,7 @@ public class PersistentDataStore {
     statusUpdateEntity.setProperty("creation_time", statusUpdate.getCreationTime().toString());
     datastore.put(statusUpdateEntity);
   }
-  
+
   /** Write a UserAction object to the Datastore service. */
   public void writeThrough(UserAction userAction) {
     Entity userActionEntity = new Entity("user-actions", userAction.getId().toString());
@@ -471,18 +475,39 @@ public class PersistentDataStore {
     userActionEntity.setProperty("creation_time", userAction.getCreationTime().toString());
     datastore.put(userActionEntity);
   }
-  
+
   /** Write a Destination object to the Datastore service. */
-  public void writeThrough(Destination destination) {
-    Entity destinationEntity = new Entity("destinations", destination.getId().toString());
-    destinationEntity.setProperty("uuid", destination.getId().toString());
-    destinationEntity.setProperty("owner", destination.getOwnerId().toString());
-    destinationEntity.setProperty("title", destination.getTitle());
-    destinationEntity.setProperty("creation_time", destination.getCreationTime().toString());
-    destinationEntity.setProperty("banner", destination.getBanner());
-    datastore.put(destinationEntity);
+  public void writeThrough(Destination destination) throws PersistentDataStoreException {
+      // Retrieve all aboutmes from the datastore.
+      Query query = new Query("destinations");
+      PreparedQuery results = datastore.prepare(query);
+
+      for (Entity entity : results.asIterable()) {
+          try {
+              if (entity.getProperty("uuid").equals(destination.getId().toString())) {
+                  entity.setProperty("votes", destination.getVotes());
+                  datastore.put(entity);
+                  return;
+              }
+          } catch (Exception e) {
+              // In a production environment, errors should be very rare. Errors which may
+              // occur include network errors, Datastore service errors, authorization errors,
+              // database entity definition mismatches, or service mismatches.
+              throw new PersistentDataStoreException(e);
+          }
+      }
+      Entity destinationEntity = new Entity("destinations", destination.getId().toString());
+      destinationEntity.setProperty("uuid", destination.getId().toString());
+      destinationEntity.setProperty("owner", destination.getOwnerId().toString());
+      destinationEntity.setProperty("title", destination.getTitle());
+      destinationEntity.setProperty("creation_time", destination.getCreationTime().toString());
+      destinationEntity.setProperty("votes", destination.getVotes());
+      destinationEntity.setProperty("banner", destination.getBanner());
+      datastore.put(destinationEntity);
   }
-  
+
+
+
   /** Write a Tip object to the Datastore service. */
   public void writeThrough(Tip tip) {
     Entity tipEntity = new Entity("tips", tip.getId().toString());
