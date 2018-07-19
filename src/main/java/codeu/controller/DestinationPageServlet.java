@@ -128,9 +128,12 @@ public class DestinationPageServlet extends HttpServlet {
 	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
 	  List<Image> images = imageStore.returnImagesInDestination(destination);
       List<Conversation> conversations = conversationStore.getConvosInDestination(destination.getId());
+      List<Destination> ranks = destinationStore.getRankedDestinations();
+
       request.setAttribute("conversations", conversations);
       request.setAttribute("destinationTitle", destinationTitle);
       request.setAttribute("images", images);
+      request.setAttribute("ranks", ranks);
 
       String banner = destination.getBanner();
       if (banner != null) {
@@ -164,7 +167,7 @@ public class DestinationPageServlet extends HttpServlet {
     String username = (String) request.getSession().getAttribute("user");
     if (username == null) {
       // user is not logged in, don't let them create a conversation
-      response.sendRedirect("/login");
+      response.sendRedirect("/index");
       return;
     }
 
@@ -172,7 +175,7 @@ public class DestinationPageServlet extends HttpServlet {
     if (user == null) {
       // user was not found, don't let them create a conversation
       System.out.println("User not found: " + username);
-      response.sendRedirect("/login");
+      response.sendRedirect("/index");
       return;
     }
 

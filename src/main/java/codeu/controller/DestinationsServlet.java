@@ -106,7 +106,7 @@ public class DestinationsServlet extends HttpServlet {
     String username = (String) request.getSession().getAttribute("user");
     if (username == null) {
       // user is not logged in, don't let them create a destination
-      response.sendRedirect("/login");
+      response.sendRedirect("/index");
       return;
     }
 
@@ -135,7 +135,7 @@ public class DestinationsServlet extends HttpServlet {
     }
     String banner = request.getParameter("banner");
     Destination destination =
-            new Destination(UUID.randomUUID(), user.getId(), destinationTitle, Instant.now(), "");
+            new Destination(UUID.randomUUID(), user.getId(), destinationTitle, Instant.now(), banner);
 
     destinationStore.addDestination(destination);
 

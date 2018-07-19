@@ -27,10 +27,6 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-<<<<<<< HEAD
-
-=======
->>>>>>> b05052125da6d657071c8e055b5037b366dd3904
     <%@include file="nav.jsp" %>
   
    <div style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;" id="container">
@@ -81,22 +77,7 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
       for (UserAction userAction : userActions) {
     %>
       <li><strong><%= userAction.getFormattedTime() %>: </strong><%= userAction.getMessage() %></li>
-    <%
-      for (Message message : messages) {
-        String author = UserStore.getInstance()
-          .getUser(message.getAuthorId()).getName();
-        if (message.getType().equals('m')) {
-        %>
-          <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
-          <%
-        } else {
-          %>
-            <a href="/user/<%=author %>"><li><strong><%= author %></a>:</strong></li>
-            <a href="<%=message.getContent()%>"><img src="<%=message.getContent()%>" width = "75" height = "75"></a>
-          <%
-        }
-      }
-    %>
+          <% } %>
       </ul>
     </div>
 

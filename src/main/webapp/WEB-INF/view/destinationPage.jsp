@@ -17,6 +17,8 @@
 <%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.data.User" %>
 <%@ page import="codeu.model.data.Image" %>
+<%@ page import="codeu.model.data.Destination" %>
+
 
 
 <!DOCTYPE html>
@@ -38,6 +40,17 @@
 
       <h1><%= request.getAttribute("destinationTitle") %></h1>
 
+    <% List<Destination> ranks = (List<Destination>) request.getAttribute("ranks");
+    int rank = 1;
+    for (Destination destination : ranks) {
+        if (destination.getTitle().equals(request.getAttribute("destinationTitle"))) { %>
+            <h3>Ranked #<%=rank%></h3>
+           <% break;
+        }
+        rank++;
+    }
+
+    %>
     <% if (request.getAttribute("banner") != null) { %>
         <img src="<%=request.getAttribute("banner")%>" height="400" width="800"/>
     <% } %>
@@ -108,9 +121,10 @@
     %>
       <ul class="mdl-list">
     <%
+      String destinationTag = (String) request.getAttribute("destinationTag");
       for(Conversation conversation : conversations){
     %>
-      <li><a href="/chat/<%= conversation.getTitle() %>">
+      <li><a href="/chat/<%=conversation.getTitle() %>">
         <%= conversation.getTitle() %></a></li>
     <%
       }

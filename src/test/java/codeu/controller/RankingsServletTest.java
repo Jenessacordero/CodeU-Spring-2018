@@ -78,7 +78,7 @@ public class RankingsServletTest {
 
         Mockito.verify(mockDestinationStore, Mockito.never())
                 .addDestination(Mockito.any(Destination.class));
-        Mockito.verify(mockResponse).sendRedirect("/login");
+        Mockito.verify(mockResponse).sendRedirect("/index");
     }
 
     @Test

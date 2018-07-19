@@ -14,6 +14,6 @@
     <% if(request.getSession().getAttribute("user") != null){ %>
     <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
     <% } else{ %>
-    <a href="/login">Login</a>
+    <a href="/index">Login</a>
     <% } %>
   </nav>

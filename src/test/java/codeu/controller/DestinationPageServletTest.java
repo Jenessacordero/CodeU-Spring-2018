@@ -114,7 +114,6 @@ public class DestinationPageServletTest {
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
 **/
-
   @Test
   public void testDoPost_UserNotLoggedIn() throws IOException, ServletException {
 	  UUID fakeDestinationId = UUID.randomUUID();
@@ -131,7 +130,7 @@ public class DestinationPageServletTest {
 
     Mockito.verify(mockConversationStore, Mockito.never())
         .addConversation(Mockito.any(Conversation.class));
-    Mockito.verify(mockResponse).sendRedirect("/login");
+    Mockito.verify(mockResponse).sendRedirect("/index");
   }
 
   @Test
@@ -151,7 +150,7 @@ public class DestinationPageServletTest {
 
     Mockito.verify(mockConversationStore, Mockito.never())
         .addConversation(Mockito.any(Conversation.class));
-    Mockito.verify(mockResponse).sendRedirect("/login");
+    Mockito.verify(mockResponse).sendRedirect("/index");
   }
 
   @Test
