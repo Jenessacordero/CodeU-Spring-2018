@@ -78,6 +78,8 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
     %>
       <li><strong><%= userAction.getFormattedTime() %>: </strong><%= userAction.getMessage() %></li>
           <% } %>
+      }
+    %>
       </ul>
     </div>
 

@@ -41,7 +41,7 @@ List<String> countryList = (List<String>) request.getAttribute("countryList");
       <h1>New Destination</h1>
       <form action="/destinations" method="POST">
           <div class="form-group">
-            <label class="form-control-label">Title:</label>
+            <label class="form-control-label">Destination:</label>
           <select name="destinationTitle">
           <%
       for(String country : countryList){%>
@@ -50,7 +50,6 @@ List<String> countryList = (List<String>) request.getAttribute("countryList");
           }
           %>
           </select>
-          <input type="text" name="destinationTitle">
             <br/>
             <label class="form-control-label">Banner Image:</label>
             <input type="text" name="banner">

@@ -19,6 +19,8 @@ import codeu.model.data.Destination;
 import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.data.Image;
+import codeu.model.data.Message;
+import codeu.model.data.Tip;
 import codeu.model.store.basic.*;
 import codeu.model.data.Banner;
 import java.io.IOException;
@@ -29,6 +31,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 /** Servlet class responsible for the conversations page. */
 public class DestinationPageServlet extends HttpServlet {
@@ -47,6 +52,9 @@ public class DestinationPageServlet extends HttpServlet {
 
   /** Store class that gives access to Images. */
   private ImageStore imageStore;
+  
+  /** Store class that gives access to Tips. */
+  private TipStore tipStore;
 
   /** Store class that gives access to Images. */
   private BannerStore bannerStore;
@@ -64,6 +72,7 @@ public class DestinationPageServlet extends HttpServlet {
     setUserActionStore(UserActionStore.getInstance());
     setImageStore(ImageStore.getInstance());
     setBannerStore(BannerStore.getInstance());
+    setTipStore(TipStore.getInstance());
   }
 
   /**
@@ -115,6 +124,15 @@ public class DestinationPageServlet extends HttpServlet {
   void setBannerStore(BannerStore bannerStore) {
     this.bannerStore = bannerStore;
   }
+  
+  /**
+   * Sets the TipStore used by this servlet. This function provides a common setup method
+   * for use by the test framework or the servlet's init() function.
+   */
+
+  void setTipStore(TipStore tipStore) {
+    this.tipStore = tipStore;
+  }
 
   /**
    * This function fires when a user navigates to the conversations page. It gets all of the
@@ -129,11 +147,13 @@ public class DestinationPageServlet extends HttpServlet {
 	  List<Image> images = imageStore.returnImagesInDestination(destination);
       List<Conversation> conversations = conversationStore.getConvosInDestination(destination.getId());
       List<Destination> ranks = destinationStore.getRankedDestinations();
+      List<Tip> tips = tipStore.getTipsInDestination(destination.getId());
 
       request.setAttribute("conversations", conversations);
       request.setAttribute("destinationTitle", destinationTitle);
       request.setAttribute("images", images);
       request.setAttribute("ranks", ranks);
+      request.setAttribute("tips", tips);
 
       String banner = destination.getBanner();
       if (banner != null) {
@@ -162,6 +182,7 @@ public class DestinationPageServlet extends HttpServlet {
 	  String requestUrl = request.getRequestURI();
 	  String destinationTitle = requestUrl.substring("/destination/".length());
 	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
+	  String cleanedTipContent = "";
 
 	  
     String username = (String) request.getSession().getAttribute("user");
@@ -205,6 +226,32 @@ public class DestinationPageServlet extends HttpServlet {
               + conversationTitle, Instant.now());
       userActionStore.addUserAction(newConversation);
       response.sendRedirect("/chat/" + conversationTitle);
+      
+    
+    }
+    // Tip Form
+    else if (request.getParameter("tip") != null) {
+        String tipContent = request.getParameter("tip");
+
+        // this removes any HTML from the message content
+        cleanedTipContent = Jsoup.clean(tipContent, Whitelist.none());
+
+        // Creates a Tip.
+        Tip tip =
+                new Tip(
+                        UUID.randomUUID(),
+                        destination.getId(),
+                        user.getId(),
+                        cleanedTipContent,
+                        Instant.now());
+
+        tipStore.addTip(tip);
+        response.sendRedirect("/destination/" + destinationTitle);
+
+        // Creates a new user action.
+        UserAction newTip = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has added a tip in " + destinationTitle
+                + ": " + "\"" + cleanedTipContent + "\"", Instant.now());
+        userActionStore.addUserAction(newTip);
     }
     else if (request.getParameter("banner") != null && request.getParameter("banner") != "") {
         String banner = request.getParameter("banner");

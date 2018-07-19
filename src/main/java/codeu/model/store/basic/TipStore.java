@@ -88,20 +88,6 @@ public class TipStore {
 
     return tipsInDestination;
   }
-  
-  /** Access the current set of Tips by the current user. */
-  public List<Tip> getTipsByUser(UUID user) {
-
-    List<Tip> tipsByUser = new ArrayList<>();
-
-    for (Tip tip : tips) {
-      if (tip.getAuthorId().equals(user)) {
-    	  tipsByUser.add(tip);
-      }
-    }
-
-    return tipsByUser;
-  }
 
   /** Sets the List of Tips stored by this TipStore. */
   public void setTips(List<Tip> tips) {
