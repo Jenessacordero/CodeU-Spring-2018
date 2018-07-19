@@ -13,31 +13,62 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CodeU Chat App</title>
+  <title>Login</title>
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 
-<%@ include file="WEB-INF/view/nav.jsp" %>
+<%@include file="WEB-INF/view/nav.jsp" %>
 
-  <div id="container">
-    <div
-      style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
+<div id="box">
+  <div id="login" style ="margin-left: 30%;
+  margin-right: auto;
+  margin-top: 10%;
+  width: 40%;
+  height: 60%;
+  background-color: rgba(0, 0, 0, .6);
+  position: absolute;">
+    <h1 style="float: none;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  color: white;">
+      Login</h1>
 
-      <h1>CodeU Chat App</h1>
-      <h2>Welcome!</h2>
+    <% if(request.getAttribute("error") != null){ %>
+    <h2 style="color:red"><%= request.getAttribute("error") %></h2>
+    <% } %>
+    <form action="/index" method="POST" style="float: none;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  color: white;">
 
-      <ul>
-        <li><a href="/login">Login</a> to get started.</li>
-        <li>Go to the <a href="/conversations">conversations</a> page to
-            create or join a conversation.</li>
-        <li>View the <a href="/about.jsp">about</a> page to learn more about the
-            project.</li>
-      </ul>
-    </div>
+      <label for="username">Username: </label>
+      <br/>
+      <input type="text" name="username" id="username">
+      <br/>
+      <label for="password">Password: </label>
+      <br/>
+      <input type="password" name="password" id="password">
+      <br/><br/>
+      <button type="submit">Login</button>
+    </form>
+    <p style="float: none;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  color: white;">New users can register <a href="/register">here</a>.</p>
   </div>
+</div>
+
 </body>
 </html>
+

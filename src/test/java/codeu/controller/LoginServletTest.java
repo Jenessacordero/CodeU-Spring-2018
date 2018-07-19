@@ -42,7 +42,7 @@ public class LoginServletTest {
     mockRequest = Mockito.mock(HttpServletRequest.class);
     mockResponse = Mockito.mock(HttpServletResponse.class);
     mockRequestDispatcher = Mockito.mock(RequestDispatcher.class);
-    Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/login.jsp"))
+    Mockito.when(mockRequest.getRequestDispatcher("index.jsp"))
         .thenReturn(mockRequestDispatcher);
   }
 
@@ -93,6 +93,6 @@ public class LoginServletTest {
 
     Mockito.verify(mockUserStore, Mockito.never()).addUser(Mockito.any(User.class));
     Mockito.verify(mockSession).setAttribute("user", "test username");
-    Mockito.verify(mockResponse).sendRedirect("/conversations");
+    Mockito.verify(mockResponse).sendRedirect("/destinations");
   }
 }

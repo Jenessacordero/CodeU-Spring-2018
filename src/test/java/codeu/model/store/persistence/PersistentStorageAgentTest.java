@@ -4,6 +4,8 @@ import codeu.model.data.*;
 
 import java.time.Instant;
 import java.util.UUID;
+
+import com.google.appengine.api.datastore.Text;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -145,21 +147,21 @@ public class PersistentStorageAgentTest {
   public void testWriteThroughDestination() throws PersistentDataStoreException {
     Destination destination =
         new Destination(
-            UUID.randomUUID(), UUID.randomUUID(), "test title", Instant.now(), "");
+            UUID.randomUUID(), UUID.randomUUID(), "test title", Instant.now(), new Text(""));
     persistentStorageAgent.writeThrough(destination);
     Mockito.verify(mockPersistentDataStore).writeThrough(destination);
   }
 
   @Test
   public void testWriteThroughImage() throws PersistentDataStoreException {
-    Image testImage = new Image("test", "test", UUID.randomUUID(), Instant.now());
+    Image testImage = new Image(new Text("test"), "test", UUID.randomUUID(), Instant.now());
     persistentStorageAgent.writeThrough(testImage);
     Mockito.verify(mockPersistentDataStore).writeThrough(testImage);
   }
 
   @Test
   public void testWriteThroughBanner() throws PersistentDataStoreException {
-    Banner testBanner = new Banner("test", "test", UUID.randomUUID(), Instant.now());
+    Banner testBanner = new Banner(new Text("test"), "test", UUID.randomUUID(), Instant.now());
     persistentStorageAgent.writeThrough(testBanner);
     Mockito.verify(mockPersistentDataStore).writeThrough(testBanner);
   }

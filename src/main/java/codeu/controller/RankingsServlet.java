@@ -91,7 +91,7 @@ public class RankingsServlet extends HttpServlet {
         String username = (String) request.getSession().getAttribute("user");
         if (username == null) {
             // user is not logged in, don't let them vote
-            response.sendRedirect("/login");
+            response.sendRedirect("/index");
             return;
         }
 

@@ -43,8 +43,11 @@ public class ChatServlet extends HttpServlet {
   /** Store class that gives access to UserActions. */
   private UserActionStore userActionStore;
 
-  /** Store class that gives access to UserActions. */
+  /** Store class that gives access to Images. */
   private ImageStore imageStore;
+
+  /** Store class that gives access to Destinations. */
+  private DestinationStore destinationStore;
 
   
   /** Set up state for handling chat requests. */
@@ -56,6 +59,7 @@ public class ChatServlet extends HttpServlet {
     setUserStore(UserStore.getInstance());
     setUserActionStore(UserActionStore.getInstance());
     setImageStore(ImageStore.getInstance());
+    setDestinationStore(DestinationStore.getInstance());
   }
 
   /**
@@ -91,11 +95,19 @@ public class ChatServlet extends HttpServlet {
   }
 
   /**
-   * Sets the UserStore used by this servlet. This function provides a common setup method for use
+   * Sets the ImageStore used by this servlet. This function provides a common setup method for use
    * by the test framework or the servlet's init() function.
    */
   void setImageStore(ImageStore imageStore) {
     this.imageStore = imageStore;
+  }
+
+  /**
+   * Sets the DestinationStore used by this servlet. This function provides a common setup method for use
+   * by the test framework or the servlet's init() function.
+   */
+  void setDestinationStore(DestinationStore destinationStore) {
+    this.destinationStore = destinationStore;
   }
 
   /**
@@ -107,13 +119,13 @@ public class ChatServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     String requestUrl = request.getRequestURI();
-    String conversationTitle = requestUrl.substring("/chat/".length());
+    String conversationTitle = requestUrl.substring(("/chat/".length()));
 
     Conversation conversation = conversationStore.getConversationWithTitle(conversationTitle);
     if (conversation == null) {
       // couldn't find conversation, redirect to conversation list
       System.out.println("Conversation was null: " + conversationTitle);
-      response.sendRedirect("/conversations");
+      response.sendRedirect("/destinations");
       return;
     }
 
@@ -140,14 +152,14 @@ public class ChatServlet extends HttpServlet {
     String username = (String) request.getSession().getAttribute("user");
     if (username == null) {
       // user is not logged in, don't let them add a message
-      response.sendRedirect("/login");
+      response.sendRedirect("/index");
       return;
     }
 
     User user = userStore.getUser(username);
     if (user == null) {
       // user was not found, don't let them add a message
-      response.sendRedirect("/login");
+      response.sendRedirect("/index");
       return;
     }
 
@@ -157,7 +169,7 @@ public class ChatServlet extends HttpServlet {
     Conversation conversation = conversationStore.getConversationWithTitle(conversationTitle);
     if (conversation == null) {
       // couldn't find conversation, redirect to conversation list
-      response.sendRedirect("/conversations");
+      response.sendRedirect("/destinations");
       return;
     }
     if (request.getParameter("message") != null) {

@@ -80,7 +80,7 @@ public class RegisterServletTest {
     ArgumentCaptor<UserAction> userActionArgumentCaptor = ArgumentCaptor.forClass(UserAction.class);
     Mockito.verify(mockUserActionStore).addUserAction(userActionArgumentCaptor.capture());
 
-    Mockito.verify(mockResponse).sendRedirect("/login");
+    Mockito.verify(mockResponse).sendRedirect("/index");
   }
 
   @Test

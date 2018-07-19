@@ -85,6 +85,6 @@ public class RegisterServlet extends HttpServlet {
     // Creates a new user action.
     UserAction newUser = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has registered as a new user.", Instant.now());
     userActionStore.addUserAction(newUser);
-    response.sendRedirect("/login");
+    response.sendRedirect("/index");
   }
 }

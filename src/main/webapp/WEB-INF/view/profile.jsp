@@ -27,7 +27,6 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-
     <%@include file="nav.jsp" %>
   
    <div style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;" id="container">
@@ -78,8 +77,7 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
       for (UserAction userAction : userActions) {
     %>
       <li><strong><%= userAction.getFormattedTime() %>: </strong><%= userAction.getMessage() %></li>
-
-      <% 
+          <% } %>
       }
     %>
       </ul>

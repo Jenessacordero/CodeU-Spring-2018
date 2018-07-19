@@ -17,6 +17,7 @@
 <%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.data.User" %>
 <%@ page import="codeu.model.data.Image" %>
+<%@ page import="codeu.model.data.Destination" %>
 <%@ page import="codeu.model.data.Tip" %>
 
 
@@ -38,9 +39,10 @@
 
 
       <h1><%= request.getAttribute("destinationTitle") %></h1>
+    <h3>Ranked #<%=request.getAttribute("ranks")%></h3>
 
     <% if (request.getAttribute("banner") != null) { %>
-        <img src="<%=request.getAttribute("banner")%>" height="400" width="800"/>
+        <img src="<%=request.getAttribute("banner").toString()%>" height="400" width="800"/>
     <% } %>
 
     <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
@@ -52,6 +54,15 @@
 
 
     <h2>Photos:</h2>
+      <%-- New form to submit new photos, then below are the photos displayed --%>
+      <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
+          <div class="form-group">
+              <label class="form-control-label">Image Address:</label>
+              <input type="text" name="filename">
+          </div>
+
+          <button type="submit">Upload Image</button>
+      </form>
 
     <% List<Image> images = (List<Image>) request.getAttribute("images");
     if (images == null || images.isEmpty()) { %>
@@ -61,63 +72,40 @@
       <%
         for(Image image : images ){
       %>
-    <a href="<%=image.returnFilename()%>"><img src="<%=image.returnFilename()%>" width = "100" height = "100"/></a>
+    <a href="<%=image.returnFilename().getValue()%>"><img src="<%=image.returnFilename().getValue()%>" width = "100" height = "100"/></a>
       <%
         }
       %>
     <% } %>
 
-    <%-- New form to submit new photos, then below are the photos displayed --%>
-    <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
-      <div class="form-group">
-        <label class="form-control-label">Title:</label>
-        <input type="text" name="filename">
-      </div>
-
-      <button type="submit">Upload Image</button> <p>Copy and Paste Image Address Only!</p>
-    </form>
-
     <hr/>
 
-      <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
-          <div class="form-group">
-            <label class="form-control-label">Title:</label>
-          <input type="text" name="conversationTitle">
-        </div>
-
-        <button type="submit">Start Conversation</button>
-      </form>
-
-      <hr/>
-
-	 <div>
+    <h1>Conversations</h1>
     <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
-        <input type="text" name="tip">
-        <br/>
-        <button type="submit">Add a tip!</button>
-    </form>
+      <div class="form-group">
+        <label class="form-control-label">Conversation Title:</label>
+        <input type="text" name="conversationTitle">
       </div>
 
-    <h1>Conversations</h1>
+      <button type="submit">Start Conversation</button>
+    </form>
     <% if(request.getSession().getAttribute("user") == null){ %>
       <p>Login to start a conversation!</p>
-    <% } %>
-
-    <%
-    List<Conversation> conversations =
-      (List<Conversation>) request.getAttribute("conversations");
-    if(conversations == null || conversations.isEmpty()){
+    <% }
+    else if((List<Conversation>) request.getAttribute("conversations") == null || ((List<Conversation>) request.getAttribute("conversations")).isEmpty()){
     %>
       <p>Create a conversation to get started.</p>
     <%
     }
-    else{
+    else {
     %>
       <ul class="mdl-list">
     <%
+      List<Conversation> conversations = (List<Conversation>) request.getAttribute("conversations");
+      String destinationTag = (String) request.getAttribute("destinationTag");
       for(Conversation conversation : conversations){
     %>
-      <li><a href="/chat/<%= conversation.getTitle() %>">
+      <li><a href="/chat/<%=conversation.getTitle() %>">
         <%= conversation.getTitle() %></a></li>
     <%
       }
@@ -126,27 +114,33 @@
     <%
     }
     %>
-    
+    <hr/>
 	<div>
 	<h1>Tips</h1>
+      <div>
+        <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
+          <label class="form-control-label">Tip Content:</label>
+          <input type="text" name="tip">
+          <br/>
+          <button type="submit">Add a tip!</button>
+        </form>
+      </div>
     <% if(request.getSession().getAttribute("user") == null){ %>
       <p>Login to add a tip!</p>
-    <% } %>
-	<%
-    List<Tip> tips =
-      (List<Tip>) request.getAttribute("tips");
-    if(tips == null || tips.isEmpty()){
+    <% }
+    else if((List<Tip>) request.getAttribute("tips") == null || ((List<Tip>) request.getAttribute("tips")).isEmpty()){
     %>
-      <p>Add some tips!.</p>
+      <p>Add some tips!</p>
     <%
     }
     else{
     %>
       <ul class="mdl-list">
     <%
+      List<Tip> tips = (List<Tip>) request.getAttribute("tips");
       for(Tip tip : tips){
     %>
-        <%= tip.getContent() %></li>
+        <li><%= tip.getContent() %></li>
     <%
       }
     %>

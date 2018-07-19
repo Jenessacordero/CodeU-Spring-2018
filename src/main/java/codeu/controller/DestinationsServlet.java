@@ -14,15 +14,9 @@
 
 package codeu.controller;
 
-import codeu.model.data.Conversation;
-import codeu.model.data.Destination;
-import codeu.model.data.User;
-import codeu.model.data.UserAction;
-import codeu.model.data.Countries;
-import codeu.model.store.basic.ConversationStore;
-import codeu.model.store.basic.DestinationStore;
-import codeu.model.store.basic.UserActionStore;
-import codeu.model.store.basic.UserStore;
+import codeu.model.data.*;
+import codeu.model.store.basic.*;
+
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
@@ -31,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.google.appengine.api.datastore.Text;
 
 /** Servlet class responsible for the conversations page. */
 public class DestinationsServlet extends HttpServlet {
@@ -44,6 +39,9 @@ public class DestinationsServlet extends HttpServlet {
   /** Store class that gives access to UserActions. */
   private UserActionStore userActionStore;
 
+  /** Store class that gives access to Banners. */
+  private BannerStore bannerStore;
+
   /**
    * Set up state for handling conversation-related requests. This method is only called when
    * running in a server, not when running in a test.
@@ -54,6 +52,7 @@ public class DestinationsServlet extends HttpServlet {
     setUserStore(UserStore.getInstance());
     setDestinationStore(DestinationStore.getInstance());
     setUserActionStore(UserActionStore.getInstance());
+    setBannerStore(BannerStore.getInstance());
   }
 
   /**
@@ -78,6 +77,14 @@ public class DestinationsServlet extends HttpServlet {
    */
   void setUserActionStore(UserActionStore UserActionStore) {
     this.userActionStore = UserActionStore;
+  }
+
+  /**
+   * Sets the BannerStore used by this servlet. This function provides a common setup method
+   * for use by the test framework or the servlet's init() function.
+   */
+  void setBannerStore(BannerStore bannerStore) {
+    this.bannerStore = bannerStore;
   }
 
   /**
@@ -106,7 +113,7 @@ public class DestinationsServlet extends HttpServlet {
     String username = (String) request.getSession().getAttribute("user");
     if (username == null) {
       // user is not logged in, don't let them create a destination
-      response.sendRedirect("/login");
+      response.sendRedirect("/index");
       return;
     }
 
@@ -133,9 +140,10 @@ public class DestinationsServlet extends HttpServlet {
       response.sendRedirect("/destination/" + destinationTitle);
       return;
     }
-    String banner = request.getParameter("banner");
+    Text banner = new Text(request.getParameter("banner"));
     Destination destination =
-            new Destination(UUID.randomUUID(), user.getId(), destinationTitle, Instant.now(), "");
+            new Destination(UUID.randomUUID(), user.getId(), destinationTitle, Instant.now(), banner);
+    bannerStore.addBanner(destinationTitle, new Banner(banner, destinationTitle, UUID.randomUUID(), Instant.now()));
 
     destinationStore.addDestination(destination);
 

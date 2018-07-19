@@ -2,6 +2,7 @@ package codeu.model.store.basic;
 
 import codeu.model.data.Destination;
 import codeu.model.store.persistence.PersistentStorageAgent;
+import com.google.appengine.api.datastore.Text;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,15 +22,15 @@ public class DestinationStoreTest {
 
   private final Destination DESTINATION_ONE =
 	      new Destination(
-          UUID.randomUUID(), UUID.randomUUID(), "destination_one", Instant.ofEpochMilli(1000), "", 5);
+          UUID.randomUUID(), UUID.randomUUID(), "destination_one", Instant.ofEpochMilli(1000), new Text(""), 5);
   
   private final Destination DESTINATION_TWO =
 	      new Destination(
-	          UUID.randomUUID(), UUID.randomUUID(), "destination_two", Instant.ofEpochMilli(1000), "", 0);
+	          UUID.randomUUID(), UUID.randomUUID(), "destination_two", Instant.ofEpochMilli(1000), new Text(""), 0);
 
   private final Destination DESTINATION_THREE =
           new Destination(
-                  UUID.randomUUID(), UUID.randomUUID(), "destination_three", Instant.ofEpochMilli(1000), "", -2);
+                  UUID.randomUUID(), UUID.randomUUID(), "destination_three", Instant.ofEpochMilli(1000), new Text(""), -2);
 
   @Before
   public void setup() {
@@ -78,7 +79,7 @@ public class DestinationStoreTest {
   @Test
   public void testAddDestination() {
     Destination inputDestination =
-        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), "");
+        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), new Text(""));
 
     destinationStore.addDestination(inputDestination);
     

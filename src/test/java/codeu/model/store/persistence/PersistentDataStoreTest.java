@@ -1,6 +1,7 @@
 package codeu.model.store.persistence;
 
 import codeu.model.data.*;
+import com.google.appengine.api.datastore.Text;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import java.time.Instant;
@@ -271,7 +272,7 @@ public class PersistentDataStoreTest {
     UUID userOne = UUID.fromString("10000002-2222-3333-4444-555555555555");
     String titleOne = "test title one";
     Instant creationOne = Instant.ofEpochMilli(1000);
-    String banner1 = "";
+    Text banner1 = new Text("");
     Destination inputDestinationOne =
         new Destination(idOne, userOne, titleOne, creationOne, banner1);
 
@@ -279,7 +280,7 @@ public class PersistentDataStoreTest {
     UUID userTwo = UUID.fromString("10000005-2222-3333-4444-555555555555");
     String titleTwo = "test title two";
     Instant creationTwo = Instant.ofEpochMilli(2000);
-    String banner2 = "";
+    Text banner2 = new Text("");
     Destination inputDestinationTwo =
         new Destination(idTwo, userTwo, titleTwo, creationTwo, banner2);
 
@@ -307,13 +308,13 @@ public class PersistentDataStoreTest {
 
   @Test
   public void testSaveAndLoadImages() throws PersistentDataStoreException {
-    String filename = "test";
+    Text filename = new Text("test");
     String destination = "test";
     UUID id = UUID.randomUUID();
     Instant now = Instant.ofEpochMilli(1000);
     Image image = new Image(filename, destination, id, now);
 
-    String filename2 = "random";
+    Text filename2 = new Text("random");
     String destination2 = "random";
     UUID id2 = UUID.randomUUID();
     Instant now2 = Instant.ofEpochMilli(2000);
@@ -343,13 +344,13 @@ public class PersistentDataStoreTest {
 
   @Test
   public void testSaveandLoadBanners() throws PersistentDataStoreException {
-    String filename = "test";
+    Text filename = new Text("test");
     String destination = "test";
     UUID id = UUID.randomUUID();
     Instant now = Instant.ofEpochMilli(1000);
     Banner banner = new Banner(filename, destination, id, now);
 
-    String filename2 = "random";
+    Text filename2 = new Text("random");
     String destination2 = "random";
     UUID id2 = UUID.randomUUID();
     Instant now2 = Instant.ofEpochMilli(2000);

@@ -104,7 +104,7 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
           <button type="submit">Send Image (Image Address Only)</button>
       </form>
     <% } else { %>
-      <p><a href="/login">Login</a> to send a message.</p>
+      <p><a href="/index">Login</a> to send a message.</p>
     <% } %>
 
     <hr/>
