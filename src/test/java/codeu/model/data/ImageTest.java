@@ -1,5 +1,6 @@
 package codeu.model.data;
 
+import com.google.appengine.api.datastore.Text;
 import org.junit.Test;
 
 import java.time.Instant;
@@ -12,7 +13,7 @@ public class ImageTest {
     public void testCreate() {
         UUID id = UUID.randomUUID();
         String destination = "random";
-        String filename = "random";
+        Text filename = new Text("random");
         Instant now = Instant.now();
 
         Image image = new Image(filename, destination, id, now);

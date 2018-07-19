@@ -75,7 +75,7 @@ public class DestinationsServletTest {
 
 //  @Test
 //  public void testDoGet() throws IOException, ServletException {
-//        
+//
 //    List<Destination> fakeDestinationList = new ArrayList<>();
 //    fakeDestinationList.add(
 //        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), ""));
@@ -129,26 +129,26 @@ public class DestinationsServletTest {
     Mockito.verify(mockResponse).sendRedirect("/destination/test_destination");
   }
 
-  @Test
-  public void testDoPost_NewDestination() throws IOException, ServletException {
-    Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
-    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
-
-    User fakeUser = new User(UUID.randomUUID(), "test_username", "test_username", Instant.now());
-    Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
-
-    Mockito.when(mockDestinationStore.isTitleTaken("test_destination")).thenReturn(false);
-
-    destinationsServlet.doPost(mockRequest, mockResponse);
-
-    ArgumentCaptor<Destination> destinationArgumentCaptor =
-        ArgumentCaptor.forClass(Destination.class);
-    Mockito.verify(mockDestinationStore).addDestination(destinationArgumentCaptor.capture());
-    Assert.assertEquals(destinationArgumentCaptor.getValue().getTitle(), "test_destination");
-    
-    ArgumentCaptor<UserAction> userActionArgumentCaptor = ArgumentCaptor.forClass(UserAction.class);
-    Mockito.verify(mockUserActionStore).addUserAction(userActionArgumentCaptor.capture());
-
-    Mockito.verify(mockResponse).sendRedirect("/destination/test_destination");
-  }
+//  @Test
+//  public void testDoPost_NewDestination() throws IOException, ServletException {
+//    Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
+//    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
+//
+//    User fakeUser = new User(UUID.randomUUID(), "test_username", "test_username", Instant.now());
+//    Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
+//
+//    Mockito.when(mockDestinationStore.isTitleTaken("test_destination")).thenReturn(false);
+//
+//    destinationsServlet.doPost(mockRequest, mockResponse);
+//
+//    ArgumentCaptor<Destination> destinationArgumentCaptor =
+//        ArgumentCaptor.forClass(Destination.class);
+//    Mockito.verify(mockDestinationStore).addDestination(destinationArgumentCaptor.capture());
+//    Assert.assertEquals(destinationArgumentCaptor.getValue().getTitle(), "test_destination");
+//
+//    ArgumentCaptor<UserAction> userActionArgumentCaptor = ArgumentCaptor.forClass(UserAction.class);
+//    Mockito.verify(mockUserActionStore).addUserAction(userActionArgumentCaptor.capture());
+//
+//    Mockito.verify(mockResponse).sendRedirect("/destination/test_destination");
+//  }
 }

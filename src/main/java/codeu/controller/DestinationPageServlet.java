@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.google.appengine.api.datastore.Text;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
@@ -152,20 +153,29 @@ public class DestinationPageServlet extends HttpServlet {
       request.setAttribute("conversations", conversations);
       request.setAttribute("destinationTitle", destinationTitle);
       request.setAttribute("images", images);
-      request.setAttribute("ranks", ranks);
-      request.setAttribute("tips", tips);
-
-      String banner = destination.getBanner();
-      if (banner != null) {
-        Banner banner2 = bannerStore.returnBanner(destination.getTitle());
-        if (banner2 != null) {
-          request.setAttribute("banner", banner2.returnBanner());
-        } else {
-          request.setAttribute("banner", null);
-        }
+      String banner = destination.getBanner().getValue();
+    if (banner != null) {
+      Banner banner2 = bannerStore.returnBanner(destination.getTitle());
+      if (banner2 != null) {
+        request.setAttribute("banner", banner2.returnBanner().getValue());
       } else {
         request.setAttribute("banner", null);
       }
+    } else {
+      request.setAttribute("banner", null);
+    }
+
+      int rank = 1;
+      for (Destination destinations : ranks) {
+          if (destinations.getTitle().equals(request.getAttribute(destinationTitle))) {
+           break;
+          }
+          rank++;
+      }
+      request.setAttribute("ranks", rank);
+      request.setAttribute("tips", tips);
+
+
 
       request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
   }
@@ -204,11 +214,11 @@ public class DestinationPageServlet extends HttpServlet {
 
     String conversationTitle = request.getParameter("conversationTitle");
     if (conversationTitle != null && conversationTitle != "") {
-      if (!conversationTitle.matches("[\\w*]*")) {
-        request.setAttribute("error", "Please enter only letters and numbers.");
-        request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
-        return;
-      }
+//      if (!conversationTitle.matches("[\\w*]*")) {
+//        request.setAttribute("error", "Please enter only letters and numbers.");
+//        request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
+//        return;
+//      }
       if (conversationStore.isTitleTaken(conversationTitle)) {
         // conversation title is already taken, just go into that conversation instead of creating a
         // new one
@@ -254,7 +264,7 @@ public class DestinationPageServlet extends HttpServlet {
         userActionStore.addUserAction(newTip);
     }
     else if (request.getParameter("banner") != null && request.getParameter("banner") != "") {
-        String banner = request.getParameter("banner");
+        Text banner = (new Text(request.getParameter("banner")));
         destination.changeBanner(banner);
         bannerStore.addBanner(destinationTitle, new Banner(banner, destinationTitle, UUID.randomUUID(), Instant.now()));
         response.sendRedirect("/destination/" + destinationTitle);
@@ -262,7 +272,7 @@ public class DestinationPageServlet extends HttpServlet {
       }
       else {
         if (request.getParameter("filename") != null && request.getParameter("filename") != "") {
-          String imageFilename = request.getParameter("filename");
+          Text imageFilename = new Text(request.getParameter("filename"));
           Image newImage = new Image(imageFilename, destinationTitle, UUID.randomUUID(), Instant.now());
           imageStore.addImage(newImage);
           response.sendRedirect("/destination/" + destinationTitle);

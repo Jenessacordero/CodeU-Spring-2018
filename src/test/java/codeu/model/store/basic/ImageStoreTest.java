@@ -7,6 +7,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import com.google.appengine.api.datastore.Text;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,11 +21,11 @@ public class ImageStoreTest {
     private PersistentStorageAgent mockPersistentStorageAgent;
 
     private final Image one =
-            new Image("one", "one", UUID.randomUUID(), Instant.now());
+            new Image(new Text("one"), "one", UUID.randomUUID(), Instant.now());
     private final Image two =
-            new Image("two", "two", UUID.randomUUID(), Instant.now());
+            new Image(new Text("two"), "two", UUID.randomUUID(), Instant.now());
     private final Image three =
-            new Image("three", "three", UUID.randomUUID(), Instant.now());
+            new Image(new Text("three"), "three", UUID.randomUUID(), Instant.now());
 
     @Before
     public void setup() {
@@ -49,7 +51,7 @@ public class ImageStoreTest {
 
     @Test
     public void testAddUserAction() {
-        Image image = new Image("test", "test", UUID.randomUUID(), Instant.now());
+        Image image = new Image(new Text("test"), "test", UUID.randomUUID(), Instant.now());
 
         imageStore.addImage(image);
         Image resultImage = imageStore.returnAllImages().get(0);

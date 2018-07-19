@@ -32,6 +32,9 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.Text;
+
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -262,7 +265,7 @@ public class PersistentDataStore {
 	        UUID owner = UUID.fromString((String) entity.getProperty("owner"));
 	        String title = (String) entity.getProperty("title");
 	        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-	        String banner = "";
+	        Text banner = new Text("");
 	        Destination destination = new Destination(uuid, owner, title, creationTime, banner);
 	        destinations.add(destination);
 	      } catch (Exception e) {
@@ -317,7 +320,7 @@ public class PersistentDataStore {
             try {
                 UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
                 String destination = (String) entity.getProperty("destination");
-                String filename = (String) entity.getProperty("filename");
+                Text filename = (Text) entity.getProperty("filename") ;
                 Instant now = Instant.parse((String) entity.getProperty("creation_time"));
                 Image image = new Image(filename, destination, uuid, now);
                 images.add(image);
@@ -343,7 +346,7 @@ public class PersistentDataStore {
             try {
                 UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
                 String destination = (String) entity.getProperty("destination");
-                String filename = (String) entity.getProperty("filename");
+                Text filename = (Text) entity.getProperty("filename");
                 Instant now = Instant.parse((String) entity.getProperty("creation_time"));
                 Banner banner = new Banner(filename, destination, uuid, now);
                 banners.put(destination, banner);
@@ -373,7 +376,7 @@ public class PersistentDataStore {
                 String title = (String) entity.getProperty("title");
                 Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
                 int votes = (int) entity.getProperty("votes");
-                Destination destination = new Destination(uuid, owner, title, creationTime, "", votes);
+                Destination destination = new Destination(uuid, owner, title, creationTime, new Text(""), votes);
                 rankedDestinations.add(destination);
             } catch (Exception e) {
                 // In a production environment, errors should be very rare. Errors which may

@@ -14,6 +14,7 @@
 
 package codeu.model.data;
 
+import com.google.appengine.api.datastore.Text;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class Destination {
   public final UUID owner;
   public final String title;
   public final Instant creation;
-  public String banner;
+  public Text banner;
   private int votes;
 
   /**
@@ -39,7 +40,7 @@ public class Destination {
    * @param votes the number of votes from users it has, default is zero if not defined
    */
 
-  public Destination(UUID id, UUID owner, String title, Instant creation, String banner, int votes) {
+  public Destination(UUID id, UUID owner, String title, Instant creation, Text banner, int votes) {
     this.id = id;
     this.owner = owner;
     this.creation = creation;
@@ -48,7 +49,7 @@ public class Destination {
     this.banner = banner;
   }
 
-  public Destination(UUID id, UUID owner, String title, Instant creation, String banner) {
+  public Destination(UUID id, UUID owner, String title, Instant creation, Text banner) {
     this.id = id;
     this.owner = owner;
     this.creation = creation;
@@ -88,11 +89,11 @@ public class Destination {
   }
 
   /** Returns the banner of this Destination. */
-  public String getBanner() {
+  public Text getBanner() {
     return this.banner;
   }
 
-  public void changeBanner(String filename) {
+  public void changeBanner(Text filename) {
     this.banner = filename;
   }
 

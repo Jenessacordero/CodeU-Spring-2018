@@ -16,6 +16,8 @@ package codeu.model.data;
 
 import java.time.Instant;
 import java.util.UUID;
+
+import com.google.appengine.api.datastore.Text;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,7 +29,7 @@ public class DestinationTest {
     UUID owner = UUID.randomUUID();
     String title = "Test_Title";
     Instant creation = Instant.now();
-    String banner = "";
+    Text banner = new Text("");
 
     Destination destination = new Destination(id, owner, title, creation, banner);
 

@@ -51,7 +51,7 @@ List<String> countryList = (List<String>) request.getAttribute("countryList");
           %>
           </select>
             <br/>
-            <label class="form-control-label">Banner Image:</label>
+            <label class="form-control-label">Banner Image Address:</label>
             <input type="text" name="banner">
         </div>
 
