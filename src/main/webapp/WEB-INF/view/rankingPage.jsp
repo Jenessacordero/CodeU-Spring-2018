@@ -13,24 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
-<%@ page import="java.util.List" %>
+<%@ page import="codeu.model.data.Banner" %>
 <%@ page import="codeu.model.data.Destination" %>
-<%@ page import="codeu.model.data.UserAction" %>
-<%@ page import="codeu.model.data.Message" %>
-<%@ page import="codeu.model.data.UserAction" %>
-<%@ page import="codeu.model.store.basic.UserStore" %>
-
+<%@ page import="codeu.model.store.basic.BannerStore" %>
+<%@ page import="com.google.appengine.api.datastore.Text" %>
+<%@ page import="java.util.List" %>
 
 
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Rankings</title>
-  <link rel="stylesheet" href="/css/main.css">
+    <title>Rankings</title>
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 
-  <%@include file="nav.jsp" %>
+<%@include file="nav.jsp" %>
 
   <div id="container">
 
@@ -45,7 +43,9 @@
   <div id="chat">
       <ol>
     <%
-      List<Destination> rankedDestinations = (List<Destination>) request.getAttribute("rankedDestinations");
+        BannerStore bannerStore = BannerStore.getInstance();
+
+        List<Destination> rankedDestinations = (List<Destination>) request.getAttribute("rankedDestinations");
       for (Destination destination : rankedDestinations) {
     %>
 
@@ -56,7 +56,14 @@
          </form>
 
           <strong><%= destination.getVotes() %> </strong>       <a href="/destination/<%= destination.getTitle() %>"><%= destination.getTitle() %></a></li>
-        </li>
+          <% Text banner = destination.getBanner();
+              if (banner != null) {
+                  Banner banner2 = bannerStore.returnBanner(destination.getTitle());
+                  if (banner2 != null) { %>
+          <img src="<%=banner2.returnBanner().getValue()%>" height="200" width="400"/>
+          <% }
+          }%>
+          </li>
     <%
       }
     %>
