@@ -70,6 +70,7 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
     %>
 
     <%
+        if (messages != null && !messages.isEmpty()) {
       for (Message message : messages) {
         String author = UserStore.getInstance()
           .getUser(message.getAuthorId()).getName();
@@ -86,6 +87,7 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
         <%
          }
       }
+            }
     %>
       </ul>
     </div>

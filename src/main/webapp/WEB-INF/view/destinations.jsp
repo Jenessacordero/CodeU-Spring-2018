@@ -44,10 +44,12 @@ List<String> countryList = (List<String>) request.getAttribute("countryList");
             <label class="form-control-label">Destination:</label>
           <select name="destinationTitle">
           <%
+            if (countryList != null || !countryList.isEmpty()) {
       for(String country : countryList){%>
           <option value="<%= country %>"><%= country %></option>
           <%
           }
+            }
           %>
           </select>
             <br/>
