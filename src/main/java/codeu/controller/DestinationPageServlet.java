@@ -167,7 +167,7 @@ public class DestinationPageServlet extends HttpServlet {
 
       int rank = 1;
       for (Destination destinations : ranks) {
-          if (destinations.getTitle().equals(request.getAttribute(destinationTitle))) {
+          if (destinations.getTitle().equals(destinationTitle)) {
            break;
           }
           rank++;
