@@ -32,7 +32,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import sun.security.krb5.internal.crypto.Des;
 
 public class ChatServletTest {
 
