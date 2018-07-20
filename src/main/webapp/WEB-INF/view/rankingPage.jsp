@@ -46,6 +46,7 @@
         BannerStore bannerStore = BannerStore.getInstance();
 
         List<Destination> rankedDestinations = (List<Destination>) request.getAttribute("rankedDestinations");
+        if (rankedDestinations != null) {
       for (Destination destination : rankedDestinations) {
     %>
 
@@ -66,6 +67,7 @@
           </li>
     <%
       }
+        }
     %>
       </ol>
     </div>

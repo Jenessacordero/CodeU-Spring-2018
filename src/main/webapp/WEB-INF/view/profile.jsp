@@ -44,24 +44,30 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
     
      <div contenteditable="true"> 
      <% if(request.getSession().getAttribute("user") != null){ %>
-       <% if(request.getSession().getAttribute("user").equals(request.getAttribute("username"))){ %>
+       <% if(request.getSession().getAttribute("user").equals(request.getAttribute("username"))){
+           if (aboutMe != null) { %>
       <form action="/user/<%= request.getSession().getAttribute("user") %>" method="POST">
         <textarea name="aboutme"><%= aboutMe.getContent() %></textarea>
         <br/>
         <button type="submit">Update Bio</button>
     </form>
-        <% } else if(!request.getSession().getAttribute("user").equals(request.getAttribute("username"))){ %>
+        <% }
+       } else if(!request.getSession().getAttribute("user").equals(request.getAttribute("username"))){ %>
         <h1><%= request.getAttribute("username") %>'s bio:</h1>
+         <% if (aboutMe != null) { %>
 		<p>
        <%= aboutMe.getContent() %>
        </p>
-        <% } %>
-        <% } else if(request.getSession().getAttribute("user") == null){ %>
+        <% }
+       }
+        } else if(request.getSession().getAttribute("user") == null){ %>
          <h1><%= request.getAttribute("username") %>'s bio:</h1>
-		<p>
+            <% if (aboutMe != null) { %>
+                <p>
        <%= aboutMe.getContent() %>
        </p>
-        <% } %>
+        <%}
+     } %>
         
         </div>
         
@@ -74,10 +80,11 @@ AboutMe aboutMe = (AboutMe) request.getAttribute("aboutMe");
     
       <ul>
     <%
+        if (userActions != null) {
       for (UserAction userAction : userActions) {
     %>
       <li><strong><%= userAction.getFormattedTime() %>: </strong><%= userAction.getMessage() %></li>
-          <% } %>
+          <% }
       }
     %>
       </ul>

@@ -37,10 +37,12 @@
         <h2 style="color:red"><%= request.getAttribute("error") %></h2>
     <% } %>
 
-
+      <% if (request.getAttribute("destinationTitle") != null) { %>
       <h1><%= request.getAttribute("destinationTitle") %></h1>
+    <% } %>
+    <% if (request.getAttribute("ranks") != null) { %>
     <h3>Ranked #<%=request.getAttribute("ranks")%></h3>
-
+<% } %>
     <% if (request.getAttribute("banner") != null) { %>
         <img src="<%=request.getAttribute("banner").toString()%>" height="400" width="800"/>
     <% } %>
