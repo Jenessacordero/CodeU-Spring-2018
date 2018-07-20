@@ -167,7 +167,7 @@ public class DestinationPageServlet extends HttpServlet {
 
       int rank = 1;
       for (Destination destinations : ranks) {
-          if (destinations.getTitle().equals(request.getAttribute(destinationTitle))) {
+          if (destinations.getTitle().equals(destinationTitle)) {
            break;
           }
           rank++;
@@ -214,6 +214,7 @@ public class DestinationPageServlet extends HttpServlet {
 
     String conversationTitle = request.getParameter("conversationTitle");
     if (conversationTitle != null && conversationTitle != "") {
+        conversationTitle = conversationTitle.replaceAll("\\s", "_");
 //      if (!conversationTitle.matches("[\\w*]*")) {
 //        request.setAttribute("error", "Please enter only letters and numbers.");
 //        request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
