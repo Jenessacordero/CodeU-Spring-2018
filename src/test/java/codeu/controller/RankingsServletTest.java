@@ -8,7 +8,6 @@ import com.google.appengine.api.datastore.Text;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import sun.security.krb5.internal.crypto.Des;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;

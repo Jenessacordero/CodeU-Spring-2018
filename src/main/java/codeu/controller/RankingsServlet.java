@@ -6,7 +6,6 @@ import codeu.model.data.UserAction;
 import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
-import sun.security.krb5.internal.crypto.Des;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
