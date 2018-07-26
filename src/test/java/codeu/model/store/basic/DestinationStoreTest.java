@@ -1,19 +1,21 @@
 package codeu.model.store.basic;
 
 import codeu.model.data.Destination;
+import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import com.google.appengine.api.datastore.Text;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import javax.servlet.ServletException;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static org.hamcrest.CoreMatchers.is;
 
 public class DestinationStoreTest {
 
@@ -32,6 +34,10 @@ public class DestinationStoreTest {
           new Destination(
                   UUID.randomUUID(), UUID.randomUUID(), "destination_three", Instant.ofEpochMilli(1000), new Text(""), -2);
 
+  private final Destination DESTINATION_FOUR =
+          new Destination(
+                  UUID.randomUUID(), UUID.randomUUID(), "destination_three", Instant.ofEpochMilli(1000), new Text(""), -9);
+
   @Before
   public void setup() {
     mockPersistentStorageAgent = Mockito.mock(PersistentStorageAgent.class);
@@ -40,6 +46,7 @@ public class DestinationStoreTest {
     final List<Destination> destinationList = new ArrayList<>();
     destinationList.add(DESTINATION_THREE);
     destinationList.add(DESTINATION_ONE);
+    destinationList.add(DESTINATION_FOUR);
     destinationList.add(DESTINATION_TWO);
     destinationStore.setDestinations(destinationList);
   }
@@ -82,7 +89,7 @@ public class DestinationStoreTest {
         new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), new Text(""));
 
     destinationStore.addDestination(inputDestination);
-    
+
     Destination resultDestination =
     		destinationStore.getDestinationWithTitle("test_destination");
 
@@ -90,14 +97,17 @@ public class DestinationStoreTest {
     Mockito.verify(mockPersistentStorageAgent).writeThrough(inputDestination);
   }
 
-
   @Test
-  public void testGetRankedDestinations() {
-    List<Destination> expectedRankedList = new ArrayList<>();
-    expectedRankedList.add(DESTINATION_ONE);
-    expectedRankedList.add(DESTINATION_TWO);
-    expectedRankedList.add(DESTINATION_THREE);
-    Assert.assertThat(expectedRankedList, is(destinationStore.getRankedDestinations()));
+  public void test_rankings_correct() throws IOException, ServletException {
+    List<Destination> fakeRankedList = new ArrayList<>();
+    fakeRankedList.add(DESTINATION_ONE);
+    fakeRankedList.add(DESTINATION_TWO);
+    fakeRankedList.add(DESTINATION_THREE);
+    fakeRankedList.add(DESTINATION_FOUR);
+
+    List<Destination> resultRankedList = destinationStore.getRankedDestinations();
+
+    Assert.assertEquals(fakeRankedList, resultRankedList);
   }
 
   private void assertEquals(Destination expectedDestination, Destination actualDestination) {

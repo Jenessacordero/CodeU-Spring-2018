@@ -1,13 +1,17 @@
 package codeu.controller;
 
+import codeu.controller.RankingsServlet;
 import codeu.model.data.Destination;
 import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
 import com.google.appengine.api.datastore.Text;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import sun.security.krb5.internal.crypto.Des;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -59,16 +63,21 @@ public class RankingsServletTest {
     }
 
     @Test
-    public void testDoGet() {
-        List<Destination> fakeRankedDestinationList = new ArrayList<>();
-        fakeRankedDestinationList.add(
-                new Destination(UUID.randomUUID(), UUID.randomUUID(), "location1", Instant.now(), new Text(""), 5));
-        fakeRankedDestinationList.add(
-                new Destination(UUID.randomUUID(), UUID.randomUUID(), "location2", Instant.now(), new Text(""), 0));
-        fakeRankedDestinationList.add(
-                new Destination(UUID.randomUUID(), UUID.randomUUID(), "location3", Instant.now(), new Text(""), -2));
-        Mockito.when(mockDestinationStore.getRankedDestinations()).thenReturn(fakeRankedDestinationList);
+    public void testDoGet() throws IOException, ServletException {
+        Destination dest1 = new Destination(UUID.randomUUID(), UUID.randomUUID(), "location1", Instant.now(), new Text(""), 5);
+        Destination dest2 = new Destination(UUID.randomUUID(), UUID.randomUUID(), "location1", Instant.now(), new Text(""), 0);
+        Destination dest3 = new Destination(UUID.randomUUID(), UUID.randomUUID(), "location1", Instant.now(), new Text(""), -3);
+        List<Destination> fakeRankedList = new ArrayList<>();
+        fakeRankedList.add(dest1);
+        fakeRankedList.add(dest2);
+        fakeRankedList.add(dest3);
+        Mockito.when(mockDestinationStore.getRankedDestinations()).thenReturn(fakeRankedList);
+
+        rankingsServlet.doGet(mockRequest, mockResponse);
+
+        Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
     }
+
 
     @Test
     public void testDoPost_UserNotLoggedIn() throws IOException, ServletException {
@@ -92,8 +101,72 @@ public class RankingsServletTest {
                 .addDestination(Mockito.any(Destination.class));
         Mockito.verify(mockResponse).sendRedirect("/rankingPage");
     }
-
-    //TODO: make sure votes work
-    //TODO: make sure user only able to vote once
+//
+//    @Test
+//    public void testUpVote() {
+//        Destination fakeDestination = Mockito.mock(Destination.class);
+//
+//        fakeDestination.upVote();
+//
+//        Mockito.verify(fakeDestination, Mockito.times(1)).upVote();
+//        Assert.assertEquals(1, fakeDestination.getVotes());
+//    }
+//
+//    @Test
+//    public void testDownVote() {
+//        Destination fakeDestination = Mockito.mock(Destination.class);
+//
+//        fakeDestination.downVote();
+//
+//        Mockito.verify(fakeDestination, Mockito.times(1)).downVote();
+//        Assert.assertEquals(-1, fakeDestination.getVotes());
+//    }
+//
+//
+//    @Test
+//    public void testUpVote_multiple() {
+//        Destination fakeDestination = Mockito.mock(Destination.class);
+//
+//        fakeDestination.upVote();
+//        fakeDestination.upVote();
+//
+//        Mockito.verify(fakeDestination, Mockito.times(1)).upVote();
+//        Assert.assertEquals(1, fakeDestination.getVotes());
+//    }
+//
+//    @Test
+//    public void testDownVote_multiple() {
+//        Destination fakeDestination = Mockito.mock(Destination.class);
+//
+//        fakeDestination.downVote();
+//        fakeDestination.downVote();
+//
+//        Mockito.verify(fakeDestination, Mockito.times(1)).downVote();
+//        Assert.assertEquals(-1, fakeDestination.getVotes());
+//    }
+//
+//    @Test
+//    public void testUpThenDown() {
+//        Destination fakeDestination = Mockito.mock(Destination.class);
+//
+//        fakeDestination.upVote();
+//        fakeDestination.downVote();
+//
+//        Mockito.verify(fakeDestination, Mockito.times(1)).upVote();
+//        Mockito.verify(fakeDestination, Mockito.times(2)).downVote();
+//        Assert.assertEquals(-1, fakeDestination.getVotes());
+//    }
+//
+//    @Test
+//    public void testDownThenUp() {
+//        Destination fakeDestination = Mockito.mock(Destination.class);
+//
+//        fakeDestination.downVote();
+//        fakeDestination.upVote();
+//
+//        Mockito.verify(fakeDestination, Mockito.times(1)).downVote();
+//        Mockito.verify(fakeDestination, Mockito.times(2)).upVote();
+//        Assert.assertEquals(1, fakeDestination.getVotes());
+//    }
     
 }

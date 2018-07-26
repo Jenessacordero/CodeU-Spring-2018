@@ -46,13 +46,13 @@ public class ServerStartupListener implements ServletContextListener {
 
       List<Message> messages = PersistentStorageAgent.getInstance().loadMessages();
       MessageStore.getInstance().setMessages(messages);
-      
+
       List<AboutMe> aboutMes = PersistentStorageAgent.getInstance().loadAboutMes();
       AboutMeStore.getInstance().setAboutMes(aboutMes);
-      
+
       List<StatusUpdate> statusUpdates = PersistentStorageAgent.getInstance().loadStatusUpdates();
       StatusUpdateStore.getInstance().setStatusUpdates(statusUpdates);
-      
+
       List<UserAction> userActions = PersistentStorageAgent.getInstance().loadUserActions();
       UserActionStore.getInstance().setUserActions(userActions);
       
@@ -71,7 +71,7 @@ public class ServerStartupListener implements ServletContextListener {
       //TODO implement functions -> done!
       List<Destination> rankedDestinations = PersistentStorageAgent.getInstance().loadRankedDestinations();
       DestinationStore.getInstance().setRankedDestinations(rankedDestinations);
-      
+
       Countries.setGlobalInstance();
 
     } catch (PersistentDataStoreException e) {
