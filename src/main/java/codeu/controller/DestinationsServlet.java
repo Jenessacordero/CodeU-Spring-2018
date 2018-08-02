@@ -19,6 +19,7 @@ import codeu.model.store.basic.*;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import javax.servlet.ServletException;
@@ -96,6 +97,8 @@ public class DestinationsServlet extends HttpServlet {
           throws IOException, ServletException {
     List<Destination> destinations = destinationStore.getAllDestinations();
     List<String> countryList = Countries.getGlobalInstance().countryList;
+    HashMap<String, Banner> bannerList = bannerStore.returnBanners();
+    request.setAttribute("banners", bannerList);
     request.setAttribute("destinations", destinations);
     request.setAttribute("countryList", countryList);
     request.getRequestDispatcher("/WEB-INF/view/destinations.jsp").forward(request, response);

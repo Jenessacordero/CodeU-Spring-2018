@@ -230,6 +230,7 @@ public class DestinationPageServlet extends HttpServlet {
         return;
       }
 
+      conversationTitle = destinationTitle + ":_" + conversationTitle;
       Conversation conversation =
               new Conversation(UUID.randomUUID(), user.getId(), destination.getId(), conversationTitle, Instant.now());
 

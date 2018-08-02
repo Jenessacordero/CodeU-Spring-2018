@@ -20,7 +20,7 @@ html {
 body {
   margin: 0;
   height: 100%;
-  font-family: sans-serif;
+  font-family: Helvetica;
   line-height: 1.6;
   font-size: 18px;
   line-height: 1.6;
@@ -28,42 +28,68 @@ body {
   background-color: #eeeeee;
 }
 
-nav {
-  background-color: cornflowerblue;
+#navTitle {
+  font-size: 36px;
 }
 
-nav a {
+#navLeft {
+  overflow: hidden;
+  background-color: cornflowerblue;
+  height: 10%;
+  width: 30%;
+  float: left;
+  margin: auto;
+  text-align: left;
+}
+
+#navLeft a {
+  color: white;
+  display: inline-block;
+  margin: 15px;
+  margin-top: 1%;
+  margin-left: 2%;
+  text-decoration: none;
+}
+
+#navLeft a:hover {
+  color: white;
+  display:inline-block;
+  font-size: 36px;
+  margin: 15px;
+  margin-top: 1%;
+  margin-left: 2%;
+  text-decoration: none;
+  text-shadow: 2px 2px black;
+}
+
+#navRight {
+  text-align: right;
+  background-color: cornflowerblue;
+  height: 10%;
+  width: 70%;
+  float: right;
+  margin: auto;
+  overflow: hidden;
+}
+
+#navRight a {
   color: white;
   display: inline-block;
   font-size: 24px;
   margin: 15px;
   text-decoration: none;
+  margin-right: 2%;
 }
 
-#navTitle {
-  font-size: 36px;
-}
-/**
-#login {
-  margin-left: 30%;
-  margin-right: auto;
-  margin-top: 10%;
-  width: 40%;
-  height: 60%;
-  background-color: rgba(0, 0, 0, .6);
-  position: absolute;
-}
-**/
-/**
-#login h1, h2, form, p {
-  float: none;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
+#navRight a:hover {
   color: white;
+  display:inline-block;
+  font-size: 24px;
+  margin: 15px;
+  margin-right: 2%;
+  text-decoration: none;
+  text-shadow: 2px 2px black;
 }
-**/
 
 #container {
   margin-left: auto;
@@ -71,9 +97,98 @@ nav a {
   width: 800px;
 }
 
+#container form {
+  text-align: center;
+}
+
+#container h1 {
+  text-shadow: 2px 2px darkblue;
+}
+
+#destinationPageHeader {
+  margin-top: 2%;
+  margin-left: auto;
+  margin-right: auto;
+  width: 800px;
+}
+
+#destinationPageHeader form, h1, h3 {
+  text-align: center;
+  margin: auto;
+}
+
+#destinationPageHeader h1 {
+  font-size: 50px;
+  text-shadow: 2px 2px darkblue;
+}
+
+#imageBox {
+  width: 100%;
+  background-color: lightgray;
+}
+
+#destinationPageImages img {
+  margin-right: 0.5%;
+}
+
+#destinationPageImages {
+  margin-top: 2%;
+  margin-left: auto;
+  margin-right: auto;
+  width: 900px;
+  text-align: center;
+}
+
+#destinationPageImages form, h2 {
+  text-align: center;
+  margin: auto;
+}
+
+#destinationPageImages h2 {
+  text-shadow: 2px 2px darkgray;
+}
+
+#DestinationPageContainter {
+  margin-top: 1%;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, .3);
+  float: left;
+  margin-left: 13%;
+  width: 40%;
+  background-color: rgba(100, 149, 237, .3);
+}
+
+#DestinationPageContainter form, p, h2{
+  text-align: center;
+  margin: auto;
+}
+
+#DestinationPageContainter h2 {
+  text-shadow: 2px 2px darkgray;
+}
+
+#DestinationPageTips {
+  margin-top: 1%;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, .3);
+  float:right;
+  margin-right: 13%;
+  width: 30%;
+  background-color: rgba(100, 149, 237, .3);
+}
+
+#DestinationPageTips form, p, h2 {
+  text-align: center;
+  margin: auto;
+}
+
+#DestinationPageTips h2 {
+  text-shadow: 2px 2px darkgray;
+}
 
 #box {
-  margin: auto;
+  top: 10%;
+  margin-top: auto;
   position: relative;
   width: 100%;
   height: 85%;
@@ -93,4 +208,42 @@ input {
 
 button {
   font-size: 18px;
+}
+
+#developers u {
+  text-align: center;
+}
+
+#chat p {
+  text-align: left;
+}
+
+#destImage {
+  position: relative;
+  text-align: center;
+}
+
+#destText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: black;
+  color: white;
+  font-size: 24px;
+  text-decoration: none;
+}
+
+#destText:visited {
+  text-decoration: none;
+  color: white;
+}
+
+#destText a {
+  color: white;
+  text-decoration: none;
+}
+
+ul {
+  list-style-type: none;
 }
