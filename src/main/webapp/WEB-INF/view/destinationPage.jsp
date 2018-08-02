@@ -31,7 +31,7 @@
 
   <%@include file="nav.jsp" %>
 
-  <div id="container">
+  <div id="destinationPageHeader">
 
     <% if(request.getAttribute("error") != null){ %>
         <h2 style="color:red"><%= request.getAttribute("error") %></h2>
@@ -53,36 +53,39 @@
         <input type="text" name="banner">
       </div>
     </form>
+  </div>
+    <p></p>
 
+  <div id="imageBox">
+<div id="destinationPageImages">
+  <h2>Photos</h2>
+  <%-- New form to submit new photos, then below are the photos displayed --%>
+  <form action="/destination/<%= request.getAttribute("urlDestinationTitle") %>" method="POST">
+    <div class="form-group">
+      <label class="form-control-label">Image Address:</label>
+      <input type="text" name="filename">
+    </div>
 
-    <h2>Photos:</h2>
-      <%-- New form to submit new photos, then below are the photos displayed --%>
-      <form action="/destination/<%= request.getAttribute("urlDestinationTitle") %>" method="POST">
-          <div class="form-group">
-              <label class="form-control-label">Image Address:</label>
-              <input type="text" name="filename">
-          </div>
+    <button type="submit">Upload Image</button>
+  </form>
 
-          <button type="submit">Upload Image</button>
-      </form>
-
-    <% List<Image> images = (List<Image>) request.getAttribute("images");
+  <% List<Image> images = (List<Image>) request.getAttribute("images");
     if (images == null || images.isEmpty()) { %>
-        <p>Be the first to add an image of this destination!</p>
-    <% }
-    else { %>
-      <%
-        for(Image image : images ){
-      %>
-    <a href="<%=image.returnFilename().getValue()%>"><img src="<%=image.returnFilename().getValue()%>" width = "100" height = "100"/></a>
-      <%
-        }
-      %>
-    <% } %>
-
-    <hr/>
-
-    <h1>Conversations</h1>
+  <p>Be the first to add an image of this destination!</p>
+  <% }
+  else { %>
+  <%
+    for(Image image : images ){
+  %>
+  <a href="<%=image.returnFilename().getValue()%>"><img src="<%=image.returnFilename().getValue()%>" width = "100" height = "100"/></a>
+  <%
+    }
+  %>
+  <% } %>
+</div>
+  </div>
+  <div id="DestinationPageContainter">
+    <h2>Conversations</h2>
     <form action="/destination/<%= request.getAttribute("urlDestinationTitle") %>" method="POST">
       <div class="form-group">
         <label class="form-control-label">Conversation Title:</label>
@@ -107,8 +110,11 @@
       String destinationTag = (String) request.getAttribute("destinationTag");
       for(Conversation conversation : conversations){
     %>
+        <% String title = conversation.getTitle();
+           title = title.replaceAll("_", " ");
+        %>
       <li><a href="/chat/<%=conversation.getTitle() %>">
-        <%= conversation.getTitle() %></a></li>
+        <%= title %></a></li>
     <%
       }
     %>
@@ -116,9 +122,9 @@
     <%
     }
     %>
-    <hr/>
-	<div>
-	<h1>Tips</h1>
+    </div>
+      <div id="DestinationPageTips">
+	<h2>Tips</h2>
       <div>
         <form action="/destination/<%= request.getAttribute("urlDestinationTitle") %>" method="POST">
           <label class="form-control-label">Tip Content:</label>
@@ -150,8 +156,6 @@
     <%
     }
     %>
-	</div>
-    <hr/>
-  </div>
+      </div>
 </body>
 </html>

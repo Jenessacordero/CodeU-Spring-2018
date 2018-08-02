@@ -30,7 +30,9 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= conversation.getTitle() %></title>
+    <% String title = conversation.getTitle();
+       title = title.replaceAll("_", " "); %>
+  <title><%= title %></title>
   <link rel="stylesheet" href="/css/main.css" type="text/css">
 
   <style>
@@ -53,9 +55,9 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 
   <%@include file="nav.jsp" %>
 
-  <div id="container">
+  <div id="chatContainer">
 
-    <h1><%= conversation.getTitle() %>
+    <h1><%= title %>
       <a href="" style="float: right">&#8635;</a></h1>
 
     <hr/>

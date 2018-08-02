@@ -213,11 +213,11 @@ public class DestinationPageServletTest {
     ArgumentCaptor<Conversation> conversationArgumentCaptor =
         ArgumentCaptor.forClass(Conversation.class);
     Mockito.verify(mockConversationStore).addConversation(conversationArgumentCaptor.capture());
-    Assert.assertEquals(conversationArgumentCaptor.getValue().getTitle(), "test_conversation");
+    Assert.assertEquals(conversationArgumentCaptor.getValue().getTitle(), "test_destination:_test_conversation");
     
     ArgumentCaptor<UserAction> userActionArgumentCaptor = ArgumentCaptor.forClass(UserAction.class);
     Mockito.verify(mockUserActionStore).addUserAction(userActionArgumentCaptor.capture());
 
-    Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
+    Mockito.verify(mockResponse).sendRedirect("/chat/test_destination:_test_conversation");
   }
 }
