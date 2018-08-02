@@ -112,43 +112,49 @@ public class DestinationsServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
           throws IOException, ServletException {
+	  // Logout form
+	  if (request.getParameter("extra_submit_param") != null) {
+	    	 request.getSession().setAttribute("user", null);
+	    	 response.sendRedirect("/index");
+	     }
+	  else {
+		  String username = (String) request.getSession().getAttribute("user");
+		    if (username == null) {
+		      // user is not logged in, don't let them create a destination
+		      response.sendRedirect("/index");
+		      return;
+		    }
 
-    String username = (String) request.getSession().getAttribute("user");
-    if (username == null) {
-      // user is not logged in, don't let them create a destination
-      response.sendRedirect("/index");
-      return;
-    }
-
-    User user = userStore.getUser(username);
-    if (user == null) {
-      // user was not found, don't let them create a destination
-      System.out.println("User not found: " + username);
-      response.sendRedirect("/destinations");
-      return;
-    }
+		    User user = userStore.getUser(username);
+		    if (user == null) {
+		      // user was not found, don't let them create a destination
+		      System.out.println("User not found: " + username);
+		      response.sendRedirect("/destinations");
+		      return;
+		    }
 
 
-    String oldDestinationTitle = request.getParameter("destinationTitle");
-    String destinationTitle = oldDestinationTitle.replace(" ", "_");
+		    String oldDestinationTitle = request.getParameter("destinationTitle");
+		    String destinationTitle = oldDestinationTitle.replace(" ", "_");
 
-    if (destinationStore.isTitleTaken(destinationTitle)) {
-      // destination title is already taken, just go into that conversation instead of creating a
-      // new one
-      response.sendRedirect("/destination/" + destinationTitle);
-      return;
-    }
-    Text banner = new Text(request.getParameter("banner"));
-    Destination destination =
-            new Destination(UUID.randomUUID(), user.getId(), destinationTitle, Instant.now(), banner);
-    bannerStore.addBanner(destinationTitle, new Banner(banner, destinationTitle, UUID.randomUUID(), Instant.now()));
+		    if (destinationStore.isTitleTaken(destinationTitle)) {
+		      // destination title is already taken, just go into that conversation instead of creating a
+		      // new one
+		      response.sendRedirect("/destination/" + destinationTitle);
+		      return;
+		    }
+		    Text banner = new Text(request.getParameter("banner"));
+		    Destination destination =
+		            new Destination(UUID.randomUUID(), user.getId(), destinationTitle, Instant.now(), banner);
+		    bannerStore.addBanner(destinationTitle, new Banner(banner, destinationTitle, UUID.randomUUID(), Instant.now()));
 
-    destinationStore.addDestination(destination);
+		    destinationStore.addDestination(destination);
 
-    // Creates a new user action.
-    UserAction newDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has created a new destination: "
-            + destinationTitle, Instant.now());
-    userActionStore.addUserAction(newDestination);
-    response.sendRedirect("/destination/" + destinationTitle);
+		    // Creates a new user action.
+		    UserAction newDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has created a new destination: "
+		            + destinationTitle, Instant.now());
+		    userActionStore.addUserAction(newDestination);
+		    response.sendRedirect("/destination/" + destinationTitle);
+	  }
   }
 }

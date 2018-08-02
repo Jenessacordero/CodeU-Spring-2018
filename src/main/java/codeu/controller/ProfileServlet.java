@@ -126,33 +126,39 @@ public class ProfileServlet extends HttpServlet {
 	  @Override
 	  public void doPost(HttpServletRequest request, HttpServletResponse response)
 	      throws IOException, ServletException {
-		  
-		  // Here I get information about the user.
-		  String username = (String) request.getSession().getAttribute("user");
-		  User user = userStore.getUser(username);
-		  
-		  String aboutMeContent = request.getParameter("aboutme");
+		  // Logout form
+		  if (request.getParameter("extra_submit_param") != null) {
+		    	 request.getSession().setAttribute("user", null);
+		    	 response.sendRedirect("/index");
+		     }
+		  else {
+			// Here I get information about the user.
+			  String username = (String) request.getSession().getAttribute("user");
+			  User user = userStore.getUser(username);
+			  
+			  String aboutMeContent = request.getParameter("aboutme");
 
-		  // this removes any HTML from the message content
-		  String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());
-		  
-		  // Create a new AboutMe object and add it to the store.
-		  AboutMe aboutMe =
-			        new AboutMe(
-			            UUID.randomUUID(),
-			            user.getId(),
-			            cleanedAboutMeContent,
-			            Instant.now());
-		  
-		  try {
-			aboutMeStore.addAboutMe(aboutMe);
-		} catch (PersistentDataStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		  
-		  // redirect to a GET request
-		  response.sendRedirect("/user/" + username);
+			  // this removes any HTML from the message content
+			  String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());
+			  
+			  // Create a new AboutMe object and add it to the store.
+			  AboutMe aboutMe =
+				        new AboutMe(
+				            UUID.randomUUID(),
+				            user.getId(),
+				            cleanedAboutMeContent,
+				            Instant.now());
+			  
+			  try {
+				aboutMeStore.addAboutMe(aboutMe);
+			} catch (PersistentDataStoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			  
+			  // redirect to a GET request
+			  response.sendRedirect("/user/" + username);
+		  }
 		  
 	  }
 
