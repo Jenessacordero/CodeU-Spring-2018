@@ -143,15 +143,18 @@ public class DestinationPageServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 	  String requestUrl = request.getRequestURI();
-	  String destinationTitle = requestUrl.substring("/destination/".length());
-	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
+	  String urlDestinationTitle = requestUrl.substring("/destination/".length());
+	  String cleanDestinationTitle = urlDestinationTitle.replace("_", " ");
+	  
+	  Destination destination = destinationStore.getDestinationWithTitle(urlDestinationTitle);
 	  List<Image> images = imageStore.returnImagesInDestination(destination);
       List<Conversation> conversations = conversationStore.getConvosInDestination(destination.getId());
       List<Destination> ranks = destinationStore.getRankedDestinations();
       List<Tip> tips = tipStore.getTipsInDestination(destination.getId());
 
       request.setAttribute("conversations", conversations);
-      request.setAttribute("destinationTitle", destinationTitle);
+      request.setAttribute("urlDestinationTitle", urlDestinationTitle);
+      request.setAttribute("cleanDestinationTitle", cleanDestinationTitle);
       request.setAttribute("images", images);
       String banner = destination.getBanner().getValue();
     if (banner != null) {
@@ -167,7 +170,7 @@ public class DestinationPageServlet extends HttpServlet {
 
       int rank = 1;
       for (Destination destinations : ranks) {
-          if (destinations.getTitle().equals(destinationTitle)) {
+          if (destinations.getTitle().equals(cleanDestinationTitle)) {
            break;
           }
           rank++;

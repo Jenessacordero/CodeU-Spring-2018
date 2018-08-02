@@ -82,9 +82,12 @@ List<String> countryList = (List<String>) request.getAttribute("countryList");
       <ul class="mdl-list">
     <%
       for(Destination destination : destinations){
+    	  String urlDestinationTitle = destination.getTitle();
+    	  String cleanDestinationTitle = urlDestinationTitle.replace("_", " ");
     %>
-      <li><a href="/destination/<%= destination.getTitle() %>">
-        <%= destination.getTitle() %></a></li>
+
+      <li><a href="/destination/<%= urlDestinationTitle %>">
+        <%= cleanDestinationTitle %></a></li>
     <%
       }
     %>

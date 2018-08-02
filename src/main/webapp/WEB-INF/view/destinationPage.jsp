@@ -37,8 +37,8 @@
         <h2 style="color:red"><%= request.getAttribute("error") %></h2>
     <% } %>
 
-      <% if (request.getAttribute("destinationTitle") != null) { %>
-      <h1><%= request.getAttribute("destinationTitle") %></h1>
+      <% if (request.getAttribute("cleanDestinationTitle") != null) { %>
+      <h1><%= request.getAttribute("cleanDestinationTitle") %></h1>
     <% } %>
     <% if (request.getAttribute("ranks") != null) { %>
     <h3>Ranked #<%=request.getAttribute("ranks")%></h3>
@@ -47,7 +47,7 @@
         <img src="<%=request.getAttribute("banner").toString()%>" height="400" width="800"/>
     <% } %>
 
-    <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
+    <form action="/destination/<%= request.getAttribute("urlDestinationTitle") %>" method="POST">
       <div class="form-group">
         <label class="form-control-label">Upload/Change the Banner Image (Image Address Only): </label>
         <input type="text" name="banner">
@@ -57,7 +57,7 @@
 
     <h2>Photos:</h2>
       <%-- New form to submit new photos, then below are the photos displayed --%>
-      <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
+      <form action="/destination/<%= request.getAttribute("urlDestinationTitle") %>" method="POST">
           <div class="form-group">
               <label class="form-control-label">Image Address:</label>
               <input type="text" name="filename">
@@ -83,7 +83,7 @@
     <hr/>
 
     <h1>Conversations</h1>
-    <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
+    <form action="/destination/<%= request.getAttribute("urlDestinationTitle") %>" method="POST">
       <div class="form-group">
         <label class="form-control-label">Conversation Title:</label>
         <input type="text" name="conversationTitle">
@@ -120,7 +120,7 @@
 	<div>
 	<h1>Tips</h1>
       <div>
-        <form action="/destination/<%= request.getAttribute("destinationTitle") %>" method="POST">
+        <form action="/destination/<%= request.getAttribute("urlDestinationTitle") %>" method="POST">
           <label class="form-control-label">Tip Content:</label>
           <input type="text" name="tip">
           <br/>
