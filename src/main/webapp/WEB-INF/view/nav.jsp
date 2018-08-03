@@ -3,12 +3,6 @@
     <a id="navTitle" href="/">CodeU Crossing</a>
     </div>
     <div id="navRight">
-    <form method="POST" action="/index" class="inline">
-  <input type="hidden" name="extra_submit_param" value="extra_submit_value">
-  <button type="submit" name="submit_param" value="submit_value" class="link-button">
-    Logout
-  </button>
-</form>
     <a href="/about.jsp">About</a>
     <a href="/activityfeed">Activity Feed</a>
     <a href="/destinations">Destinations</a>
@@ -25,4 +19,13 @@
     <% } else{ %>
     <a href="/index">Login</a>
     <% } %>
+        <% if (request.getSession().getAttribute("user") != null) {%>
+            <form method="POST" action="/index" class="inline">
+                <input type="hidden" name="extra_submit_param" value="extra_submit_value">
+                <button type="submit" name="submit_param" value="submit_value" class="link-button">
+                    Logout
+                </button>
+            </form>
+        <% }
+        %>
     </div>

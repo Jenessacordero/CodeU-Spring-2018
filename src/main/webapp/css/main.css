@@ -40,6 +40,7 @@ body {
   float: left;
   margin: auto;
   text-align: left;
+  display: inline;
 }
 
 #navLeft a {
@@ -70,6 +71,7 @@ body {
   float: right;
   margin: auto;
   overflow: hidden;
+  display: inline;
 }
 
 #navRight a {
@@ -91,6 +93,30 @@ body {
   text-shadow: 2px 2px black;
 }
 
+#navRight button {
+  color: white;
+  display: inline-block;
+  font-size: 24px;
+  margin: 15px;
+  text-decoration: none;
+  margin-right: 2%;
+}
+
+#navRight button:hover {
+  color: white;
+  display:inline-block;
+  font-size: 24px;
+  margin: 15px;
+  margin-right: 2%;
+  text-decoration: none;
+  text-shadow: 2px 2px black;
+}
+
+#navRight form {
+  display: inline;
+  float: right;
+}
+
 #container {
   margin-left: auto;
   margin-right: auto;
@@ -102,7 +128,7 @@ body {
 }
 
 #container h1 {
-  text-shadow: 2px 2px darkblue;
+  text-shadow: 1px 1px darkblue;
 }
 
 #destinationPageHeader {
@@ -215,13 +241,22 @@ button {
 }
 
 #chat p {
-  text-align: left;
+  text-align: center;
 }
 
 #destImage {
   position: relative;
   text-align: center;
 }
+
+#destImageEX {
+  position: relative;
+  text-align: center;
+  display: block;
+  top: 6%;
+  height: 70%;
+}
+
 
 #destText {
   position: absolute;
@@ -232,6 +267,7 @@ button {
   color: white;
   font-size: 24px;
   text-decoration: none;
+  padding: 10px 20px;
 }
 
 #destText:visited {
@@ -244,6 +280,29 @@ button {
   text-decoration: none;
 }
 
+#destText h1 {
+  color: white;
+}
+
 ul {
   list-style-type: none;
+}
+
+button {
+  background-color: royalblue;
+  border-radius: 12px;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+}
+
+button:hover {
+  background-color: white; /* Green */
+  color: royalblue;
 }

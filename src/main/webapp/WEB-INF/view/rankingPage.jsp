@@ -41,35 +41,37 @@
     <hr/>
 
   <div id="chat">
-      <ol>
     <%
         BannerStore bannerStore = BannerStore.getInstance();
 
         List<Destination> rankedDestinations = (List<Destination>) request.getAttribute("rankedDestinations");
+        int count = 1;
         if (rankedDestinations != null) {
       for (Destination destination : rankedDestinations) {
     %>
-
-        <li>
+            <p><strong><%= destination.getVotes() %></p>
          <form action="${pageContext.request.contextPath}/rankingPage" method="post">
              <button type="submit" name="upvote" value =<%=destination.getTitle()%> >Upvote</button>
              <button type="submit" name="downvote" value =<%=destination.getTitle()%> >Downvote</button>
          </form>
-
-          <strong><%= destination.getVotes() %> </strong>       <a href="/destination/<%= destination.getTitle() %>"><%= destination.getTitle() %></a></li>
-          <% Text banner = destination.getBanner();
-              if (banner != null) {
-                  Banner banner2 = bannerStore.returnBanner(destination.getTitle());
-                  if (banner2 != null) { %>
-          <img src="<%=banner2.returnBanner().getValue()%>" height="200" width="400"/>
-          <% }
-          }%>
-          </li>
+<div id="destImage">
+    <% Text banner = destination.getBanner();
+        if (banner != null) {
+            Banner banner2 = bannerStore.returnBanner(destination.getTitle());
+            if (banner2 != null) { %>
+    <img src="<%=banner2.returnBanner().getValue()%>" height="200" width="400"/>
+    <% }
+    }%>
+    <div id="destText">
+        </strong> <a href="/destination/<%= destination.getTitle() %>"><%= count %>. <%=destination.getTitle().replaceAll("_", " ")%></a>
+      </div>
+  </div>
     <%
+          count += 1;
       }
         }
     %>
-      </ol>
+  </div>
     </div>
 
     <hr/>

@@ -104,13 +104,13 @@ HashMap<String, Banner> bannerList = (HashMap<String, Banner>) request.getAttrib
         <% com.google.appengine.api.datastore.Text banner = current.getBanner();
            BannerStore bannerStore = BannerStore.getInstance();
           if (banner != null) {
-              Banner banner2 = bannerStore.returnBanner(cleanDestinationTitle);
+              Banner banner2 = bannerStore.returnBanner(destination);
               if (banner2 != null) { %>
           <a href="/destination/<%= destination %>"><img src="<%=banner2.returnBanner().getValue()%>" height="375" width="500"/></a>
        <% }
           } %>
           <div id="destText">
-          <li><a href="/destination/<%= destination %>">
+          <li><a href="/destination/<%= cleanDestinationTitle %>">
               <%= cleanDestinationTitle %></a></li>
           </div>
       </div>
