@@ -35,6 +35,7 @@ import com.google.appengine.api.datastore.Text;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
+import sun.security.krb5.internal.crypto.Des;
 
 /** Servlet class responsible for the conversations page. */
 public class DestinationPageServlet extends HttpServlet {
@@ -149,7 +150,7 @@ public class DestinationPageServlet extends HttpServlet {
 	  Destination destination = destinationStore.getDestinationWithTitle(urlDestinationTitle);
 	  List<Image> images = imageStore.returnImagesInDestination(destination);
       List<Conversation> conversations = conversationStore.getConvosInDestination(destination.getId());
-      List<Destination> ranks = destinationStore.getRankedDestinations();
+      List<Destination> rankedDestinations = destinationStore.getRankedDestinations();
       List<Tip> tips = tipStore.getTipsInDestination(destination.getId());
 
       request.setAttribute("conversations", conversations);
@@ -157,24 +158,19 @@ public class DestinationPageServlet extends HttpServlet {
       request.setAttribute("cleanDestinationTitle", cleanDestinationTitle);
       request.setAttribute("images", images);
       String banner = destination.getBanner().getValue();
-    if (banner != null) {
-      Banner banner2 = bannerStore.returnBanner(destination.getTitle());
-      if (banner2 != null) {
-        request.setAttribute("banner", banner2.returnBanner().getValue());
+      if (banner != null) {
+        Banner banner2 = bannerStore.returnBanner(destination.getTitle());
+        if (banner2 != null) {
+          request.setAttribute("banner", banner2.returnBanner().getValue());
+        } else {
+          request.setAttribute("banner", null);
+        }
       } else {
         request.setAttribute("banner", null);
       }
-    } else {
-      request.setAttribute("banner", null);
-    }
 
-      int rank = 1;
-      for (Destination destinations : ranks) {
-          if (destinations.getTitle().equals(cleanDestinationTitle)) {
-           break;
-          }
-          rank++;
-      }
+      int rank = rankedDestinations.indexOf(destination) + 1; //to start ranks at 1 instead of 0
+
       request.setAttribute("ranks", rank);
       request.setAttribute("tips", tips);
 

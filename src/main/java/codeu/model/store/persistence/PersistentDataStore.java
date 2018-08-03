@@ -259,22 +259,22 @@ public class PersistentDataStore {
 	    Query query = new Query("destinations").addSort("creation_time", SortDirection.ASCENDING);
 	    PreparedQuery results = datastore.prepare(query);
 
-	    for (Entity entity : results.asIterable()) {
-	      try {
-	        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
-	        UUID owner = UUID.fromString((String) entity.getProperty("owner"));
-	        String title = (String) entity.getProperty("title");
-	        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-	        Text banner = new Text("");
-	        Destination destination = new Destination(uuid, owner, title, creationTime, banner);
-	        destinations.add(destination);
-	      } catch (Exception e) {
-	        // In a production environment, errors should be very rare. Errors which may
-	        // occur include network errors, Datastore service errors, authorization errors,
-	        // database entity definition mismatches, or service mismatches.
-	        throw new PersistentDataStoreException(e);
-	      }
-	    }
+	    for (Entity entity : results.asIterable())
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                UUID owner = UUID.fromString((String) entity.getProperty("owner"));
+                String title = (String) entity.getProperty("title");
+                Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+                Text banner = new Text("");
+                int votes = Long.valueOf((Long) entity.getProperty("votes")).intValue();
+                Destination destination = new Destination(uuid, owner, title, creationTime, banner, votes);
+                destinations.add(destination);
+            } catch (Exception e) {
+                // In a production environment, errors should be very rare. Errors which may
+                // occur include network errors, Datastore service errors, authorization errors,
+                // database entity definition mismatches, or service mismatches.
+                throw new PersistentDataStoreException(e);
+            }
 
 	    return destinations;
 	  }
@@ -360,33 +360,33 @@ public class PersistentDataStore {
         return banners;
     }
 
-	  //TODO implement/modify for ranked destinations -> done!
-    public List<Destination> loadRankedDestinations() throws PersistentDataStoreException {
-
-        List<Destination> rankedDestinations = new ArrayList<>();
+//	  //TODO implement/modify for ranked destinations -> done!
+//    public List<Destination> loadRankedDestinations() throws PersistentDataStoreException {
 //
-//        // Retrieve from the datastore.
-        Query query = new Query("rankedDestinations").addSort("creation_time", SortDirection.ASCENDING);
-        PreparedQuery results = datastore.prepare(query);
-//
-        for (Entity entity : results.asIterable()) {
-            try {
-                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
-                UUID owner = UUID.fromString((String) entity.getProperty("owner"));
-                String title = (String) entity.getProperty("title");
-                Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-                int votes = (int) entity.getProperty("votes");
-                Destination destination = new Destination(uuid, owner, title, creationTime, new Text(""), votes);
-                rankedDestinations.add(destination);
-            } catch (Exception e) {
-                // In a production environment, errors should be very rare. Errors which may
-                // occur include network errors, Datastore service errors, authorization errors,
-                // database entity definition mismatches, or service mismatches.
-                throw new PersistentDataStoreException(e);
-            }
-        }
-        return rankedDestinations;
-    }
+//        List<Destination> rankedDestinations = new ArrayList<>();
+////
+////        // Retrieve from the datastore.
+//        Query query = new Query("rankedDestinations").addSort("creation_time", SortDirection.ASCENDING);
+//        PreparedQuery results = datastore.prepare(query);
+////
+//        for (Entity entity : results.asIterable()) {
+//            try {
+//                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+//                UUID owner = UUID.fromString((String) entity.getProperty("owner"));
+//                String title = (String) entity.getProperty("title");
+//                Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+//                int votes = (int) entity.getProperty("votes");
+//                Destination destination = new Destination(uuid, owner, title, creationTime, new Text(""), votes);
+//                rankedDestinations.add(destination);
+//            } catch (Exception e) {
+//                // In a production environment, errors should be very rare. Errors which may
+//                // occur include network errors, Datastore service errors, authorization errors,
+//                // database entity definition mismatches, or service mismatches.
+//                throw new PersistentDataStoreException(e);
+//            }
+//        }
+//        return rankedDestinations;
+//    }
 
 
 
@@ -476,12 +476,30 @@ public class PersistentDataStore {
   }
   
   /** Write a Destination object to the Datastore service. */
-  public void writeThrough(Destination destination) {
+  public void writeThrough(Destination destination) throws PersistentDataStoreException{
+      Query query = new Query("destinations");
+      PreparedQuery results = datastore.prepare(query);
+
+      for (Entity entity : results.asIterable()) {
+          try {
+              if(entity.getProperty("uuid").equals(destination.getId().toString())) {
+                  entity.setProperty("votes", (destination.getVotes()));
+                  datastore.put(entity);
+                  return;
+              }
+          } catch (Exception e) {
+              // In a production environment, errors should be very rare. Errors which may
+              // occur include network errors, Datastore service errors, authorization errors,
+              // database entity definition mismatches, or service mismatches.
+              throw new PersistentDataStoreException(e);
+          }
+      }
     Entity destinationEntity = new Entity("destinations", destination.getId().toString());
     destinationEntity.setProperty("uuid", destination.getId().toString());
     destinationEntity.setProperty("owner", destination.getOwnerId().toString());
     destinationEntity.setProperty("title", destination.getTitle());
     destinationEntity.setProperty("creation_time", destination.getCreationTime().toString());
+    destinationEntity.setProperty("votes", destination.getVotes());
     destinationEntity.setProperty("banner", destination.getBanner());
     datastore.put(destinationEntity);
   }
