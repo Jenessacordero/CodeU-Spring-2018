@@ -86,38 +86,44 @@ public class RankingsServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
+    	// Logout Form
+	     if (request.getParameter("extra_submit_param") != null) {
+	    	 request.getSession().setAttribute("user", null);
+	    	 response.sendRedirect("/index");
+	     }
+	     else {
+	    	 String username = (String) request.getSession().getAttribute("user");
+	         if (username == null) {
+	             // user is not logged in, don't let them vote
+	             response.sendRedirect("/index");
+	             return;
+	         }
 
-        String username = (String) request.getSession().getAttribute("user");
-        if (username == null) {
-            // user is not logged in, don't let them vote
-            response.sendRedirect("/index");
-            return;
-        }
+	         User user = userStore.getUser(username);
+	         if (user == null) {
+	             // user was not found, don't let them vote
+	             System.out.println("User not found: " + username);
+	             response.sendRedirect("/rankingPage");
+	             return;
+	         }
 
-        User user = userStore.getUser(username);
-        if (user == null) {
-            // user was not found, don't let them vote
-            System.out.println("User not found: " + username);
-            response.sendRedirect("/rankingPage");
-            return;
-        }
+	         //TODO: add checks for if they've already voted once
+	         //Vote and create new user action
+	         if (request.getParameter("upvote") != null) {
+	             destinationStore.getDestinationWithTitle(request.getParameter("upvote")).upVote();
+	             UserAction voteDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has upvoted  "
+	                     + request.getParameter("upvote") + "!", Instant.now());
+	             userActionStore.addUserAction(voteDestination);
+	             response.sendRedirect("/rankingPage");
 
-        //TODO: add checks for if they've already voted once
-        //Vote and create new user action
-        if (request.getParameter("upvote") != null) {
-            destinationStore.getDestinationWithTitle(request.getParameter("upvote")).upVote();
-            UserAction voteDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has upvoted  "
-                    + request.getParameter("upvote") + "!", Instant.now());
-            userActionStore.addUserAction(voteDestination);
-            response.sendRedirect("/rankingPage");
-
-        } else if (request.getParameter("downvote") != null) {
-            destinationStore.getDestinationWithTitle(request.getParameter("downvote")).downVote();
-            UserAction voteDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has downvoted  "
-                    + request.getParameter("downvote") + "!", Instant.now());
-            userActionStore.addUserAction(voteDestination);
-            response.sendRedirect("/rankingPage");
-        }
+	         } else if (request.getParameter("downvote") != null) {
+	             destinationStore.getDestinationWithTitle(request.getParameter("downvote")).downVote();
+	             UserAction voteDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has downvoted  "
+	                     + request.getParameter("downvote") + "!", Instant.now());
+	             userActionStore.addUserAction(voteDestination);
+	             response.sendRedirect("/rankingPage");
+	         }
+	     }
     }
 }
 

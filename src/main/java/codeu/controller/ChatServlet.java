@@ -147,65 +147,72 @@ public class ChatServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-    String cleanedMessageContent = "";
-    Character type = 'm';
-    String username = (String) request.getSession().getAttribute("user");
-    if (username == null) {
-      // user is not logged in, don't let them add a message
-      response.sendRedirect("/index");
-      return;
-    }
+	// Logout Form
+	     if (request.getParameter("extra_submit_param") != null) {
+	    	 request.getSession().setAttribute("user", null);
+	    	 response.sendRedirect("/index");
+	     }  
+	     else {
+	    	 String cleanedMessageContent = "";
+	    	    Character type = 'm';
+	    	    String username = (String) request.getSession().getAttribute("user");
+	    	    if (username == null) {
+	    	      // user is not logged in, don't let them add a message
+	    	      response.sendRedirect("/index");
+	    	      return;
+	    	    }
 
-    User user = userStore.getUser(username);
-    if (user == null) {
-      // user was not found, don't let them add a message
-      response.sendRedirect("/index");
-      return;
-    }
+	    	    User user = userStore.getUser(username);
+	    	    if (user == null) {
+	    	      // user was not found, don't let them add a message
+	    	      response.sendRedirect("/index");
+	    	      return;
+	    	    }
 
-    String requestUrl = request.getRequestURI();
-    String conversationTitle = requestUrl.substring("/chat/".length());
+	    	    String requestUrl = request.getRequestURI();
+	    	    String conversationTitle = requestUrl.substring("/chat/".length());
 
-    Conversation conversation = conversationStore.getConversationWithTitle(conversationTitle);
-    if (conversation == null) {
-      // couldn't find conversation, redirect to conversation list
-      response.sendRedirect("/destinations");
-      return;
-    }
-    if (request.getParameter("message") != null) {
-      String messageContent = request.getParameter("message");
+	    	    Conversation conversation = conversationStore.getConversationWithTitle(conversationTitle);
+	    	    if (conversation == null) {
+	    	      // couldn't find conversation, redirect to conversation list
+	    	      response.sendRedirect("/destinations");
+	    	      return;
+	    	    }
+	    	    if (request.getParameter("message") != null) {
+	    	      String messageContent = request.getParameter("message");
 
-      // this removes any HTML from the message content
-      cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
+	    	      // this removes any HTML from the message content
+	    	      cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
 
 
-      // Creates a new user action.
-      UserAction newMessage = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has sent a message in " + conversationTitle
-              + ": " + "\"" + cleanedMessageContent + "\"", Instant.now());
-      userActionStore.addUserAction(newMessage);
-    }
-    else {
-      if (request.getParameter("image") != null) {
-        cleanedMessageContent = request.getParameter("image");
-        type = 'i';
-        UserAction newMessage = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has sent an image in " + conversationTitle
-                + ": " + "\"" + cleanedMessageContent + "\"", Instant.now());
-        userActionStore.addUserAction(newMessage);
-      }
-    }
+	    	      // Creates a new user action.
+	    	      UserAction newMessage = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has sent a message in " + conversationTitle
+	    	              + ": " + "\"" + cleanedMessageContent + "\"", Instant.now());
+	    	      userActionStore.addUserAction(newMessage);
+	    	    }
+	    	    else {
+	    	      if (request.getParameter("image") != null) {
+	    	        cleanedMessageContent = request.getParameter("image");
+	    	        type = 'i';
+	    	        UserAction newMessage = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has sent an image in " + conversationTitle
+	    	                + ": " + "\"" + cleanedMessageContent + "\"", Instant.now());
+	    	        userActionStore.addUserAction(newMessage);
+	    	      }
+	    	    }
 
-    // Creates a message.
-    Message message =
-            new Message(
-                    UUID.randomUUID(),
-                    conversation.getId(),
-                    user.getId(),
-                    cleanedMessageContent,
-                    Instant.now(), type);
+	    	    // Creates a message.
+	    	    Message message =
+	    	            new Message(
+	    	                    UUID.randomUUID(),
+	    	                    conversation.getId(),
+	    	                    user.getId(),
+	    	                    cleanedMessageContent,
+	    	                    Instant.now(), type);
 
-    messageStore.addMessage(message);
-    user.changeNumPersonalMessageCount();
-    user.changeNumWords(message.getContent());
-    response.sendRedirect("/chat/" + conversationTitle);
+	    	    messageStore.addMessage(message);
+	    	    user.changeNumPersonalMessageCount();
+	    	    user.changeNumWords(message.getContent());
+	    	    response.sendRedirect("/chat/" + conversationTitle);
+	     }
   }
 }

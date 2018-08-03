@@ -82,25 +82,31 @@ public class ActivityFeedServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
+	// Logout Form
+	     if (request.getParameter("extra_submit_param") != null) {
+	    	 request.getSession().setAttribute("user", null);
+	    	 response.sendRedirect("/index");
+	     }
+	     else {
+	    	 String username = (String) request.getSession().getAttribute("user");  
+	    	    User user = userStore.getUser(username);
 
-    String username = (String) request.getSession().getAttribute("user");  
-    User user = userStore.getUser(username);
+	    	    String statusUpdateContent = request.getParameter("status-update");
+	    	    
+	    	    String cleanedStatusUpdateContent = Jsoup.clean(statusUpdateContent, Whitelist.none());
 
-    String statusUpdateContent = request.getParameter("status-update");
-    
-    String cleanedStatusUpdateContent = Jsoup.clean(statusUpdateContent, Whitelist.none());
+	    	    // Creates a status update.
+	    	    StatusUpdate statusUpdate =
+	    	        new StatusUpdate(UUID.randomUUID(), user.getId(), cleanedStatusUpdateContent, Instant.now());
 
-    // Creates a status update.
-    StatusUpdate statusUpdate =
-        new StatusUpdate(UUID.randomUUID(), user.getId(), cleanedStatusUpdateContent, Instant.now());
-
-    statusUpdateStore.addStatusUpdate(statusUpdate);
-    
-    // Creates a user action.
-    UserAction newStatusUpdate = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + ": "
-    		+ cleanedStatusUpdateContent, Instant.now());
-    userActionStore.addUserAction(newStatusUpdate);
-    response.sendRedirect("/activityfeed");
+	    	    statusUpdateStore.addStatusUpdate(statusUpdate);
+	    	    
+	    	    // Creates a user action.
+	    	    UserAction newStatusUpdate = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + ": "
+	    	    		+ cleanedStatusUpdateContent, Instant.now());
+	    	    userActionStore.addUserAction(newStatusUpdate);
+	    	    response.sendRedirect("/activityfeed");
+	     }
   }
 
 }

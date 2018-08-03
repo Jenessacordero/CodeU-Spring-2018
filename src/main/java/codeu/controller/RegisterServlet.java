@@ -61,30 +61,36 @@ public class RegisterServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
+	// Logout Form
+	     if (request.getParameter("extra_submit_param") != null) {
+	    	 request.getSession().setAttribute("user", null);
+	    	 response.sendRedirect("/index");
+	     }
+	     else {
+	    	 String username = request.getParameter("username");
 
-    String username = request.getParameter("username");
+	    	    if (!username.matches("[\\w*\\s*]*")) {
+	    	      request.setAttribute("error", "Please enter only letters, numbers, and spaces.");
+	    	      request.getRequestDispatcher("/WEB-INF/view/register.jsp").forward(request, response);
+	    	      return;
+	    	    }
 
-    if (!username.matches("[\\w*\\s*]*")) {
-      request.setAttribute("error", "Please enter only letters, numbers, and spaces.");
-      request.getRequestDispatcher("/WEB-INF/view/register.jsp").forward(request, response);
-      return;
-    }
+	    	    if (userStore.isUserRegistered(username)) {
+	    	      request.setAttribute("error", "That username is already taken.");
+	    	      request.getRequestDispatcher("/WEB-INF/view/register.jsp").forward(request, response);
+	    	      return;
+	    	    }
+	    	    
+	    	    String password = request.getParameter("password");    
+	    	    String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
 
-    if (userStore.isUserRegistered(username)) {
-      request.setAttribute("error", "That username is already taken.");
-      request.getRequestDispatcher("/WEB-INF/view/register.jsp").forward(request, response);
-      return;
-    }
-    
-    String password = request.getParameter("password");    
-    String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
-
-    User user = new User(UUID.randomUUID(), username, hashed, Instant.now());
-    userStore.addUser(user);
-    
-    // Creates a new user action.
-    UserAction newUser = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has registered as a new user.", Instant.now());
-    userActionStore.addUserAction(newUser);
-    response.sendRedirect("/index");
+	    	    User user = new User(UUID.randomUUID(), username, hashed, Instant.now());
+	    	    userStore.addUser(user);
+	    	    
+	    	    // Creates a new user action.
+	    	    UserAction newUser = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has registered as a new user.", Instant.now());
+	    	    userActionStore.addUserAction(newUser);
+	    	    response.sendRedirect("/index");
+	     }
   }
 }

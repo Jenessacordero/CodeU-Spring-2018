@@ -2,15 +2,24 @@
 // admin page message.
 package codeu.controller;
 
+import codeu.model.data.StatusUpdate;
+import codeu.model.data.User;
+import codeu.model.data.UserAction;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 public class AdminPageServlet extends HttpServlet {
 
@@ -68,6 +77,16 @@ public class AdminPageServlet extends HttpServlet {
       request.setAttribute("mostActive", userStore.mostActive().getName());
       request.setAttribute("newest", userStore.getNewestUser().getName());
     request.getRequestDispatcher("/WEB-INF/view/adminpage.jsp").forward(request, response);
+  }
+  
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
+	// Logout Form
+	     if (request.getParameter("extra_submit_param") != null) {
+	    	 request.getSession().setAttribute("user", null);
+	    	 response.sendRedirect("/index");
+	     }  
   }
 
 }
