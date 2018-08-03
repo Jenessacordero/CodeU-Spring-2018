@@ -191,97 +191,103 @@ public class DestinationPageServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-	  
-	  String requestUrl = request.getRequestURI();
-	  String destinationTitle = requestUrl.substring("/destination/".length());
-	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
-	  String cleanedTipContent = "";
+	// Logout Form
+	     if (request.getParameter("extra_submit_param") != null) {
+	    	 request.getSession().setAttribute("user", null);
+	    	 response.sendRedirect("/index");
+	     }
+	     else {
+	    	 String requestUrl = request.getRequestURI();
+	   	  String destinationTitle = requestUrl.substring("/destination/".length());
+	   	  Destination destination = destinationStore.getDestinationWithTitle(destinationTitle);
+	   	  String cleanedTipContent = "";
 
-	  
-    String username = (String) request.getSession().getAttribute("user");
-    if (username == null) {
-      // user is not logged in, don't let them create a conversation
-      response.sendRedirect("/index");
-      return;
-    }
+	   	  
+	       String username = (String) request.getSession().getAttribute("user");
+	       if (username == null) {
+	         // user is not logged in, don't let them create a conversation
+	         response.sendRedirect("/index");
+	         return;
+	       }
 
-    User user = userStore.getUser(username);
-    if (user == null) {
-      // user was not found, don't let them create a conversation
-      System.out.println("User not found: " + username);
-      response.sendRedirect("/index");
-      return;
-    }
+	       User user = userStore.getUser(username);
+	       if (user == null) {
+	         // user was not found, don't let them create a conversation
+	         System.out.println("User not found: " + username);
+	         response.sendRedirect("/index");
+	         return;
+	       }
 
-    // conversation form
+	       // conversation form
 
-    String conversationTitle = request.getParameter("conversationTitle");
-    if (conversationTitle != null && conversationTitle != "") {
-        conversationTitle = conversationTitle.replaceAll("\\s", "_");
-//      if (!conversationTitle.matches("[\\w*]*")) {
-//        request.setAttribute("error", "Please enter only letters and numbers.");
-//        request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
-//        return;
-//      }
-      if (conversationStore.isTitleTaken(conversationTitle)) {
-        // conversation title is already taken, just go into that conversation instead of creating a
-        // new one
-        response.sendRedirect("/chat/" + conversationTitle);
-        return;
-      }
+	       String conversationTitle = request.getParameter("conversationTitle");
+	       if (conversationTitle != null && conversationTitle != "") {
+	           conversationTitle = conversationTitle.replaceAll("\\s", "_");
+//	         if (!conversationTitle.matches("[\\w*]*")) {
+//	           request.setAttribute("error", "Please enter only letters and numbers.");
+//	           request.getRequestDispatcher("/WEB-INF/view/destinationPage.jsp").forward(request, response);
+//	           return;
+//	         }
+	         if (conversationStore.isTitleTaken(conversationTitle)) {
+	           // conversation title is already taken, just go into that conversation instead of creating a
+	           // new one
+	           response.sendRedirect("/chat/" + conversationTitle);
+	           return;
+	         }
 
-      conversationTitle = destinationTitle + ":_" + conversationTitle;
-      Conversation conversation =
-              new Conversation(UUID.randomUUID(), user.getId(), destination.getId(), conversationTitle, Instant.now());
+	         conversationTitle = destinationTitle + ":_" + conversationTitle;
+	         Conversation conversation =
+	                 new Conversation(UUID.randomUUID(), user.getId(), destination.getId(), conversationTitle, Instant.now());
 
-      conversationStore.addConversation(conversation);
+	         conversationStore.addConversation(conversation);
 
-      // Creates a new user action.
-      UserAction newConversation = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has created a new conversation: "
-              + conversationTitle, Instant.now());
-      userActionStore.addUserAction(newConversation);
-      response.sendRedirect("/chat/" + conversationTitle);
-      
-    
-    }
-    // Tip Form
-    else if (request.getParameter("tip") != null) {
-        String tipContent = request.getParameter("tip");
+	         // Creates a new user action.
+	         UserAction newConversation = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has created a new conversation: "
+	                 + conversationTitle, Instant.now());
+	         userActionStore.addUserAction(newConversation);
+	         response.sendRedirect("/chat/" + conversationTitle);
+	         
+	       
+	       }
+	       // Tip Form
+	       else if (request.getParameter("tip") != null) {
+	           String tipContent = request.getParameter("tip");
 
-        // this removes any HTML from the message content
-        cleanedTipContent = Jsoup.clean(tipContent, Whitelist.none());
+	           // this removes any HTML from the message content
+	           cleanedTipContent = Jsoup.clean(tipContent, Whitelist.none());
 
-        // Creates a Tip.
-        Tip tip =
-                new Tip(
-                        UUID.randomUUID(),
-                        destination.getId(),
-                        user.getId(),
-                        cleanedTipContent,
-                        Instant.now());
+	           // Creates a Tip.
+	           Tip tip =
+	                   new Tip(
+	                           UUID.randomUUID(),
+	                           destination.getId(),
+	                           user.getId(),
+	                           cleanedTipContent,
+	                           Instant.now());
 
-        tipStore.addTip(tip);
-        response.sendRedirect("/destination/" + destinationTitle);
+	           tipStore.addTip(tip);
+	           response.sendRedirect("/destination/" + destinationTitle);
 
-        // Creates a new user action.
-        UserAction newTip = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has added a tip in " + destinationTitle
-                + ": " + "\"" + cleanedTipContent + "\"", Instant.now());
-        userActionStore.addUserAction(newTip);
-    }
-    else if (request.getParameter("banner") != null && request.getParameter("banner") != "") {
-        Text banner = (new Text(request.getParameter("banner")));
-        destination.changeBanner(banner);
-        bannerStore.addBanner(destinationTitle, new Banner(banner, destinationTitle, UUID.randomUUID(), Instant.now()));
-        response.sendRedirect("/destination/" + destinationTitle);
-        return;
-      }
-      else {
-        if (request.getParameter("filename") != null && request.getParameter("filename") != "") {
-          Text imageFilename = new Text(request.getParameter("filename"));
-          Image newImage = new Image(imageFilename, destinationTitle, UUID.randomUUID(), Instant.now());
-          imageStore.addImage(newImage);
-          response.sendRedirect("/destination/" + destinationTitle);
-        }
-      }
+	           // Creates a new user action.
+	           UserAction newTip = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has added a tip in " + destinationTitle
+	                   + ": " + "\"" + cleanedTipContent + "\"", Instant.now());
+	           userActionStore.addUserAction(newTip);
+	       }
+	       else if (request.getParameter("banner") != null && request.getParameter("banner") != "") {
+	           Text banner = (new Text(request.getParameter("banner")));
+	           destination.changeBanner(banner);
+	           bannerStore.addBanner(destinationTitle, new Banner(banner, destinationTitle, UUID.randomUUID(), Instant.now()));
+	           response.sendRedirect("/destination/" + destinationTitle);
+	           return;
+	         }
+	         else {
+	           if (request.getParameter("filename") != null && request.getParameter("filename") != "") {
+	             Text imageFilename = new Text(request.getParameter("filename"));
+	             Image newImage = new Image(imageFilename, destinationTitle, UUID.randomUUID(), Instant.now());
+	             imageStore.addImage(newImage);
+	             response.sendRedirect("/destination/" + destinationTitle);
+	           }
+	         }
+	     }
     }
   }
