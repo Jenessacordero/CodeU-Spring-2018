@@ -31,20 +31,9 @@
 
   <%@include file="nav.jsp" %>
 
-  <div id="destinationPageHeader">
-
-    <% if(request.getAttribute("error") != null){ %>
-        <h2 style="color:red"><%= request.getAttribute("error") %></h2>
-    <% } %>
-
-      <% if (request.getAttribute("cleanDestinationTitle") != null) { %>
-      <h1><%= request.getAttribute("cleanDestinationTitle") %></h1>
-    <% } %>
-    <% if (request.getAttribute("ranks") != null) { %>
-    <h3>Ranked #<%=request.getAttribute("ranks")%></h3>
-<% } %>
+  <div id="destImageEX">
     <% if (request.getAttribute("banner") != null) { %>
-        <img src="<%=request.getAttribute("banner").toString()%>" height="400" width="800"/>
+    <img src="<%=request.getAttribute("banner").toString()%>" height="400" width="800"/>
     <% } %>
 
     <form action="/destination/<%= request.getAttribute("urlDestinationTitle") %>" method="POST">
@@ -53,6 +42,18 @@
         <input type="text" name="banner">
       </div>
     </form>
+    <div id="destText">
+      <% if(request.getAttribute("error") != null){ %>
+      <h2 style="color:red"><%= request.getAttribute("error") %></h2>
+      <% } %>
+
+      <% if (request.getAttribute("cleanDestinationTitle") != null) { %>
+      <h1><%= request.getAttribute("cleanDestinationTitle") %></h1>
+      <% } %>
+      <% if (request.getAttribute("ranks") != null) { %>
+      <h3>Ranked #<%=request.getAttribute("ranks")%></h3>
+      <% } %>
+    </div>
   </div>
     <p></p>
 
