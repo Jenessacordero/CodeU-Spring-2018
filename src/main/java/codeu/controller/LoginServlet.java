@@ -14,14 +14,21 @@
 
 package codeu.controller;
 
+import codeu.model.data.Tip;
 import codeu.model.data.User;
+import codeu.model.data.UserAction;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
+import java.time.Instant;
+import java.util.UUID;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.mindrot.jbcrypt.BCrypt;
 
 /** Servlet class responsible for the login page. */
@@ -66,23 +73,31 @@ public class LoginServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-    String username = request.getParameter("username");
-    String password = request.getParameter("password");
+	  	// Logout Form
+	     if (request.getParameter("extra_submit_param") != null) {
+	    	 request.getSession().setAttribute("user", null);
+	    	 response.sendRedirect("/index");
+	     }
+	     else {
+	    	 String username = request.getParameter("username");
+	    	 String password = request.getParameter("password");
 
-    if (!userStore.isUserRegistered(username)) {
-      request.setAttribute("error", "That username was not found.");
-      request.getRequestDispatcher("index.jsp").forward(request, response);
-      return;
-    }
+	    	    if (!userStore.isUserRegistered(username)) {
+	    	      request.setAttribute("error", "That username was not found.");
+	    	      request.getRequestDispatcher("index.jsp").forward(request, response);
+	    	      return;
+	    	    }
 
-    User user = userStore.getUser(username);
+	    	    User user = userStore.getUser(username);
 
-    if (!BCrypt.checkpw(password, user.getPasswordHash())) {
-      request.setAttribute("error", "Please enter a correct password.");
-      request.getRequestDispatcher("index.jsp").forward(request, response);
-      return;
-    }
-    request.getSession().setAttribute("user", username);
-      response.sendRedirect("/destinations");
+	    	    if (!BCrypt.checkpw(password, user.getPasswordHash())) {
+	    	      request.setAttribute("error", "Please enter a correct password.");
+	    	      request.getRequestDispatcher("index.jsp").forward(request, response);
+	    	      return;
+	    	    }
+	    	    request.getSession().setAttribute("user", username);
+	    	      response.sendRedirect("/destinations"); 
+	     }
+
   }
 }
