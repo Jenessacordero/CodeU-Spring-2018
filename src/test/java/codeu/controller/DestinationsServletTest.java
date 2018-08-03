@@ -32,6 +32,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import codeu.model.store.persistence.PersistentDataStoreException;
+import com.google.appengine.api.datastore.Text;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +81,7 @@ public class DestinationsServletTest {
 //
 //    List<Destination> fakeDestinationList = new ArrayList<>();
 //    fakeDestinationList.add(
-//        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), ""));
+//        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), new Text("")));
 //
 //    Mockito.when(mockDestinationStore.getAllDestinations()).thenReturn(fakeDestinationList);
 //
@@ -89,7 +92,7 @@ public class DestinationsServletTest {
 //  }
 
   @Test
-  public void testDoPost_UserNotLoggedIn() throws IOException, ServletException {
+  public void testDoPost_UserNotLoggedIn() throws IOException, ServletException, PersistentDataStoreException {
     Mockito.when(mockSession.getAttribute("user")).thenReturn(null);
 
     destinationsServlet.doPost(mockRequest, mockResponse);
@@ -100,7 +103,7 @@ public class DestinationsServletTest {
   }
 
   @Test
-  public void testDoPost_InvalidUser() throws IOException, ServletException {
+  public void testDoPost_InvalidUser() throws IOException, ServletException, PersistentDataStoreException {
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
     Mockito.when(mockUserStore.getUser("test_username")).thenReturn(null);
 
@@ -113,7 +116,7 @@ public class DestinationsServletTest {
 
 
   @Test
-  public void testDoPost_DestinationNameTaken() throws IOException, ServletException {
+  public void testDoPost_DestinationNameTaken() throws IOException, ServletException, PersistentDataStoreException{
     Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
 
