@@ -93,6 +93,25 @@ body {
   text-shadow: 2px 2px black;
 }
 
+#link-button {
+  color: white;
+  display: inline-block;
+  font-size: 24px;
+  margin: 15px;
+  text-decoration: none;
+  margin-right: 2%;
+}
+
+#link-button:hover {
+  color: white;
+  display:inline-block;
+  font-size: 24px;
+  margin: 15px;
+  margin-right: 2%;
+  text-decoration: none;
+  text-shadow: 2px 2px black;
+}
+
 #navRight button {
   color: white;
   display: inline-block;
@@ -300,6 +319,7 @@ button {
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
   -webkit-transition-duration: 0.4s; /* Safari */
   transition-duration: 0.4s;
+  overflow: hidden;
 }
 
 button:hover {
