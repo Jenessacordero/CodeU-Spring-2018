@@ -1,5 +1,8 @@
-<nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
+
+    <div id="navLeft">
+    <a id="navTitle" href="/">CodeU Crossing</a>
+    </div>
+    <div id="navRight">
     <a href="/about.jsp">About</a>
     <a href="/activityfeed">Activity Feed</a>
     <a href="/destinations">Destinations</a>
@@ -16,4 +19,4 @@
     <% } else{ %>
     <a href="/index">Login</a>
     <% } %>
-  </nav>
+    </div>

@@ -17,8 +17,18 @@
 <%@ page import="codeu.model.data.Destination" %>
 <%@ page import="codeu.model.data.User" %>
 <%@ page import="codeu.model.data.Countries" %>
+<%@ page import="codeu.model.data.Banner" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="org.w3c.dom.Text" %>
+<%@ page import="codeu.model.store.basic.BannerStore" %>
+<%@ page import="codeu.model.store.basic.DestinationStore" %>
+<%@ page import="java.text.Collator" %>
+<%@ page import="java.util.ArrayList" %>
+
+
 <%
 List<String> countryList = (List<String>) request.getAttribute("countryList");
+HashMap<String, Banner> bannerList = (HashMap<String, Banner>) request.getAttribute("banners");
 %>
 
 <!DOCTYPE html>
@@ -81,12 +91,31 @@ List<String> countryList = (List<String>) request.getAttribute("countryList");
     %>
       <ul class="mdl-list">
     <%
-      for(Destination destination : destinations){
-    %>
-      <li><a href="/destination/<%= destination.getTitle() %>">
-        <%= destination.getTitle() %></a></li>
-    <%
+      DestinationStore dStore = DestinationStore.getInstance();
+      List<String> destinationStrings = new ArrayList<>();
+      for (Destination destination: destinations) {
+          destinationStrings.add(destination.getTitle());
       }
+      java.util.Collections.sort(destinationStrings, Collator.getInstance());
+      for(String destination : destinationStrings){
+          Destination current = dStore.getDestinationWithTitle(destination);
+    	  String cleanDestinationTitle = destination.replace("_", " ");
+    %>  <div id="destImage">
+        <% com.google.appengine.api.datastore.Text banner = current.getBanner();
+           BannerStore bannerStore = BannerStore.getInstance();
+          if (banner != null) {
+              Banner banner2 = bannerStore.returnBanner(cleanDestinationTitle);
+              if (banner2 != null) { %>
+          <a href="/destination/<%= destination %>"><img src="<%=banner2.returnBanner().getValue()%>" height="375" width="500"/></a>
+       <% }
+          } %>
+          <div id="destText">
+          <li><a href="/destination/<%= destination %>">
+              <%= cleanDestinationTitle %></a></li>
+          </div>
+      </div>
+          <p></p>
+      <%}
     %>
       </ul>
     <%

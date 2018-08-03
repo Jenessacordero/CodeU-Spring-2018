@@ -27,37 +27,28 @@
     <div
       style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
 
-      <h1>About the CodeU Chat App</h1>
+      <h1>About the CodeU Crossing App</h1>
       <p>
-        This is an example chat application designed to be a starting point
-        for your CodeU project team work. Here's some stuff to think about:
+        This travel application helps users across the world learn more about different countries as well as help plan their next vacation.
+        Users have the ability to create destinations of countries that have not been visited by others yet, share images, start forums, rank their
+        favorite spots as well as provide tips for the rest of the world!
       </p>
 
       <ul>
-        <li><strong>Algorithms and data structures:</strong> We've made the app
-            and the code as simple as possible. You will have to extend the
-            existing data structures to support your enhancements to the app,
-            and also make changes for performance and scalability as your app
-            increases in complexity.</li>
-        <li><strong>Look and feel:</strong> The focus of CodeU is on the Java
-          side of things, but if you're particularly interested you might use
-          HTML, CSS, and JavaScript to make the chat app prettier.</li>
-        <li><strong>Customization:</strong> Think about a group you care about.
-          What needs do they have? How could you help? Think about technical
-          requirements, privacy concerns, and accessibility and
-          internationalization.</li>
+        <li><strong>Algorithms and data structures:</strong> A popular data structure commonly used throughout the production of our travel application
+         was a hashmap. We noticed the inefficiency of the list structure used for most object stores, and were able to convert these lists to hashmaps,
+        allowing our search procedures to run in constant time, rather than linear.</li>
+        <li><strong>Look and feel:</strong> Through simple css styling, we were able to take the design and layout provided to us by
+        CodeU, and slightly modify the text and formatting to make it something unique and special to us. Our main goal was to keep the site as sleek as possible,
+        meanwhile carefully choosing colors that are easy on the eye. </li>
+        <li><strong>Customization:</strong> Our team of three hails from very different hometowns, individually leaning us towards very unique hobbies. One source of recreation that we share (and many
+         others as well) is traveling. We wanted to create a web application that allowed users like us to share our own experiences on our adventures! Hopefully our advice can
+        help plan others' vacations in the near future.</li>
       </ul>
-
-      <p>
-        This is your code now. Get familiar with it and get comfortable
-        working with your team to plan and make changes. Start by updating the
-        homepage and this about page to tell your users more about your team.
-        This page should also be used to describe the features and improvements
-        you've added.
-      </p>
 
       <h1>About the Developers</h1>
 
+      <div id="developers">
       <div>
       <strong><u>Vibha Agarwal</strong></u>
       <p>I'm a sophomore at MIT. My hobbies include reading, dancing,
@@ -67,8 +58,8 @@
 
       <div>
       <strong><u>Jenessa Cordero</strong></u>
-      <p>I am from Seattle, Washington. I am currently studying data science
-      and cognitive science at Berkeley.</p>
+      <p>Hi! My name is Jenessa and I will be going into my sophomore year at the University of California - Berkeley. I'm currently studying cognitive
+      science and data science and hope to someday learn Korean!</p>
       </div>
 
       <div>
@@ -78,7 +69,7 @@
       hobbies include reading, playing the piano, video games, and
       listening to music.</p>
       </div>
-
+      </div>
     </div>
   </div>
 </body>

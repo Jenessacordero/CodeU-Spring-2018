@@ -90,7 +90,8 @@ public class DestinationPageServletTest {
   public void testDoGet() throws IOException, ServletException {
 	UUID fakeDestinationId = UUID.randomUUID();
 	Mockito.when(mockRequest.getRequestURI()).thenReturn("/destination/test_destination");
-    Mockito.when(mockRequest.getParameter("destinationTitle")).thenReturn("test_destination");
+    Mockito.when(mockRequest.getParameter("urlDestinationTitle")).thenReturn("test_destination");
+    Mockito.when(mockRequest.getParameter("cleanDestinationTitle")).thenReturn("test destination");
 
     Destination fakeDestination =
             new Destination(fakeDestinationId, UUID.randomUUID(), "test_destination", Instant.now(), new Text(""));
@@ -118,7 +119,8 @@ public class DestinationPageServletTest {
     destinationPageServlet.doGet(mockRequest, mockResponse);
 
     Mockito.verify(mockRequest).setAttribute("conversations", fakeConversationList);
-    Mockito.verify(mockRequest).setAttribute("destinationTitle", "test_destination");
+    Mockito.verify(mockRequest).setAttribute("urlDestinationTitle", "test_destination");
+    Mockito.verify(mockRequest).setAttribute("cleanDestinationTitle", "test destination");
     Mockito.verify(mockRequest).setAttribute("images", fakeImageList);
     Mockito.verify(mockRequest).setAttribute("banner", null);
     Mockito.verify(mockRequest).setAttribute("tips", fakeTipList);
@@ -211,11 +213,11 @@ public class DestinationPageServletTest {
     ArgumentCaptor<Conversation> conversationArgumentCaptor =
         ArgumentCaptor.forClass(Conversation.class);
     Mockito.verify(mockConversationStore).addConversation(conversationArgumentCaptor.capture());
-    Assert.assertEquals(conversationArgumentCaptor.getValue().getTitle(), "test_conversation");
+    Assert.assertEquals(conversationArgumentCaptor.getValue().getTitle(), "test_destination:_test_conversation");
     
     ArgumentCaptor<UserAction> userActionArgumentCaptor = ArgumentCaptor.forClass(UserAction.class);
     Mockito.verify(mockUserActionStore).addUserAction(userActionArgumentCaptor.capture());
 
-    Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
+    Mockito.verify(mockResponse).sendRedirect("/chat/test_destination:_test_conversation");
   }
 }
