@@ -68,9 +68,9 @@ public class ServerStartupListener implements ServletContextListener {
       HashMap<String, Banner> banners = PersistentStorageAgent.getInstance().loadBanners();
       BannerStore.getInstance().setBanner(banners);
 
-      //TODO implement functions -> done!
-      List<Destination> rankedDestinations = PersistentStorageAgent.getInstance().loadRankedDestinations();
-      DestinationStore.getInstance().setRankedDestinations(rankedDestinations);
+//      //TODO implement functions -> done!
+//      List<Destination> rankedDestinations = PersistentStorageAgent.getInstance().loadRankedDestinations();
+//      DestinationStore.getInstance().setRankedDestinations(rankedDestinations);
 
       Countries.setGlobalInstance();
 

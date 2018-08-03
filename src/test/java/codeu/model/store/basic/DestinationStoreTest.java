@@ -2,6 +2,7 @@ package codeu.model.store.basic;
 
 import codeu.model.data.Destination;
 import codeu.model.store.basic.DestinationStore;
+import codeu.model.store.persistence.PersistentDataStoreException;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import com.google.appengine.api.datastore.Text;
 import org.junit.Assert;
@@ -84,9 +85,9 @@ public class DestinationStoreTest {
   }
 
   @Test
-  public void testAddDestination() {
+  public void testAddDestination() throws PersistentDataStoreException {
     Destination inputDestination =
-        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), new Text(""));
+        new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), new Text(""), 5);
 
     destinationStore.addDestination(inputDestination);
 

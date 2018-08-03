@@ -5,6 +5,7 @@ import codeu.model.data.Destination;
 import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.Text;
 import org.junit.Assert;
 import org.junit.Before;
@@ -80,7 +81,7 @@ public class RankingsServletTest {
 
 
     @Test
-    public void testDoPost_UserNotLoggedIn() throws IOException, ServletException {
+    public void testDoPost_UserNotLoggedIn() throws IOException, ServletException, PersistentDataStoreException {
         Mockito.when(mockSession.getAttribute("user")).thenReturn(null);
 
         rankingsServlet.doPost(mockRequest, mockResponse);
@@ -91,7 +92,7 @@ public class RankingsServletTest {
     }
 
     @Test
-    public void testDoPost_InvalidUser() throws IOException, ServletException {
+    public void testDoPost_InvalidUser() throws IOException, ServletException, PersistentDataStoreException {
         Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
         Mockito.when(mockUserStore.getUser("test_username")).thenReturn(null);
 

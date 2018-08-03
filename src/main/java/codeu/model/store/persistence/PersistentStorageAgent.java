@@ -167,9 +167,9 @@ public class PersistentStorageAgent {
     return persistentDataStore.loadBanners();
   }
 
-  public List<Destination> loadRankedDestinations() throws PersistentDataStoreException {
-    return persistentDataStore.loadRankedDestinations();
-  }
+//  public List<Destination> loadRankedDestinations() throws PersistentDataStoreException {
+//    return persistentDataStore.loadRankedDestinations();
+//  }
 
 
   /** Write a User object to the Datastore service. */
@@ -204,7 +204,7 @@ public class PersistentStorageAgent {
   }
   
   /** Write a Destination object to the Datastore service. */
-  public void writeThrough(Destination destination) {
+  public void writeThrough(Destination destination) throws PersistentDataStoreException{
     persistentDataStore.writeThrough(destination);
   }
   

@@ -26,6 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.Text;
 
 /** Servlet class responsible for the conversations page. */
@@ -112,7 +114,7 @@ public class DestinationsServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
           throws IOException, ServletException {
-	  // Logout form
+      // Logout form
 	  if (request.getParameter("extra_submit_param") != null) {
 	    	 request.getSession().setAttribute("user", null);
 	    	 response.sendRedirect("/index");
@@ -148,8 +150,12 @@ public class DestinationsServlet extends HttpServlet {
 		            new Destination(UUID.randomUUID(), user.getId(), destinationTitle, Instant.now(), banner);
 		    bannerStore.addBanner(destinationTitle, new Banner(banner, destinationTitle, UUID.randomUUID(), Instant.now()));
 
-		    destinationStore.addDestination(destination);
-
+          try {
+              destinationStore.addDestination(destination);
+          } catch (PersistentDataStoreException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+          }
 		    // Creates a new user action.
 		    UserAction newDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has created a new destination: "
 		            + destinationTitle, Instant.now());
