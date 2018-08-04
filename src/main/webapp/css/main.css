@@ -72,6 +72,8 @@ body {
   margin: auto;
   overflow: hidden;
   display: inline;
+    z-index: 999;
+
 }
 
 #navRight a {
@@ -81,6 +83,8 @@ body {
   margin: 15px;
   text-decoration: none;
   margin-right: 2%;
+  text-align: center;
+
 }
 
 #navRight a:hover {
@@ -91,6 +95,8 @@ body {
   margin-right: 2%;
   text-decoration: none;
   text-shadow: 2px 2px black;
+  text-align: center;
+
 }
 
 #link-button {
@@ -325,4 +331,39 @@ button {
 button:hover {
   background-color: white; /* Green */
   color: royalblue;
+}
+/**=================== **/
+.dropdown {
+  position: relative;
+  display: inline-block;
+
+}
+
+.dropdown span {
+  color: white;
+  display: inline-block;
+  font-size: 24px;
+  margin: 15px;
+  text-decoration: none;
+  margin-right: 2%;
+    z-index: 999;
+
+}
+
+.dropdown-content {
+  display: none;
+  position: fixed;
+  background-color: lightslategrey;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.4);
+  padding: 12px 16px;
+  z-index: 999;
+  width: 15%;
+  text-align: left;
+}
+
+
+.dropdown:hover .dropdown-content {
+  display: block;
+  z-index: 999;
 }

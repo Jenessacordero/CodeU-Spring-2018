@@ -35,15 +35,4 @@ public class AdminServletTest {
 
     }
 
-   /** @Test
-    public void testWordiest() throws IOException, ServletException {
-        for (User users : UserStore.returnAllUsers()) {
-            System.out.println(users.getName());
-        }
-
-
-        Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
-    } */
-
-
 }
