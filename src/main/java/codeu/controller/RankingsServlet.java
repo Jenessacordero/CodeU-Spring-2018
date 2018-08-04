@@ -119,19 +119,51 @@ public class RankingsServlet extends HttpServlet {
             if (request.getParameter("upvote") != null) {
                 String destinationTitle = request.getParameter("upvote");
                 destination = destinationStore.getDestinationWithTitle(destinationTitle);
-                destination.upVote();
-                UserAction voteDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has upvoted  "
-                        + destinationTitle + "!", Instant.now());
-                userActionStore.addUserAction(voteDestination);
+                String currentVote = user.getVotesDictionary().get(destinationTitle);
+                if (currentVote != null) {
+                    if (currentVote.equals("upvote")) {
+                        destination.downVote();
+                        user.getVotesDictionary().put(destinationTitle, null);
+                    } else if (currentVote.equals("downvote")) {
+                        destination.upVote();
+                        destination.upVote();
+                        UserAction voteDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has upvoted  "
+                                + destinationTitle + "!", Instant.now());
+                        userActionStore.addUserAction(voteDestination);
+                        user.getVotesDictionary().put(destinationTitle, "upvote");
+                    }
+                } else {
+                    destination.upVote();
+                    UserAction voteDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has upvoted  "
+                            + destinationTitle + "!", Instant.now());
+                    userActionStore.addUserAction(voteDestination);
+                    user.getVotesDictionary().put(destinationTitle, "upvote");
+                }
                 response.sendRedirect("/rankingPage");
 
             } else if (request.getParameter("downvote") != null) {
                 String destinationTitle = request.getParameter("downvote");
                 destination = destinationStore.getDestinationWithTitle(destinationTitle);
-                destination.downVote();
-                UserAction voteDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has downvoted  "
-                        + destinationTitle + "!", Instant.now());
-                userActionStore.addUserAction(voteDestination);
+                String currentVote = user.getVotesDictionary().get(destination.getTitle());
+                if (currentVote != null) {
+                    if (currentVote.equals("downvote")) {
+                        destination.upVote();
+                        user.getVotesDictionary().put(destinationTitle, null);
+                    } else if (currentVote.equals("upvote")) {
+                        destination.downVote();
+                        destination.downVote();
+                        UserAction voteDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has downvoted  "
+                                + destinationTitle + "!", Instant.now());
+                        userActionStore.addUserAction(voteDestination);
+                        user.getVotesDictionary().put(destinationTitle, "downvote");
+                    }
+                } else {
+                    destination.downVote();
+                    UserAction voteDestination = new UserAction(UUID.randomUUID(), user.getId(), user.getName() + " has downvoted  "
+                            + destinationTitle + "!", Instant.now());
+                    userActionStore.addUserAction(voteDestination);
+                    user.getVotesDictionary().put(destinationTitle, "downvote");
+                }
                 response.sendRedirect("/rankingPage");
             }
             if (destination != null) {

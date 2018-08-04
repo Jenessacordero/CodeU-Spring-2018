@@ -15,6 +15,7 @@
 package codeu.model.data;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,12 +28,15 @@ public class UserTest {
     String name = "test_username";
     String passwordHash = "$2a$10$bBiLUAVmUFK6Iwg5rmpBUOIBW6rIMhU1eKfi3KR60V9UXaYTwPfHy";
     Instant creation = Instant.now();
+    HashMap<String, String> votesDictionary = new HashMap<>();
+    votesDictionary.put("testDestinationTitle", "upvote");
 
-    User user = new User(id, name, passwordHash, creation);
+    User user = new User(id, name, passwordHash, creation, votesDictionary);
 
     Assert.assertEquals(id, user.getId());
     Assert.assertEquals(name, user.getName());
     Assert.assertEquals(passwordHash, user.getPasswordHash());
     Assert.assertEquals(creation, user.getCreationTime());
+    Assert.assertEquals(votesDictionary, user.getVotesDictionary());
   }
 }
