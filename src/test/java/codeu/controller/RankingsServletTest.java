@@ -2,6 +2,7 @@ package codeu.controller;
 
 import codeu.controller.RankingsServlet;
 import codeu.model.data.Destination;
+import codeu.model.data.User;
 import codeu.model.store.basic.DestinationStore;
 import codeu.model.store.basic.UserActionStore;
 import codeu.model.store.basic.UserStore;
@@ -66,8 +67,8 @@ public class RankingsServletTest {
     @Test
     public void testDoGet() throws IOException, ServletException {
         Destination dest1 = new Destination(UUID.randomUUID(), UUID.randomUUID(), "location1", Instant.now(), new Text(""), 5);
-        Destination dest2 = new Destination(UUID.randomUUID(), UUID.randomUUID(), "location1", Instant.now(), new Text(""), 0);
-        Destination dest3 = new Destination(UUID.randomUUID(), UUID.randomUUID(), "location1", Instant.now(), new Text(""), -3);
+        Destination dest2 = new Destination(UUID.randomUUID(), UUID.randomUUID(), "location2", Instant.now(), new Text(""), 0);
+        Destination dest3 = new Destination(UUID.randomUUID(), UUID.randomUUID(), "location3", Instant.now(), new Text(""), -3);
         List<Destination> fakeRankedList = new ArrayList<>();
         fakeRankedList.add(dest1);
         fakeRankedList.add(dest2);
@@ -102,12 +103,21 @@ public class RankingsServletTest {
                 .addDestination(Mockito.any(Destination.class));
         Mockito.verify(mockResponse).sendRedirect("/rankingPage");
     }
-//
+
 //    @Test
-//    public void testUpVote() {
+//    public void testUpVote() throws IOException, ServletException {
 //        Destination fakeDestination = Mockito.mock(Destination.class);
+//        User fakeUser = Mockito.mock(User.class);
+////        Destination fakeDestination = new Destination(UUID.randomUUID(), UUID.randomUUID(), "test_destination", Instant.now(), new Text(""), 0);
+//        fakeUser.getVotesDictionary().put(fakeDestination.title, "upvote");
 //
-//        fakeDestination.upVote();
+//        Mockito.when(mockRequest.getParameter("upvote")).thenReturn("test_destination");
+//        Mockito.when(mockDestinationStore.getDestinationWithTitle("test_destination")).thenReturn(fakeDestination);
+//        Mockito.when(mockSession.getAttribute("user")).thenReturn("test_user");
+//        Mockito.when(mockUserStore.getUser("test_user")).thenReturn(fakeUser);
+//        Mockito.when(fakeUser.getVotesDictionary().get("test_destination")).thenReturn(null);
+//
+//        rankingsServlet.doPost(mockRequest, mockResponse);
 //
 //        Mockito.verify(fakeDestination, Mockito.times(1)).upVote();
 //        Assert.assertEquals(1, fakeDestination.getVotes());

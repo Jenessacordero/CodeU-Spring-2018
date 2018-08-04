@@ -4,6 +4,7 @@ import codeu.model.data.User;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import org.junit.Assert;
@@ -16,12 +17,14 @@ public class UserStoreTest {
   private UserStore userStore;
   private PersistentStorageAgent mockPersistentStorageAgent;
 
+  HashMap<String, String> testvotesDict;
+
   private final User USER_ONE =
       new User(
           UUID.randomUUID(),
           "test_username_one",
           "$2a$10$/zf4WlT2Z6tB5sULB9Wec.QQdawmF0f1SbqBw5EeJg5uoVpKFFXAa",
-          Instant.ofEpochMilli(1000));
+          Instant.ofEpochMilli(1000), testvotesDict);
   private final User USER_TWO =
       new User(
           UUID.randomUUID(),

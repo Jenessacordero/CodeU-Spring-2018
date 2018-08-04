@@ -15,6 +15,7 @@
 package codeu.model.data;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.UUID;
 
 /** Class representing a registered user. */
@@ -25,6 +26,7 @@ public class User {
   private final Instant creation;
   private int personalMessages;
   private int numWords;
+  private HashMap<String, String> votesDictionary;
 
   /**
    * Constructs a new User.
@@ -41,8 +43,18 @@ public class User {
     this.creation = creation;
     this.personalMessages = 0;
     this.numWords = 0;
+    this.votesDictionary = new HashMap<String, String>();
   }
 
+  public User(UUID id, String name, String passwordHash, Instant creation, HashMap<String, String> votesDictionary) {
+    this.id = id;
+    this.name = name;
+    this.passwordHash = passwordHash;
+    this.creation = creation;
+    this.personalMessages = 0;
+    this.numWords = 0;
+    this.votesDictionary = votesDictionary;
+  }
   /** Returns the ID of this User. */
   public UUID getId() {
     return id;
@@ -74,4 +86,12 @@ public class User {
 
   /** Modifies the users word count if they send another message */
   public void changeNumWords(String message) { this.numWords += (message.length()); }
+
+  public HashMap<String, String> getVotesDictionary() {
+    return votesDictionary;
+  }
+
+  public void setVotesDictionary(HashMap<String, String> votesDictionary) {
+    this.votesDictionary = votesDictionary;
+  }
 }

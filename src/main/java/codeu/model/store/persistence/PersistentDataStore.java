@@ -23,23 +23,13 @@ import codeu.model.data.User;
 import codeu.model.data.UserAction;
 import codeu.model.data.AboutMe;
 import codeu.model.data.*;
-import codeu.model.store.persistence.PersistentDataStoreException;
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.datastore.Text;
+import sun.security.krb5.internal.crypto.Des;
 
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This class handles all interactions with Google App Engine's Datastore service. On startup it
@@ -79,7 +69,15 @@ public class PersistentDataStore {
         String userName = (String) entity.getProperty("username");
         String password = (String) entity.getProperty("password_hash");
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        User user = new User(uuid, userName, password, creationTime);
+        HashMap<String, String> votesDictionary = new HashMap<>();
+        EmbeddedEntity ee = (EmbeddedEntity) entity.getProperty("votesDictionary");
+        if (ee != null) {
+            for (String key : ee.getProperties().keySet()) {
+                votesDictionary.put(key, (String) ee.getProperty(key));
+            }
+        }
+
+        User user = new User(uuid, userName, password, creationTime, votesDictionary);
         users.add(user);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -399,6 +397,14 @@ public class PersistentDataStore {
     userEntity.setProperty("username", user.getName());
     userEntity.setProperty("password_hash", user.getPasswordHash());
     userEntity.setProperty("creation_time", user.getCreationTime().toString());
+    EmbeddedEntity ee = new EmbeddedEntity();
+    Map<String, String> votesDictionary = user.getVotesDictionary();
+
+    for (String key : votesDictionary.keySet()) { // TODO: maybe there is a more efficient way of solving this
+        ee.setProperty(key, votesDictionary.get(key));
+    }
+    userEntity.setProperty("votesDictionary", ee);
+
     datastore.put(userEntity);
   }
 
